@@ -22,7 +22,10 @@ io.on('connection', (socket) => {
         userList(socket.id);
     });
     socket.on('chat message', (msg) => {
-      io.to("some room").emit('chat message', msg);
+            if(socket.rooms.has(`some room`) && socket.rooms.has(socket.id)) {
+                console.log(`user is in room 1`);
+                io.to("some room").emit('chat message', msg);
+            }
     });
     socket.on(`join room`, (room) => {
         console.log(room);
