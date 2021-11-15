@@ -67,6 +67,7 @@
     <form id="form" action="">
         <input id="input" autocomplete="off" /><button>Send</button>
     </form>
+    <button class="btn-room">Join room</button>
 
     <script>
         var config = {
@@ -122,6 +123,14 @@
     var messages = document.getElementById('messages');
     var form = document.getElementById('form');
     var input = document.getElementById('input');
+    var btnRoom = document.querySelector(`.btn-room`);
+    const handleClickBtn = e => {
+            console
+            socket.emit(`join room`, `one`);
+    }
+
+
+    btnRoom.addEventListener(`click` , handleClickBtn);
 
     form.addEventListener('submit', function (e) {
         e.preventDefault();
