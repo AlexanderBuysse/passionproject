@@ -85,6 +85,7 @@
             player.anims.play('left', true);
             socket.emit('left', true);
             leftDown = true;
+            rightDown= false;
         }
         else if (cursors.right.isDown)
         {
@@ -93,6 +94,7 @@
             player.anims.play('right', true);
             socket.emit('right', true);
             rightDown = true;
+            leftDown= false;
         }
         else
         {
@@ -103,15 +105,17 @@
 
         if(rightDown) {
             if (cursors.right.isUp) {
-                console.log(`cursor is up`);
+                console.log(`cursor is right`);
                 socket.emit('right', false);
+                rightDown= false;
             }
         }
 
         if(leftDown) {
             if (cursors.left.isUp) {
-                console.log(`cursor is up`);
+                console.log(`cursor is left`);
                 socket.emit('left', false);
+                leftDown=false;
             }
         }
 
@@ -123,21 +127,24 @@
             else
             {
                 playerTwo.setVelocityX(0);
+
                 playerTwo.anims.play('turn');
             }
         });
 
         socket.on('right', function (bool) {
             if (bool) {
-                playerTwo.setVelocityX(-160);
-                playerTwo.anims.play('left', true);
+                playerTwo.setVelocityX(160);
+                playerTwo.anims.play('right', true);
             }
             else
             {
                 playerTwo.setVelocityX(0);
+
                 playerTwo.anims.play('turn');
             }
         });
+
 
         if (cursors.up.isDown && player.body.touching.down)
         {
