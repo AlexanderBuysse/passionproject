@@ -7,9 +7,7 @@ const io = new Server(server);
 
 let users = [];
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
+app.use(express.static('public'));
 
 io.on('connection', (socket) => {
     
