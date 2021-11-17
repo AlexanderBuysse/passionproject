@@ -10,7 +10,6 @@ let users = [];
 app.use(express.static('public'));
 
 io.on('connection', (socket) => {
-    
     console.log(`${socket.id} connected`);
     //socket.join("some room");
     userList(`${socket.id}`);
@@ -28,6 +27,9 @@ io.on('connection', (socket) => {
     socket.on(`join room`, (room) => {
         console.log(room);
         socket.join("some room");
+    })
+    socket.on(`left`, (bool) => {
+        io.emit('left', bool);
     })
 });
 

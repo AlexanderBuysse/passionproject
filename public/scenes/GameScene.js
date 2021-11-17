@@ -1,6 +1,7 @@
-import Phaser from 'phaser'
+{
 
-export default class GameScene extends Phaser.Scene {
+
+ class GameScene extends Phaser.Scene {
     constructor(){
         super('game-scene');
         
@@ -17,4 +18,7 @@ export default class GameScene extends Phaser.Scene {
     create(){
         
     }
+}
+
+//module.exports.GameScene = GameScene;
 }
