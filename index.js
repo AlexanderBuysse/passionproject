@@ -30,7 +30,10 @@ io.on('connection', (socket) => {
     })
     socket.on(`left`, (bool) => {
         io.emit('left', bool);
-    })
+    });
+        socket.on(`right`, (bool) => {
+        io.emit('right', bool);
+    });
 });
 
 // adds and deletes users of id

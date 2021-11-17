@@ -21,13 +21,9 @@
         let player;
         let playerTwo;
         let cursors;
+        let leftDown= false;        
+        let rightDown= false;
         let socket = io();
-        const messages = document.getElementById('messages');
-        const btnRoom = document.querySelector(`.btn-room`);
-        const handleClickBtn = e => {
-                socket.emit(`join room`, `one`);
-        }
-        btnRoom.addEventListener(`click` , handleClickBtn);
 
         function preload() {
 
@@ -88,18 +84,35 @@
 
             player.anims.play('left', true);
             socket.emit('left', true);
+            leftDown = true;
         }
         else if (cursors.right.isDown)
         {
             player.setVelocityX(160);
 
             player.anims.play('right', true);
+            socket.emit('right', true);
+            rightDown = true;
         }
         else
         {
             player.setVelocityX(0);
 
             player.anims.play('turn');
+        }
+
+        if(rightDown) {
+            if (cursors.right.isUp) {
+                console.log(`cursor is up`);
+                socket.emit('right', false);
+            }
+        }
+
+        if(leftDown) {
+            if (cursors.left.isUp) {
+                console.log(`cursor is up`);
+                socket.emit('left', false);
+            }
         }
 
         socket.on('left', function (bool) {
@@ -114,9 +127,22 @@
             }
         });
 
+        socket.on('right', function (bool) {
+            if (bool) {
+                playerTwo.setVelocityX(-160);
+                playerTwo.anims.play('left', true);
+            }
+            else
+            {
+                playerTwo.setVelocityX(0);
+                playerTwo.anims.play('turn');
+            }
+        });
+
         if (cursors.up.isDown && player.body.touching.down)
         {
             player.setVelocityY(-330);
+
         }
         }
 }
