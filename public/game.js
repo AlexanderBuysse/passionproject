@@ -1,51 +1,57 @@
 {
-           var config = {
-            type: Phaser.AUTO,
-            width: 800,
-            height: 600,
-            physics: {
-                default: 'arcade',
-                arcade: {
-                    gravity: { y: 300 }
-                }
-            },
-            scene: {
-                preload: preload,
-                create: create,
-                update: update
+    var config = {
+        type: Phaser.AUTO,
+        width: 800,
+        height: 600,
+        physics: {
+            default: 'arcade',
+            arcade: {
+                gravity: { y: 300 }
             }
-        };
+        },
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
 
         var game = new Phaser.Game(config);
         let platforms;
         let player;
         let playerTwo;
+
+        let arrows;
+
         let cursors;
         let leftDown= false;        
         let rightDown= false;
+        let gameOver= false;
         let socket = io();
 
         function preload() {
 
             this.load.image('sky', 'assets/sky.png');
             this.load.image('ground', 'assets/platform.png');
-            this.load.image('star', 'assets/star.png');
-            this.load.image('bomb', 'assets/bomb.png');
+            this.load.image('arrow', 'assets/arrow.png');
 
             this.load.spritesheet('dude', 'assets/dude.png', {frameWidth: 32, framHeight:48})
         }
 
         function create() {
-            this.add.image(400, 400, 'sky')
-            this.add.image(400, 300, 'star')
+            this.add.image(400, 300, 'sky');
+
             platforms = this.physics.add.staticGroup()
             platforms.create(400, 568, 'ground').setScale(2).refreshBody()
             platforms.create(50, 250, 'ground')
             platforms.create(750, 220, 'ground')
             platforms.create(600, 400, 'ground')
 
+            arrows= this.physics.add.group();
+
             player = this.physics.add.sprite(100, 450, 'dude');
             playerTwo = this.physics.add.sprite(100, 450, 'dude');
+
 
 
             player.setBounce(.2);
@@ -78,6 +84,22 @@
         }
 
         function update() {
+        if (gameOver) {
+            return;
+        }
+
+        // ----------------------------------------- Arrow controller ------------------------------
+        if(cursors.left.isDown){
+            var arrow = arrows.create(100, 16, 'arrow');
+            arrow.setBounce(1);
+            arrow.setCollideWorldBounds(true);
+            arrow.setVelocity(Phaser.Math.Between(-200, 200), 20);
+            arrow.allowGravity = false;
+        }
+        // ----------------------------------------- Arrow controller ------------------------------
+             
+
+        //----------------------------------------- character controller ------------------------------
         if (cursors.left.isDown)
         {
             player.setVelocityX(-160);
@@ -145,11 +167,16 @@
             }
         });
 
-
         if (cursors.up.isDown && player.body.touching.down)
         {
             player.setVelocityY(-330);
 
         }
+        //----------------------------------------- character controller ------------------------------
+        }
+
+        function makeArrow () {
+            let arrowSecond;
+            arrowSecond= this.physics.add.sprite(100, 64, 'arrow');
         }
 }
