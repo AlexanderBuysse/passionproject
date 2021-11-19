@@ -16,7 +16,7 @@
         }
     };
 
-        var game = new Phaser.Game(config);
+        let game = new Phaser.Game(config);
         let platforms;
         let player;
         let playerTwo;
@@ -28,6 +28,8 @@
         let rightDown= false;
         let gameOver= false;
         let socket = io();
+
+        let timedEvent;
 
         function preload() {
 
@@ -53,11 +55,21 @@
             playerTwo = this.physics.add.sprite(100, 450, 'dude');
 
 
+            //var particles = this.add.particles('dude');
+
+            /*var emitter = particles.createEmitter({
+                speed: 50,
+                scale: { start: 1, end: 0 },
+                blendMode: 'ADD'
+            });*/
+
 
             player.setBounce(.2);
             player.setCollideWorldBounds(true);
             playerTwo.setBounce(.2);
             playerTwo.setCollideWorldBounds(true);
+
+            //emitter.startFollow(player);
 
             this.anims.create({
                 key: 'left',
@@ -81,20 +93,47 @@
             cursors = this.input.keyboard.createCursorKeys();
             this.physics.add.collider(player, platforms);
             this.physics.add.collider(playerTwo, platforms);
+
+            timedEvent = this.time.addEvent({ delay: 500, callback: secondPast, callbackScope: this, loop: true });
         }
 
-        function update() {
+
+        let secondPastBool= false;
+
+        function secondPast() {
+            secondPastBool= true;
+        }
+
+
+        function update(time, delta) {
+
+        
         if (gameOver) {
             return;
         }
 
         // ----------------------------------------- Arrow controller ------------------------------
-        if(cursors.left.isDown){
-            var arrow = arrows.create(100, 16, 'arrow');
-            arrow.setBounce(1);
-            arrow.setCollideWorldBounds(true);
-            arrow.setVelocity(Phaser.Math.Between(-200, 200), 20);
-            arrow.allowGravity = false;
+        if(secondPastBool) {
+            if(cursors.left.isDown){
+                var arrow = arrows.create(100, 16, 'arrow');
+                arrow.setBounce(1);
+                arrow.rotation = 3.15;
+                arrow.setCollideWorldBounds(true);
+                arrow.setVelocity(Phaser.Math.Between(-200, 200), 20);
+                arrow.allowGravity = false;
+                secondPastBool=false;
+            }
+        }
+     
+        if(secondPastBool) {
+            if(cursors.right.isDown){
+                var arrow = arrows.create(100, 16, 'arrow');
+                arrow.setBounce(1);
+                arrow.setCollideWorldBounds(true);
+                arrow.setVelocity(Phaser.Math.Between(-200, 200), 20);
+                arrow.allowGravity = false;
+                secondPastBool=false;
+            }
         }
         // ----------------------------------------- Arrow controller ------------------------------
              
