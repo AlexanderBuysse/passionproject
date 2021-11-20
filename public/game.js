@@ -27,6 +27,7 @@
         var spacebar;
         var ship;
         var bullets;
+        let arrowsClass;
 
         let cursors;
         let leftDown= false;        
@@ -63,21 +64,22 @@
                     Phaser.GameObjects.Image.call(this, scene, 0, 0, 'arrow');
 
                     this.speed = Phaser.Math.GetSpeed(600, 1);
+                    //this.speed = .5;
+                    
                 },
 
                 fire: function (x, y)
                 {
                     this.setPosition(x, y);
-
                     this.setActive(true);
                     this.setVisible(true);
                 },
 
                 update: function (time, delta)
                 {
-                    this.y += this.speed * delta;
+                    this.y += this.speed * delta *.5;
 
-                    if (this.y > 500)
+                    if (this.y > 600)
                     {
                         this.setActive(false);
                         this.setVisible(false);
@@ -86,10 +88,12 @@
 
             });
 
-            arrowsClass = this.add.group({
+            arrowsClass = this.physics.add.group({
                 classType: Arrow,
-                maxSize: 2,
-                runChildUpdate: true
+                maxSize: 6,
+                runChildUpdate: true,
+                velocityY: .5,
+                allowGravity: false
             });
             spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
@@ -144,7 +148,8 @@
                 console.log(`gaat dit er door`);
                 timedEvent = this.time.addEvent({ delay: 1000, callback: secondPast, callbackScope: this, loop: {secondPastBool} });
             }*/
-            this.physics.add.overlap(arrows, zone);
+            console.log(arrows, arrowsClass);
+            this.physics.add.overlap(arrowsClass, zone);
         }
 
         function removeArrow (arrows, platforms) {
@@ -199,7 +204,7 @@
 
             if (arrowClass)
             {
-                arrowClass.fire(100, 100);
+                arrowClass.fire(200, 100);
             }
         }
         // ----------------------------------------- Arrow controller ------------------------------
