@@ -6,7 +6,7 @@
         physics: {
             default: 'arcade',
             arcade: {
-                gravity: { y: 300 }
+                gravity: { y: 400 }
             }
         },
         scene: {
@@ -45,9 +45,6 @@
 
             platforms = this.physics.add.staticGroup()
             platforms.create(400, 568, 'ground').setScale(2).refreshBody()
-            platforms.create(50, 250, 'ground')
-            platforms.create(750, 220, 'ground')
-            platforms.create(600, 400, 'ground')
 
             arrows= this.physics.add.group();
 
@@ -55,21 +52,10 @@
             playerTwo = this.physics.add.sprite(100, 450, 'dude');
 
 
-            //var particles = this.add.particles('dude');
-
-            /*var emitter = particles.createEmitter({
-                speed: 50,
-                scale: { start: 1, end: 0 },
-                blendMode: 'ADD'
-            });*/
-
-
             player.setBounce(.2);
             player.setCollideWorldBounds(true);
             playerTwo.setBounce(.2);
             playerTwo.setCollideWorldBounds(true);
-
-            //emitter.startFollow(player);
 
             this.anims.create({
                 key: 'left',
@@ -94,51 +80,82 @@
             this.physics.add.collider(player, platforms);
             this.physics.add.collider(playerTwo, platforms);
 
-            timedEvent = this.time.addEvent({ delay: 500, callback: secondPast, callbackScope: this, loop: true });
+            this.physics.add.overlap(arrows, platforms, removeArrow, null, this);
+
+            /*if(!secondPastBool) {
+                console.log(`gaat dit er door`);
+                timedEvent = this.time.addEvent({ delay: 1000, callback: secondPast, callbackScope: this, loop: {secondPastBool} });
+            }*/
+        }
+
+        function removeArrow (arrows, platforms) {
+            //arrows.disableBody(true, true);
+            arrows.destroy()
+            //console.log(`oke then`);
         }
 
 
-        let secondPastBool= false;
+        /*let secondPastBool= false;
 
         function secondPast() {
+            console.log(`dit logt elke sconde of wa`);
             secondPastBool= true;
+        }*/
+
+        let timeWhenFunction = 0;
+
+        function didSecondPass (time, timeLastFunction) {
+            let oke = time - timeLastFunction;
+            console.log(oke);
+
+            if(oke === 1000) {
+                console.log(`second passed`)
+                return true;
+            } else if ( oke < 1000) {
+                console.log(`second didn't pass`)
+                return true;
+            } else {
+                return false;
+            }
         }
 
-
         function update(time, delta) {
-
+        
         
         if (gameOver) {
             return;
         }
 
+        var particles = this.add.particles('arrow');
+
+        var emitter = particles.createEmitter({
+                speed: 50,
+                scale: { start: 1, end: 0 },
+                blendMode: 'ADD'
+        });
         // ----------------------------------------- Arrow controller ------------------------------
-        if(secondPastBool) {
-            if(cursors.left.isDown){
-                var arrow = arrows.create(100, 16, 'arrow');
-                arrow.setBounce(1);
-                arrow.rotation = 3.15;
-                arrow.setCollideWorldBounds(true);
-                arrow.setVelocity(Phaser.Math.Between(-200, 200), 20);
-                arrow.allowGravity = false;
-                secondPastBool=false;
-            }
+        //console.log(didSecondPass(time, timeWhenFunction));
+
+        if(cursors.left.isDown){
+            var arrow = arrows.create(100, 16, 'arrow');
+            arrow.rotation = 3.15;
+            arrow.setCollideWorldBounds(true);
+            arrow.allowGravity = false;
+            timeWhenFunction= time;
         }
-     
-        if(secondPastBool) {
-            if(cursors.right.isDown){
-                var arrow = arrows.create(100, 16, 'arrow');
-                arrow.setBounce(1);
-                arrow.setCollideWorldBounds(true);
-                arrow.setVelocity(Phaser.Math.Between(-200, 200), 20);
-                arrow.allowGravity = false;
-                secondPastBool=false;
-            }
+
+        if(cursors.right.isDown){
+            var arrow = arrows.create(210, 16, 'arrow');
+            arrow.setCollideWorldBounds(true);
+            arrow.allowGravity = false;
+            secondPastBool=false;
         }
+        //console.log(timeWhenFunction);
         // ----------------------------------------- Arrow controller ------------------------------
              
 
         //----------------------------------------- character controller ------------------------------
+        
         if (cursors.left.isDown)
         {
             player.setVelocityX(-160);
@@ -166,15 +183,16 @@
 
         if(rightDown) {
             if (cursors.right.isUp) {
-                console.log(`cursor is right`);
+                //console.log(`cursor is right`);
                 socket.emit('right', false);
                 rightDown= false;
             }
         }
 
+        
         if(leftDown) {
             if (cursors.left.isUp) {
-                console.log(`cursor is left`);
+                //console.log(`cursor is left`);
                 socket.emit('left', false);
                 leftDown=false;
             }
