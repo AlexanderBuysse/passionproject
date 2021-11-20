@@ -34,6 +34,8 @@
 
         let scoreText;
 
+        let score = 0;
+
         let zone;
 
         function preload() {
@@ -46,12 +48,14 @@
         }
 
         function create() {
+
             zone = this.add.zone(160, 500).setSize(100, 100);
             this.physics.world.enable(zone);
             zone.body.setAllowGravity(false);
             zone.body.moves = false;
 
             this.add.image(400, 300, 'sky');
+            scoreText = this.add.text(100, 100, 'score: 0', { fontSize: '32px', fill: '#000' });
 
             platforms = this.physics.add.staticGroup()
             platforms.create(400, 568, 'ground').setScale(2).refreshBody()
@@ -136,7 +140,8 @@
         
         if(!zone.body.touching.none) {
             if(cursors.up.isDown){
-                console.log(`right on time`);
+                    score += 10;
+                    scoreText.setText('Score: ' + score);
             }
         }
 
