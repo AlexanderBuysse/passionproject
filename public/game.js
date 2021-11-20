@@ -24,6 +24,10 @@
 
         let arrows;
 
+        var spacebar;
+        var ship;
+        var bullets;
+
         let cursors;
         let leftDown= false;        
         let rightDown= false;
@@ -48,6 +52,46 @@
         }
 
         function create() {
+            var Arrow = new Phaser.Class({
+
+                Extends: Phaser.GameObjects.Image,
+
+                initialize:
+
+                function Arrow (scene)
+                {
+                    Phaser.GameObjects.Image.call(this, scene, 0, 0, 'arrow');
+
+                    this.speed = Phaser.Math.GetSpeed(600, 1);
+                },
+
+                fire: function (x, y)
+                {
+                    this.setPosition(x, y);
+
+                    this.setActive(true);
+                    this.setVisible(true);
+                },
+
+                update: function (time, delta)
+                {
+                    this.y += this.speed * delta;
+
+                    if (this.y > 500)
+                    {
+                        this.setActive(false);
+                        this.setVisible(false);
+                    }
+                }
+
+            });
+
+            arrowsClass = this.add.group({
+                classType: Arrow,
+                maxSize: 2,
+                runChildUpdate: true
+            });
+            spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
             zone = this.add.zone(160, 500).setSize(100, 100);
             this.physics.world.enable(zone);
@@ -134,7 +178,7 @@
             }
         }
 
-        function update(time, delta) {
+        function update() {
         
         zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
         
@@ -149,13 +193,15 @@
             return;
         }
 
-        var particles = this.add.particles('arrow');
+        if (Phaser.Input.Keyboard.JustDown(spacebar))
+        {
+            var arrowClass = arrowsClass.get();
 
-        var emitter = particles.createEmitter({
-                speed: 50,
-                scale: { start: 1, end: 0 },
-                blendMode: 'ADD'
-        });
+            if (arrowClass)
+            {
+                arrowClass.fire(100, 100);
+            }
+        }
         // ----------------------------------------- Arrow controller ------------------------------
         //console.log(didSecondPass(time, timeWhenFunction));
 
@@ -164,7 +210,6 @@
             arrow.rotation = 3.15;
             arrow.setCollideWorldBounds(true);
             arrow.allowGravity = false;
-            timeWhenFunction= time;
         }
 
         if(cursors.right.isDown){
