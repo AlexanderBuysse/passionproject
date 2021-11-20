@@ -6,6 +6,7 @@
         physics: {
             default: 'arcade',
             arcade: {
+                debug: true,
                 gravity: { y: 400 }
             }
         },
@@ -31,6 +32,10 @@
 
         let timedEvent;
 
+        let scoreText;
+
+        let zone;
+
         function preload() {
 
             this.load.image('sky', 'assets/sky.png');
@@ -41,6 +46,11 @@
         }
 
         function create() {
+            zone = this.add.zone(160, 500).setSize(100, 100);
+            this.physics.world.enable(zone);
+            zone.body.setAllowGravity(false);
+            zone.body.moves = false;
+
             this.add.image(400, 300, 'sky');
 
             platforms = this.physics.add.staticGroup()
@@ -86,6 +96,7 @@
                 console.log(`gaat dit er door`);
                 timedEvent = this.time.addEvent({ delay: 1000, callback: secondPast, callbackScope: this, loop: {secondPastBool} });
             }*/
+            this.physics.add.overlap(arrows, zone);
         }
 
         function removeArrow (arrows, platforms) {
@@ -121,7 +132,14 @@
 
         function update(time, delta) {
         
+        zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
         
+        if(!zone.body.touching.none) {
+            if(cursors.up.isDown){
+                console.log(`right on time`);
+            }
+        }
+
         if (gameOver) {
             return;
         }
