@@ -20,33 +20,31 @@
         }
     };
 
-        var element;
+    //----------------------------- random vars ----------------------------------------
+        // let player;
+        // let playerTwo;
+        // let leftDown= false;        
+        // let rightDown= false;
+        // let gameOver= false;
+    //----------------------------- random vars ----------------------------------------
+
 
         let game = new Phaser.Game(config);
-        let platforms;
-        let player;
-        let playerTwo;
-
-        let arrows;
-
-        var spacebar;
-        var ship;
-        var bullets;
-        let arrowsClass;
-
-        let cursors;
-        let leftDown= false;        
-        let rightDown= false;
-        let gameOver= false;
         let socket = io();
 
-        let timedEvent;
+        let platforms;
+        let cursors;
 
-        let scoreText;
+        let arrows;
+        let arrowsClass;
 
-        let score = 0;
+        let timeWhenFunction = 0;
 
         let zone;
+        let scoreText;
+        let score = 0;
+
+        var element;
 
         function preload() {
 
@@ -60,8 +58,10 @@
         }
 
         function create() {
-            element = this.add.dom(400, 600).createFromCache('nameform');
+            //element = this.add.dom(400, 600).createFromCache('nameform');
+            cursors = this.input.keyboard.createCursorKeys();
         
+            // ----------------------------------------- arrows class ------------------------------
             var Arrow = new Phaser.Class({
 
                 Extends: Phaser.GameObjects.Image,
@@ -99,7 +99,6 @@
                         this.setVisible(false);
                     }
                 }
-
             });
 
             arrowsClass = this.physics.add.group({
@@ -110,17 +109,6 @@
                 allowGravity: false
             });
 
-            zone = this.add.zone(160, 500).setSize(100, 100);
-            this.physics.world.enable(zone);
-            zone.body.setAllowGravity(false);
-            zone.body.moves = false;
-
-            this.add.image(400, 300, 'sky');
-            scoreText = this.add.text(100, 100, 'score: 0', { fontSize: '32px', fill: '#000' });
-
-            platforms = this.physics.add.staticGroup()
-            platforms.create(400, 568, 'ground').setScale(2).refreshBody()
-
             arrows= this.physics.add.group({
                 classType: Arrow,
                 maxSize: 12,
@@ -129,6 +117,36 @@
                 allowGravity: false
             });
 
+            socket.on('arrow', function (bool) {
+                if (bool) {
+                    console.log(`a arrow has been send`);
+                    var arrowClass = arrowsClass.get();
+
+                    if (arrowClass)
+                    {
+                        arrowClass.fire(10, 100, `right`);
+                    }
+                }
+            });
+            // ----------------------------------------- arrows class ------------------------------
+
+            // ----------------------------------------- zone ------------------------------
+            zone = this.add.zone(160, 500).setSize(100, 100);
+            this.physics.world.enable(zone);
+            zone.body.setAllowGravity(false);
+            zone.body.moves = false;
+
+            this.add.image(400, 300, 'sky');
+            scoreText = this.add.text(100, 100, 'score: 0', { fontSize: '32px', fill: '#000' }); 
+            // ----------------------------------------- zone ------------------------------
+
+
+            platforms = this.physics.add.staticGroup()
+            platforms.create(400, 568, 'ground').setScale(2).refreshBody()
+            this.physics.add.overlap(arrowsClass, zone);
+
+            // ----------------------------------------- players ------------------------------
+            /*
             player = this.physics.add.sprite(100, 450, 'dude');
             playerTwo = this.physics.add.sprite(100, 450, 'dude');
 
@@ -157,71 +175,17 @@
                 frameRate: 10,
                 repeat: -1
             });
-            cursors = this.input.keyboard.createCursorKeys();
+
             this.physics.add.collider(player, platforms);
             this.physics.add.collider(playerTwo, platforms);
-
-            socket.on('arrow', function (bool) {
-                if (bool) {
-                    console.log(`a arrow has been send`);
-                    var arrowClass = arrowsClass.get();
-
-                    if (arrowClass)
-                    {
-                        arrowClass.fire(10, 100, `right`);
-                    }
-                }
-            });
+            //*/
             //this.physics.add.overlap(arrows, platforms, removeArrow, null, this);
+            // ----------------------------------------- players ------------------------------
 
-            /*if(!secondPastBool) {
-                console.log(`gaat dit er door`);
-                timedEvent = this.time.addEvent({ delay: 1000, callback: secondPast, callbackScope: this, loop: {secondPastBool} });
-            }*/
-            console.log(arrows, arrowsClass);
-            this.physics.add.overlap(arrowsClass, zone);
-            this.tweens.add({
-                targets: element,
-                y: 300,
-                duration: 3000,
-                ease: 'Power3'
-            });
         }
-
-        function removeArrow (arrows, platforms) {
-            //arrows.disableBody(true, true);
-            arrows.destroy()
-            //console.log(`oke then`);
-        }
-
-
-        /*let secondPastBool= false;
-
-        function secondPast() {
-            console.log(`dit logt elke sconde of wa`);
-            secondPastBool= true;
-        }*/
-
-        let timeWhenFunction = 0;
-
-        /*function didSecondPass (time, timeLastFunction) {
-            let oke = time - timeLastFunction;
-            console.log(oke);
-
-            if(oke === 1000) {
-                console.log(`second passed`)
-                return true;
-            } else if ( oke < 1000) {
-                console.log(`second didn't pass`)
-                return true;
-            } else {
-                return false;
-            }
-        }
-        */
 
         function update(time, delta) {
-        
+        // ----------------------------------------- zone controller ------------------------------
         zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
         
         if(!zone.body.touching.none) {
@@ -230,12 +194,9 @@
                     scoreText.setText('Score: ' + score);
             }
         }
-
-        if (gameOver) {
-            return;
-        }
-        //console.log(time);
-        //console.log(timeWhenFunction);
+        // ----------------------------------------- zone controller ------------------------------
+        
+        // ----------------------------------------- arrow controller ------------------------------  
         if (time - timeWhenFunction >300){
             if (this.input.keyboard.checkDown(cursors.left, 1000))
             {
@@ -260,51 +221,8 @@
                     timeWhenFunction= time;
                 }
             }
-            //console.log(`second passed`);
-        } 
-
-        // socket.on('arrow', function (bool) {
-        //     if (bool) {
-        //         //console.log(`a arrow has been send`);
-        //         //console.log(bool);
-        //         //socket.emit('arrow', false);
-        //     } else {
-        //         //console.log(bool);
-        //     }
-        // });
-       /* if (this.input.keyboard.checkDown(cursors.left, 1000))
-        {
-            var arrowClass = arrowsClass.get();
-
-            if (arrowClass)
-            {
-                arrowClass.fire(200, 100);
-                socket.emit('arrow', true);
-                timeWhenFunction= time;
-            }
-        }
-        
-        //*/
-        // ----------------------------------------- Arrow controller ------------------------------
-        //console.log(didSecondPass(time, timeWhenFunction));
-        /*
-        if(cursors.left.isDown){
-            var arrow = arrows.create(100, 16, 'arrow');
-            arrow.rotation = 3.15;
-            arrow.setCollideWorldBounds(true);
-            arrow.allowGravity = false;
-        }
-
-        if(cursors.right.isDown){
-            var arrow = arrows.create(210, 16, 'arrow');
-            arrow.setCollideWorldBounds(true);
-            arrow.allowGravity = false;
-            secondPastBool=false;
-        }
-        //*/
-        //console.log(timeWhenFunction);
-        // ----------------------------------------- Arrow controller ------------------------------
-             
+        }    
+        // ----------------------------------------- arrow controller ----------------------------------          
 
         //----------------------------------------- character controller ------------------------------
         /*
@@ -384,11 +302,4 @@
         //*/
         //----------------------------------------- character controller ------------------------------
         }
-
-        /*
-        function makeArrow () {
-            let arrowSecond;
-            arrowSecond= this.physics.add.sprite(100, 64, 'arrow');
-        }
-        */
 }
