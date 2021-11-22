@@ -100,7 +100,6 @@
                 velocityY: .5,
                 allowGravity: false
             });
-            spacebar = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
             zone = this.add.zone(160, 500).setSize(100, 100);
             this.physics.world.enable(zone);
@@ -113,7 +112,13 @@
             platforms = this.physics.add.staticGroup()
             platforms.create(400, 568, 'ground').setScale(2).refreshBody()
 
-            arrows= this.physics.add.group();
+            arrows= this.physics.add.group({
+                classType: Arrow,
+                maxSize: 6,
+                runChildUpdate: true,
+                velocityY: .5,
+                allowGravity: false
+            });
 
             player = this.physics.add.sprite(100, 450, 'dude');
             playerTwo = this.physics.add.sprite(100, 450, 'dude');
@@ -147,7 +152,18 @@
             this.physics.add.collider(player, platforms);
             this.physics.add.collider(playerTwo, platforms);
 
-            this.physics.add.overlap(arrows, platforms, removeArrow, null, this);
+            socket.on('arrow', function (bool) {
+                if (bool) {
+                    console.log(`a arrow has been send`);
+                    var arrowClass = arrowsClass.get();
+
+                    if (arrowClass)
+                    {
+                        arrowClass.fire(10, 100, `right`);
+                    }
+                }
+            });
+            //this.physics.add.overlap(arrows, platforms, removeArrow, null, this);
 
             /*if(!secondPastBool) {
                 console.log(`gaat dit er door`);
@@ -173,7 +189,7 @@
 
         let timeWhenFunction = 0;
 
-        function didSecondPass (time, timeLastFunction) {
+        /*function didSecondPass (time, timeLastFunction) {
             let oke = time - timeLastFunction;
             console.log(oke);
 
@@ -187,6 +203,7 @@
                 return false;
             }
         }
+        */
 
         function update(time, delta) {
         
@@ -230,6 +247,16 @@
             }
             //console.log(`second passed`);
         } 
+
+        // socket.on('arrow', function (bool) {
+        //     if (bool) {
+        //         //console.log(`a arrow has been send`);
+        //         //console.log(bool);
+        //         //socket.emit('arrow', false);
+        //     } else {
+        //         //console.log(bool);
+        //     }
+        // });
        /* if (this.input.keyboard.checkDown(cursors.left, 1000))
         {
             var arrowClass = arrowsClass.get();
@@ -265,7 +292,7 @@
              
 
         //----------------------------------------- character controller ------------------------------
-        
+        /*
         if (cursors.left.isDown)
         {
             player.setVelocityX(-160);
@@ -339,11 +366,14 @@
             player.setVelocityY(-330);
 
         }
+        //*/
         //----------------------------------------- character controller ------------------------------
         }
 
+        /*
         function makeArrow () {
             let arrowSecond;
             arrowSecond= this.physics.add.sprite(100, 64, 'arrow');
         }
+        */
 }
