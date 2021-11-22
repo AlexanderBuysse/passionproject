@@ -2,6 +2,7 @@
   "dependencies": {
     "express": "4",
     "phaser": "3.55.2",
-    "socket.io": "^4.3.2"
+    "socket.io": "^4.3.2",
+    "stats.js": "^0.17.0"
   }
 }

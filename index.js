@@ -34,6 +34,10 @@ io.on('connection', (socket) => {
         socket.on(`right`, (bool) => {
         io.emit('right', bool);
     });
+
+    socket.on(`arrow`, (bool) => {
+        io.emit('arrow', bool);
+    });
 });
 
 // adds and deletes users of id

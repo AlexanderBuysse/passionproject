@@ -68,11 +68,16 @@
                     
                 },
 
-                fire: function (x, y)
+                fire: function (x, y, direction)
                 {
                     this.setPosition(x, y);
                     this.setActive(true);
                     this.setVisible(true);
+                    if(direction === `right`) {
+                        return this.rotation = 0;
+                    } else if(direction === `left`) {
+                        return this.rotation = 3.15;
+                    }
                 },
 
                 update: function (time, delta)
@@ -183,7 +188,7 @@
             }
         }
 
-        function update() {
+        function update(time, delta) {
         
         zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
         
@@ -197,19 +202,50 @@
         if (gameOver) {
             return;
         }
+        //console.log(time);
+        //console.log(timeWhenFunction);
+        if (time - timeWhenFunction >300){
+            if (this.input.keyboard.checkDown(cursors.left, 1000))
+            {
+                var arrowClass = arrowsClass.get();
 
-        if (Phaser.Input.Keyboard.JustDown(spacebar))
+                if (arrowClass)
+                {
+                    arrowClass.fire(200, 100, `left`);
+                    socket.emit('arrow', true);
+                    timeWhenFunction= time;
+                }
+            }
+
+            if (this.input.keyboard.checkDown(cursors.right, 1000))
+            {
+                var arrowClass = arrowsClass.get();
+
+                if (arrowClass)
+                {
+                    arrowClass.fire(320, 100, `right`);
+                    socket.emit('arrow', true);
+                    timeWhenFunction= time;
+                }
+            }
+            //console.log(`second passed`);
+        } 
+       /* if (this.input.keyboard.checkDown(cursors.left, 1000))
         {
             var arrowClass = arrowsClass.get();
 
             if (arrowClass)
             {
                 arrowClass.fire(200, 100);
+                socket.emit('arrow', true);
+                timeWhenFunction= time;
             }
         }
+        
+        //*/
         // ----------------------------------------- Arrow controller ------------------------------
         //console.log(didSecondPass(time, timeWhenFunction));
-
+        /*
         if(cursors.left.isDown){
             var arrow = arrows.create(100, 16, 'arrow');
             arrow.rotation = 3.15;
@@ -223,6 +259,7 @@
             arrow.allowGravity = false;
             secondPastBool=false;
         }
+        //*/
         //console.log(timeWhenFunction);
         // ----------------------------------------- Arrow controller ------------------------------
              
