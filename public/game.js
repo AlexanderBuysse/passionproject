@@ -3,6 +3,9 @@
         type: Phaser.AUTO,
         width: 800,
         height: 600,
+        dom: {
+        createContainer: true
+        },
         physics: {
             default: 'arcade',
             arcade: {
@@ -16,6 +19,8 @@
             update: update
         }
     };
+
+        var element;
 
         let game = new Phaser.Game(config);
         let platforms;
@@ -49,10 +54,14 @@
             this.load.image('ground', 'assets/platform.png');
             this.load.image('arrow', 'assets/arrow.png');
 
-            this.load.spritesheet('dude', 'assets/dude.png', {frameWidth: 32, framHeight:48})
+            this.load.spritesheet('dude', 'assets/dude.png', {frameWidth: 32, framHeight:48});
+
+            this.load.html('nameform', 'assets/text/loginform.html');
         }
 
         function create() {
+            element = this.add.dom(400, 600).createFromCache('nameform');
+        
             var Arrow = new Phaser.Class({
 
                 Extends: Phaser.GameObjects.Image,
@@ -171,6 +180,12 @@
             }*/
             console.log(arrows, arrowsClass);
             this.physics.add.overlap(arrowsClass, zone);
+            this.tweens.add({
+                targets: element,
+                y: 300,
+                duration: 3000,
+                ease: 'Power3'
+            });
         }
 
         function removeArrow (arrows, platforms) {
