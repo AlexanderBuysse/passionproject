@@ -95,7 +95,7 @@
 
             arrowsClass = this.physics.add.group({
                 classType: Arrow,
-                maxSize: 6,
+                maxSize: 12,
                 runChildUpdate: true,
                 velocityY: .5,
                 allowGravity: false
@@ -114,7 +114,7 @@
 
             arrows= this.physics.add.group({
                 classType: Arrow,
-                maxSize: 6,
+                maxSize: 12,
                 runChildUpdate: true,
                 velocityY: .5,
                 allowGravity: false
