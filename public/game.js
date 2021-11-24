@@ -57,6 +57,8 @@
         const cordsDown= 440;
         const cordsRight = 560;
 
+        let rect;
+
         function preload() {
 
             this.load.image('sky', 'assets/sky.png');
@@ -175,10 +177,10 @@
 
             platforms = this.physics.add.staticGroup()
             platforms.create(400, 1000, 'ground').setScale(2).refreshBody()
-            this.physics.add.overlap(arrowsClass, zone);
-            this.physics.add.overlap(arrowsClass, zone2);
-            this.physics.add.overlap(arrowsClass, zone3);
-            this.physics.add.overlap(arrowsClass, zone4);
+            this.physics.add.overlap(arrowsClass, zone, removeArrowZone, null, this);
+            this.physics.add.overlap(arrowsClass, zone2,removeArrowZone, null, this);
+            this.physics.add.overlap(arrowsClass, zone3, removeArrowZone, null, this);
+            this.physics.add.overlap(arrowsClass, zone4, removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, platforms, removeArrow, null, this);
 
             // ----------------------------------------- players ------------------------------
@@ -223,16 +225,29 @@
             let container = this.add.container(400, 300, [ bg, text ]);
 
             bg.on('pointerup', clickButton, this);
+
+            rect = this.add.rectangle(400, 300, 300, 200).setStrokeStyle(2, 0xffff00);
         }
         
         function removeArrow (arrows, platforms) {
             arrows.destroy()
         }
 
+        function removeArrowZone (zones, arrows) {
+            console.log(zone2.name);
+            if (zone2.name===`pressed`){
+                arrows.destroy();
+                score += 10;
+                scoreText.setText('Score: ' + score);
+            } else {
+                //console.log(`not pressed`);
+            }
+        }
+
         function clickButton ()
         {
             doctor = true;
-            console.log(`button pressed`);
+            //console.log(`button pressed`);
         }
 
         function SendArrow (direction, time, userPressedKey) {
@@ -263,14 +278,19 @@
             }
         }
 
+        function arrowInZone () {
+            console.log(zone2);
+            zone2.setName(`pressed`);
+        }
+
         function update(time, delta) {
+
         // ----------------------------------------- zone controller ------------------------------
         zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
         
         if(!zone.body.touching.none) {
             if(cursors.left.isDown){
-                    score += 10;
-                    scoreText.setText('Score: ' + score);
+                arrowInZone();
             }
         }
 
@@ -278,17 +298,19 @@
         
         if(!zone2.body.touching.none) {
             if(cursors.up.isDown){
-                    score += 10;
-                    scoreText.setText('Score: ' + score);
+                console.log(zone2);
+                arrowInZone();
             }
+        } else {
+            zone2.setName(`not pressed yet`);
         }
 
         zone3.body.debugBodyColor = zone3.body.touching.none ? 0x00ffff : 0xffff00;
         
         if(!zone3.body.touching.none) {
+
             if(cursors.down.isDown){
-                    score += 10;
-                    scoreText.setText('Score: ' + score);
+                    arrowInZone();
             }
         }
         
@@ -296,8 +318,7 @@
         
         if(!zone4.body.touching.none) {
             if(cursors.right.isDown){
-                    score += 10;
-                    scoreText.setText('Score: ' + score);
+                    arrowInZone();
             }
         }
         // ----------------------------------------- zone controller ------------------------------
