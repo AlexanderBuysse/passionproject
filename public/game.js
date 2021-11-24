@@ -72,7 +72,7 @@
         }
 
         function create() { 
-            //element = this.scene.add.dom(400, 300).createFromCache('nameform');
+            element = this.add.dom(400, 300).createFromCache('nameform');
             cursors = this.input.keyboard.createCursorKeys();
         
             // ----------------------------------------- arrows class ------------------------------
@@ -297,8 +297,6 @@
             score -= 10;
             scoreText.setText('Score: ' + score);
         }
-
-        let timeWhenLastPressedWrong= 0;
 
         function update(time, delta) {
 
