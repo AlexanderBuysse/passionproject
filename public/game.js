@@ -2,7 +2,7 @@
     var config = {
         type: Phaser.AUTO,
         width: 800,
-        height: 600,
+        height: 1000,
         parent: 'phaser-example',
         dom: {
             createContainer: true
@@ -42,6 +42,9 @@
         let timeWhenFunction = 0;
 
         let zone;
+        let zone2;
+        let zone3;
+        let zone4;
         let scoreText;
         let score = 0;
 
@@ -50,9 +53,9 @@
         let doctor;
 
         const cordsLeft = 200;
-        const cordsRight = 550;
         const cordsUp = 320;
         const cordsDown= 440;
+        const cordsRight = 560;
 
         function preload() {
 
@@ -108,7 +111,7 @@
                 {
                     this.y += this.speed * delta *.5;
 
-                    if (this.y > 600)
+                    if (this.y > 1000)
                     {
                         this.setActive(false);
                         this.setVisible(false);
@@ -144,19 +147,38 @@
             // ----------------------------------------- arrows class ------------------------------
 
             // ----------------------------------------- zone ------------------------------
-            zone = this.add.zone(160, 500).setSize(100, 100);
+            
+            zone = this.add.zone(cordsLeft-48, 930).setSize(100, 100);
             this.physics.world.enable(zone);
             zone.body.setAllowGravity(false);
             zone.body.moves = false;
+        
+            zone2 = this.add.zone(cordsUp-48, 930).setSize(100, 100);
+            this.physics.world.enable(zone2);
+            zone2.body.setAllowGravity(false);
+            zone2.body.moves = false;
 
-            this.add.image(400, 300, 'sky');
-            scoreText = this.add.text(100, 100, 'score: 0', { fontSize: '32px', fill: '#000' }); 
+            zone3 = this.add.zone(cordsDown-48, 930).setSize(100, 100);
+            this.physics.world.enable(zone3);
+            zone3.body.setAllowGravity(false);
+            zone3.body.moves = false;
+
+            zone4 = this.add.zone(cordsRight-48, 930).setSize(100, 100);
+            this.physics.world.enable(zone4);
+            zone4.body.setAllowGravity(false);
+            zone4.body.moves = false;
+
+            this.add.image(400, 800, 'sky');
+            scoreText = this.add.text(100, 800, 'score: 0', { fontSize: '32px', fill: '#000' }); 
             // ----------------------------------------- zone ------------------------------
 
 
             platforms = this.physics.add.staticGroup()
-            platforms.create(400, 568, 'ground').setScale(2).refreshBody()
+            platforms.create(400, 1000, 'ground').setScale(2).refreshBody()
             this.physics.add.overlap(arrowsClass, zone);
+            this.physics.add.overlap(arrowsClass, zone2);
+            this.physics.add.overlap(arrowsClass, zone3);
+            this.physics.add.overlap(arrowsClass, zone4);
             this.physics.add.overlap(arrowsClass, platforms, removeArrow, null, this);
 
             // ----------------------------------------- players ------------------------------
@@ -246,7 +268,34 @@
         zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
         
         if(!zone.body.touching.none) {
+            if(cursors.left.isDown){
+                    score += 10;
+                    scoreText.setText('Score: ' + score);
+            }
+        }
+
+        zone2.body.debugBodyColor = zone2.body.touching.none ? 0x00ffff : 0xffff00;
+        
+        if(!zone2.body.touching.none) {
             if(cursors.up.isDown){
+                    score += 10;
+                    scoreText.setText('Score: ' + score);
+            }
+        }
+
+        zone3.body.debugBodyColor = zone3.body.touching.none ? 0x00ffff : 0xffff00;
+        
+        if(!zone3.body.touching.none) {
+            if(cursors.down.isDown){
+                    score += 10;
+                    scoreText.setText('Score: ' + score);
+            }
+        }
+        
+        zone4.body.debugBodyColor = zone4.body.touching.none ? 0x00ffff : 0xffff00;
+        
+        if(!zone4.body.touching.none) {
+            if(cursors.right.isDown){
                     score += 10;
                     scoreText.setText('Score: ' + score);
             }
