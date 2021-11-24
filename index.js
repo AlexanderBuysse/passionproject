@@ -35,8 +35,8 @@ io.on('connection', (socket) => {
         io.emit('right', bool);
     });
 
-    socket.on(`arrow`, (bool) => {
-        io.emit('arrow', bool);
+    socket.on(`arrow`, (arrayInfo) => {
+        io.emit('arrow', arrayInfo);
     });
 });
 

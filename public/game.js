@@ -49,6 +49,11 @@
         let button;
         let doctor;
 
+        const cordsLeft = 200;
+        const cordsRight = 550;
+        const cordsUp = 320;
+        const cordsDown= 440;
+
         function preload() {
 
             this.load.image('sky', 'assets/sky.png');
@@ -113,7 +118,7 @@
 
             arrowsClass = this.physics.add.group({
                 classType: Arrow,
-                maxSize: 12,
+                maxSize: 6,
                 runChildUpdate: true,
                 velocityY: .5,
                 allowGravity: false
@@ -121,22 +126,17 @@
 
             arrows= this.physics.add.group({
                 classType: Arrow,
-                maxSize: 12,
+                maxSize: 6,
                 runChildUpdate: true,
                 velocityY: .5,
                 allowGravity: false
             });
 
-            socket.on('arrow', function (bool) {
-                if(doctor) {
-                    if (bool) {
-                        //console.log(`a arrow has been send`);
-                        var arrowClass = arrowsClass.get();
-
-                        if (arrowClass)
-                        {
-                            arrowClass.fire(10, 100, `right`);
-                        }
+            socket.on('arrow', function (arrayInfo) {
+                if(!doctor) {
+                    if (arrayInfo[0]) {
+                        console.log(`a arrow has been send`);
+                        SendArrow(arrayInfo[1], 0, false);
                     }
                 }
             });
@@ -157,6 +157,7 @@
             platforms = this.physics.add.staticGroup()
             platforms.create(400, 568, 'ground').setScale(2).refreshBody()
             this.physics.add.overlap(arrowsClass, zone);
+            this.physics.add.overlap(arrowsClass, platforms, removeArrow, null, this);
 
             // ----------------------------------------- players ------------------------------
             /*
@@ -201,12 +202,43 @@
 
             bg.on('pointerup', clickButton, this);
         }
-
+        
+        function removeArrow (arrows, platforms) {
+            arrows.destroy()
+        }
 
         function clickButton ()
         {
             doctor = true;
             console.log(`button pressed`);
+        }
+
+        function SendArrow (direction, time, userPressedKey) {
+            var arrowClass = arrowsClass.get();
+            const cords = GetCords(direction);
+            if (arrowClass)
+            {
+                arrowClass.fire(cords, 100, direction);
+                if (userPressedKey) {
+                    const arrowInfo = [true, direction];
+                    socket.emit('arrow', arrowInfo);
+                    timeWhenFunction= time;
+                }
+            }
+        }
+
+        function GetCords (direction) {
+            if (direction === `left`) {
+                return cordsLeft;
+            } else if (direction === `right`) {
+                return cordsRight;
+            } else
+            if (direction === `up`) {
+                return cordsUp;                
+            } else 
+            if (direction === `down`) {
+                return cordsDown;
+            }
         }
 
         function update(time, delta) {
@@ -222,55 +254,45 @@
         // ----------------------------------------- zone controller ------------------------------
         
         // ----------------------------------------- arrow controller ------------------------------  
+
         if (time - timeWhenFunction >300){
             if (this.input.keyboard.checkDown(cursors.left, 1000))
             {
-                var arrowClass = arrowsClass.get();
-
-                if (arrowClass)
-                {
-                    arrowClass.fire(200, 100, `left`);
-                    socket.emit('arrow', true);
-                    timeWhenFunction= time;
+                if (doctor) {
+                    SendArrow(`left`, time, true);
+                } else {
+                    console.log(`left`);
                 }
             }
 
             if (this.input.keyboard.checkDown(cursors.right, 1000))
             {
-                var arrowClass = arrowsClass.get();
-
-                if (arrowClass)
-                {
-                    arrowClass.fire(550, 100, `right`);
-                    socket.emit('arrow', true);
-                    timeWhenFunction= time;
+                if (doctor) {
+                    SendArrow(`right`, time, true);
+                } else {
+                    console.log(`right`);
                 }
+
             }
     
             if (this.input.keyboard.checkDown(cursors.up, 1000))
             {
-                var arrowClass = arrowsClass.get();
-
-                if (arrowClass)
-                {
-                    arrowClass.fire(320, 100, `up`);
-                    socket.emit('arrow', true);
-                    timeWhenFunction= time;
+                if (doctor) {
+                    SendArrow(`up`, time, true);
+                } else {
+                    console.log(`up`);
                 }
             }
 
             if (this.input.keyboard.checkDown(cursors.down, 1000))
             {
-                var arrowClass = arrowsClass.get();
-
-                if (arrowClass)
-                {
-                    arrowClass.fire(440, 100, `down`);
-                    socket.emit('arrow', true);
-                    timeWhenFunction= time;
+                if (doctor) {
+                    SendArrow(`down`, time, true);
+                } else {
+                    console.log(`down`);
                 }
             }
-        }    
+        } 
         // ----------------------------------------- arrow controller ----------------------------------          
 
         //----------------------------------------- character controller ------------------------------
