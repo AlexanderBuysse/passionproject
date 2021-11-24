@@ -46,6 +46,8 @@
         let score = 0;
 
         var element;
+        let button;
+        let doctor;
 
         function preload() {
 
@@ -56,9 +58,12 @@
             this.load.spritesheet('dude', 'assets/dude.png', {frameWidth: 32, framHeight:48});
 
             this.load.html('nameform', 'assets/text/loginform.html');
+
+            this.load.image('buttonBG', 'assets/button-bg.png');
+            this.load.image('buttonText', 'assets/button-text.png');
         }
 
-        function create() {
+        function create() { 
             //element = this.scene.add.dom(400, 300).createFromCache('nameform');
             cursors = this.input.keyboard.createCursorKeys();
         
@@ -123,16 +128,19 @@
             });
 
             socket.on('arrow', function (bool) {
-                if (bool) {
-                    console.log(`a arrow has been send`);
-                    var arrowClass = arrowsClass.get();
+                if(doctor) {
+                    if (bool) {
+                        //console.log(`a arrow has been send`);
+                        var arrowClass = arrowsClass.get();
 
-                    if (arrowClass)
-                    {
-                        arrowClass.fire(10, 100, `right`);
+                        if (arrowClass)
+                        {
+                            arrowClass.fire(10, 100, `right`);
+                        }
                     }
                 }
             });
+
             // ----------------------------------------- arrows class ------------------------------
 
             // ----------------------------------------- zone ------------------------------
@@ -186,7 +194,19 @@
             //*/
             //this.physics.add.overlap(arrows, platforms, removeArrow, null, this);
             // ----------------------------------------- players ------------------------------
+            let bg = this.add.image(0, 0, 'buttonBG').setInteractive();
+            let text = this.add.image(0, 0, 'buttonText');
 
+            let container = this.add.container(400, 300, [ bg, text ]);
+
+            bg.on('pointerup', clickButton, this);
+        }
+
+
+        function clickButton ()
+        {
+            doctor = true;
+            console.log(`button pressed`);
         }
 
         function update(time, delta) {
