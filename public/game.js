@@ -3,8 +3,9 @@
         type: Phaser.AUTO,
         width: 800,
         height: 600,
+        parent: 'phaser-example',
         dom: {
-        createContainer: true
+            createContainer: true
         },
         physics: {
             default: 'arcade',
@@ -58,7 +59,7 @@
         }
 
         function create() {
-            //element = this.add.dom(400, 600).createFromCache('nameform');
+            //element = this.scene.add.dom(400, 300).createFromCache('nameform');
             cursors = this.input.keyboard.createCursorKeys();
         
             // ----------------------------------------- arrows class ------------------------------
@@ -86,6 +87,10 @@
                         return this.rotation = 0;
                     } else if(direction === `left`) {
                         return this.rotation = 3.15;
+                    } else if(direction === `up`) {
+                        return this.rotation = -1.55;
+                    } else if(direction === `down`) {
+                        return this.rotation = 1.55;
                     }
                 },
 
@@ -216,7 +221,31 @@
 
                 if (arrowClass)
                 {
-                    arrowClass.fire(320, 100, `right`);
+                    arrowClass.fire(550, 100, `right`);
+                    socket.emit('arrow', true);
+                    timeWhenFunction= time;
+                }
+            }
+    
+            if (this.input.keyboard.checkDown(cursors.up, 1000))
+            {
+                var arrowClass = arrowsClass.get();
+
+                if (arrowClass)
+                {
+                    arrowClass.fire(320, 100, `up`);
+                    socket.emit('arrow', true);
+                    timeWhenFunction= time;
+                }
+            }
+
+            if (this.input.keyboard.checkDown(cursors.down, 1000))
+            {
+                var arrowClass = arrowsClass.get();
+
+                if (arrowClass)
+                {
+                    arrowClass.fire(440, 100, `down`);
                     socket.emit('arrow', true);
                     timeWhenFunction= time;
                 }
