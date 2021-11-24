@@ -34,7 +34,7 @@
         let socket = io();
 
         let platforms;
-        let cursors;
+        var cursors;
 
         let arrows;
         let arrowsClass;
@@ -56,8 +56,6 @@
         const cordsUp = 320;
         const cordsDown= 440;
         const cordsRight = 560;
-
-        let rect;
 
         function preload() {
 
@@ -150,22 +148,22 @@
 
             // ----------------------------------------- zone ------------------------------
             
-            zone = this.add.zone(cordsLeft-48, 930).setSize(100, 100);
+            zone = this.add.zone(cordsLeft, 900).setSize(100, 100);
             this.physics.world.enable(zone);
             zone.body.setAllowGravity(false);
             zone.body.moves = false;
         
-            zone2 = this.add.zone(cordsUp-48, 930).setSize(100, 100);
+            zone2 = this.add.zone(cordsUp, 900).setSize(100, 100);
             this.physics.world.enable(zone2);
             zone2.body.setAllowGravity(false);
             zone2.body.moves = false;
 
-            zone3 = this.add.zone(cordsDown-48, 930).setSize(100, 100);
+            zone3 = this.add.zone(cordsDown, 900).setSize(100, 100);
             this.physics.world.enable(zone3);
             zone3.body.setAllowGravity(false);
             zone3.body.moves = false;
 
-            zone4 = this.add.zone(cordsRight-48, 930).setSize(100, 100);
+            zone4 = this.add.zone(cordsRight, 900).setSize(100, 100);
             this.physics.world.enable(zone4);
             zone4.body.setAllowGravity(false);
             zone4.body.moves = false;
@@ -226,7 +224,6 @@
 
             bg.on('pointerup', clickButton, this);
 
-            rect = this.add.rectangle(400, 300, 300, 200).setStrokeStyle(2, 0xffff00);
         }
         
         function removeArrow (arrows, platforms) {
@@ -277,7 +274,6 @@
         }
 
         function arrowInZone (zoneNumber) {
-            console.log(zone2);
             const nameRightZone= nameZone(zoneNumber); 
             nameRightZone.setName(`pressed`);
         }
@@ -297,6 +293,13 @@
             }
         }
 
+        function losePoints () {
+            score -= 10;
+            scoreText.setText('Score: ' + score);
+        }
+
+        let timeWhenLastPressedWrong= 0;
+
         function update(time, delta) {
 
         // ----------------------------------------- zone controller ------------------------------
@@ -304,8 +307,12 @@
         
         if(!zone.body.touching.none) {
             if(cursors.left.isDown){
-                arrowInZone(1);
-            } 
+                if (cursors.left.getDuration() <= 500) {
+                    arrowInZone(1);
+                } else {
+                    losePoints ();
+                }
+            }
         } else {
             zone.setName(`not pressed yet`);
         }
@@ -314,8 +321,9 @@
         
         if(!zone2.body.touching.none) {
             if(cursors.up.isDown){
-                console.log(zone2);
-                arrowInZone(2);
+                if (cursors.up.getDuration() <= 500) {
+                    arrowInZone(2);
+                }
             }
         } else {
             zone2.setName(`not pressed yet`);
@@ -324,9 +332,10 @@
         zone3.body.debugBodyColor = zone3.body.touching.none ? 0x00ffff : 0xffff00;
         
         if(!zone3.body.touching.none) {
-
             if(cursors.down.isDown){
+                if (cursors.down.getDuration() <= 500) {
                     arrowInZone(3);
+                }
             }
         } else {
             zone3.setName(`not pressed yet`);
@@ -336,12 +345,28 @@
         
         if(!zone4.body.touching.none) {
             if(cursors.right.isDown){
+                if (cursors.down.getDuration() <= 500) {
                     arrowInZone(4);
+                }
             }
         } else {
             zone4.setName(`not pressed yet`);
         }
 
+        if (!doctor) {
+            if (zone.body.touching.none && this.input.keyboard.checkDown(cursors.left, 500)) {
+                losePoints ();
+            }
+            if (zone4.body.touching.none && this.input.keyboard.checkDown(cursors.right, 500)) {
+                losePoints ();
+            }
+            if (zone2.body.touching.none && this.input.keyboard.checkDown(cursors.up, 500)) {
+                losePoints ();
+            }
+            if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
+                losePoints ();
+            }
+        }
         // ----------------------------------------- zone controller ------------------------------
         
         // ----------------------------------------- arrow controller ------------------------------  
@@ -354,7 +379,7 @@
                 } else {
                     console.log(`left`);
                 }
-            }
+            } 
 
             if (this.input.keyboard.checkDown(cursors.right, 1000))
             {
