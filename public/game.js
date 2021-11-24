@@ -234,13 +234,11 @@
         }
 
         function removeArrowZone (zones, arrows) {
-            console.log(zone2.name);
-            if (zone2.name===`pressed`){
+            //console.log(zones);
+            if (zones.name===`pressed`){
                 arrows.destroy();
                 score += 10;
                 scoreText.setText('Score: ' + score);
-            } else {
-                //console.log(`not pressed`);
             }
         }
 
@@ -278,9 +276,25 @@
             }
         }
 
-        function arrowInZone () {
+        function arrowInZone (zoneNumber) {
             console.log(zone2);
-            zone2.setName(`pressed`);
+            const nameRightZone= nameZone(zoneNumber); 
+            nameRightZone.setName(`pressed`);
+        }
+
+        function nameZone (zoneName) {
+            if (zoneName === 1) {
+                return zone
+            }
+            if (zoneName === 2) {
+                return zone2
+            }
+            if (zoneName === 3) {
+                return zone3
+            }
+            if (zoneName === 4) {
+                return zone4
+            }
         }
 
         function update(time, delta) {
@@ -290,8 +304,10 @@
         
         if(!zone.body.touching.none) {
             if(cursors.left.isDown){
-                arrowInZone();
-            }
+                arrowInZone(1);
+            } 
+        } else {
+            zone.setName(`not pressed yet`);
         }
 
         zone2.body.debugBodyColor = zone2.body.touching.none ? 0x00ffff : 0xffff00;
@@ -299,7 +315,7 @@
         if(!zone2.body.touching.none) {
             if(cursors.up.isDown){
                 console.log(zone2);
-                arrowInZone();
+                arrowInZone(2);
             }
         } else {
             zone2.setName(`not pressed yet`);
@@ -310,17 +326,22 @@
         if(!zone3.body.touching.none) {
 
             if(cursors.down.isDown){
-                    arrowInZone();
+                    arrowInZone(3);
             }
+        } else {
+            zone3.setName(`not pressed yet`);
         }
         
         zone4.body.debugBodyColor = zone4.body.touching.none ? 0x00ffff : 0xffff00;
         
         if(!zone4.body.touching.none) {
             if(cursors.right.isDown){
-                    arrowInZone();
+                    arrowInZone(4);
             }
+        } else {
+            zone4.setName(`not pressed yet`);
         }
+
         // ----------------------------------------- zone controller ------------------------------
         
         // ----------------------------------------- arrow controller ------------------------------  
