@@ -66,7 +66,7 @@
         const yPosEmitters = 650;
         const yPosZones = 718;
         const yPosPlatform = 800;
-
+        
         let cody
 
         function preload() {
@@ -446,9 +446,11 @@
         function losePoints () {
             score -= 10;
             scoreText.setText('Score: ' + score);
-    
-            cody.playAfterRepeat('punch');
-            cody.chain([ 'idle' ]);
+                            
+            if (cody.anims.getName() === 'idle') {
+                cody.play('punch');
+                cody.chain([ 'idle' ]);
+            }
         }
 
         function update(time, delta) {
@@ -506,7 +508,6 @@
 
         if (!doctor) {
             if (zone.body.touching.none && this.input.keyboard.checkDown(cursors.left, 500)) {
-                console.log(`waarom start je niet?`);
                 emitter.start();
                 this.time.delayedCall(150, destroyEmitter, [], this);
                 losePoints ();
