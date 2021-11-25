@@ -57,6 +57,9 @@
         const cordsDown= 440;
         const cordsRight = 560;
 
+        let emitter;
+        let particles;
+
         function preload() {
 
             this.load.image('sky', 'assets/sky.png');
@@ -69,11 +72,62 @@
 
             this.load.image('buttonBG', 'assets/button-bg.png');
             this.load.image('buttonText', 'assets/button-text.png');
+
+            this.load.atlas('flares', 'assets/flares.png', 'assets/text/flares.json');
         }
 
         function create() { 
-            element = this.add.dom(400, 300).createFromCache('nameform');
+            particles = this.add.particles('flares');
+
+            emitter = particles.createEmitter({
+                frame: [ 'red', 'green' ],
+                x: 400,
+                y: 400,
+                lifespan: 4000,
+                angle: { min: 225, max: 315 },
+                speed: { min: 300, max: 500 },
+                scale: { start: 0.6, end: 0 },
+                gravityY: 300,
+                bounce: 0.9,
+                collideTop: false,
+                collideBottom: false,
+                blendMode: 'ADD'
+            });
+
+            element = this.add.dom(150, 300).createFromCache('nameform');
             cursors = this.input.keyboard.createCursorKeys();
+
+            element.setPerspective(800);
+            element.addListener('click');
+            element.on('click', function (event) {
+
+                if (event.target.name === 'loginButton')
+                {
+                    let inputUsername = this.getChildByName('choose');
+                    if (inputUsername.value === `true` && inputUsername.id === 'doctor')
+                    {
+                        this.removeListener('click');
+                        doctor= true;
+
+                        this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
+
+                        this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
+                            onComplete: function ()
+                            {
+                                element.setVisible(false);
+                            }
+                        });
+                    }
+                }
+
+            });
+        
+            this.tweens.add({
+                targets: element,
+                y: 300,
+                duration: 1000,
+                ease: 'Power3'
+            });
         
             // ----------------------------------------- arrows class ------------------------------
             var Arrow = new Phaser.Class({
@@ -217,12 +271,12 @@
             //*/
             //this.physics.add.overlap(arrows, platforms, removeArrow, null, this);
             // ----------------------------------------- players ------------------------------
-            let bg = this.add.image(0, 0, 'buttonBG').setInteractive();
+            /*let bg = this.add.image(0, 0, 'buttonBG').setInteractive();
             let text = this.add.image(0, 0, 'buttonText');
 
             let container = this.add.container(400, 300, [ bg, text ]);
 
-            bg.on('pointerup', clickButton, this);
+            bg.on('pointerup', clickButton, this);*/
 
         }
         
@@ -231,7 +285,6 @@
         }
 
         function removeArrowZone (zones, arrows) {
-            //console.log(zones);
             if (zones.name===`pressed`){
                 arrows.destroy();
                 score += 10;
@@ -362,6 +415,7 @@
                 losePoints ();
             }
             if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
+                this.time.addEvent(2000, destroyEmitter, this)
                 losePoints ();
             }
         }
@@ -486,5 +540,9 @@
         }
         //*/
         //----------------------------------------- character controller ------------------------------
+        }
+
+        function destroyEmitter() {
+            emitter.destroy();
         }
 }

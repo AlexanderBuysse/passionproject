@@ -6,6 +6,10 @@
         height: 257px;
         margin: 20px auto 0;
         width: 298px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+        align-items: center;
     }
 
     .login h1 {
@@ -105,7 +109,6 @@
         text-align: center;
         text-shadow: 1px 1px 0px #37a69b;
         padding-top: 6px;
-        margin: 29px 0 0 29px;
         position: relative;
         cursor: pointer;
         border: none;
@@ -132,12 +135,25 @@
         top: 3px;
         box-shadow: inset 0px 1px 0px #2ab7ec, 0px 2px 0px 0px #31524d, 0px 5px 3px #999;
     }
+
+    .label {
+        width: 90%;
+        height: 2rem;
+        background-color: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: .2rem;
+    }
 </style>
 
 <div class="login">
-    <input type="text" placeholder="Username" id="username" name="username">
-    <input type="password" placeholder="password" id="password" name="password">
-    <a href="#" class="forgot">forgot password?</a>
-    <input type="submit" value="Sign In" name="loginButton">
+    <label class="label" for="doctor">
+        <input type="radio" id="doctor" name="choose" value="true" checked> doctor
+    </label>
+    <label for="patient" class="label">
+        <input type="radio" id="patient" name="choose" value="true"> patient
+    </label>
+    <input type="submit" value="lock desission" name="loginButton">
 </div>
 <div class="shadow"></div>
