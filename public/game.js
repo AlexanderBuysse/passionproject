@@ -63,6 +63,10 @@
         let emitter4;
         let particles;
 
+        const yPosEmitters = 850;
+
+        const yPosZones = 900;
+
         function preload() {
 
             this.load.image('sky', 'assets/sky.png');
@@ -137,6 +141,7 @@
                     this.setPosition(x, y);
                     this.setActive(true);
                     this.setVisible(true);
+                    this.setName(direction);
                     if(direction === `right`) {
                         return this.rotation = 0;
                     } else if(direction === `left`) {
@@ -189,22 +194,22 @@
 
             // ----------------------------------------- zone ------------------------------
             
-            zone = this.add.zone(cordsLeft, 900).setSize(100, 100);
+            zone = this.add.zone(cordsLeft, yPosZones).setSize(100, 100);
             this.physics.world.enable(zone);
             zone.body.setAllowGravity(false);
             zone.body.moves = false;
         
-            zone2 = this.add.zone(cordsUp, 900).setSize(100, 100);
+            zone2 = this.add.zone(cordsUp, yPosZones).setSize(100, 100);
             this.physics.world.enable(zone2);
             zone2.body.setAllowGravity(false);
             zone2.body.moves = false;
 
-            zone3 = this.add.zone(cordsDown, 900).setSize(100, 100);
+            zone3 = this.add.zone(cordsDown, yPosZones).setSize(100, 100);
             this.physics.world.enable(zone3);
             zone3.body.setAllowGravity(false);
             zone3.body.moves = false;
 
-            zone4 = this.add.zone(cordsRight, 900).setSize(100, 100);
+            zone4 = this.add.zone(cordsRight, yPosZones).setSize(100, 100);
             this.physics.world.enable(zone4);
             zone4.body.setAllowGravity(false);
             zone4.body.moves = false;
@@ -269,7 +274,7 @@
 
             emitter = particles.createEmitter({
                 x: cordsLeft,
-                y: 850,
+                y: yPosEmitters,
                 lifespan: 5000,
                 angle: { min: 265, max: 275 },
                 speed: { min: 300, max: 500 },
@@ -280,10 +285,11 @@
                 quantity: 4,
             });
             emitter.stop();
+
             
             emitter2 = particles.createEmitter({
                 x: cordsUp,
-                y: 850,
+                y: yPosEmitters,
                 lifespan: 5000,
                 angle: { min: 265, max: 275 },
                 speed: { min: 300, max: 500 },
@@ -297,7 +303,7 @@
 
             emitter3 = particles.createEmitter({
                 x: cordsDown,
-                y: 850,
+                y: yPosEmitters,
                 lifespan: 5000,
                 angle: { min: 265, max: 275 },
                 speed: { min: 300, max: 500 },
@@ -311,7 +317,7 @@
 
             emitter4 = particles.createEmitter({
                 x: cordsRight,
-                y: 850,
+                y: yPosEmitters,
                 lifespan: 5000,
                 angle: { min: 265, max: 275 },
                 speed: { min: 300, max: 500 },
@@ -325,7 +331,33 @@
         }
         
         function removeArrow (arrows, platforms) {
-            arrows.destroy()
+            arrows.destroy();
+            losePoints();
+            switch (arrows.name) {
+                case `left`:
+                    emitter.start();
+                    this.time.delayedCall(150, destroyEmitter, [], this);
+                    break;
+
+                case `up`:
+                    emitter2.start();
+                    this.time.delayedCall(150, destroyEmitter, [], this);
+                    break;
+                
+                case `down`:
+                    emitter3.start();
+                    this.time.delayedCall(150, destroyEmitter, [], this);
+                    break;
+                
+                case `right`:
+                    emitter4.start();
+                    this.time.delayedCall(150, destroyEmitter, [], this);
+                    break;
+            
+                default:
+                    console.log(`er is iets fout gegaan`);
+                    break;
+            }
         }
 
         function removeArrowZone (zones, arrows) {
