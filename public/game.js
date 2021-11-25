@@ -2,7 +2,7 @@
     var config = {
         type: Phaser.AUTO,
         width: 800,
-        height: 1000,
+        height: 800,
         parent: 'phaser-example',
         dom: {
             createContainer: true
@@ -63,11 +63,13 @@
         let emitter4;
         let particles;
 
-        const yPosEmitters = 850;
-        const yPosZones = 900;
+        const yPosEmitters = 650;
+        const yPosZones = 718;
+        const yPosPlatform = 800;
 
         function preload() {
 
+            this.load.spritesheet('brawler', 'assets/brawler48x48.png', { frameWidth: 48, frameHeight: 48 });
             this.load.image('sky', 'assets/sky.png');
             this.load.image('ground', 'assets/platform.png');
             this.load.image('arrow', 'assets/arrow.png');
@@ -80,6 +82,37 @@
         }
 
         function create() { 
+
+            this.anims.create({
+                key: 'idle',
+                frames: this.anims.generateFrameNumbers('brawler', { frames: [ 5, 6, 7, 8 ] }),
+                frameRate: 8,
+                repeat: -1
+            });
+
+            this.anims.create({
+                key: 'punch',
+                frames: this.anims.generateFrameNumbers('brawler', { frames: [ 15, 16, 17, 18, 17, 15 ] }),
+                frameRate: 8,
+                repeat: -1,
+                repeatDelay: 2000
+            });
+            const keys = [ 'idle', 'punch'];
+
+            const cody = this.add.sprite(600, 370);
+            cody.setScale(2);
+            cody.play('idle');
+
+            let c = 0;
+            this.input.on('pointerdown', function () {
+                c++;
+                if (c === keys.length)
+                {
+                    c = 0;
+                }
+                cody.play(keys[c]);
+            });
+            //cody.play('idle');
 
             element = this.add.dom(150, 300).createFromCache('nameform');
             cursors = this.input.keyboard.createCursorKeys();
@@ -211,12 +244,12 @@
             zone4.body.moves = false;
 
             this.add.image(400, 800, 'sky');
-            scoreText = this.add.text(100, 800, 'score: 0', { fontSize: '32px', fill: '#000' }); 
+            scoreText = this.add.text(100, yPosEmitters-100, 'score: 0', { fontSize: '32px', fill: '#000' }); 
             // ----------------------------------------- zone ------------------------------
 
 
             platforms = this.physics.add.staticGroup()
-            platforms.create(400, 1000, 'ground').setScale(2).refreshBody()
+            platforms.create(400, yPosPlatform, 'ground').setScale(2).refreshBody()
             this.physics.add.overlap(arrowsClass, zone, removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, zone2,removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, zone3, removeArrowZone, null, this);
