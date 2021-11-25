@@ -67,6 +67,8 @@
         const yPosZones = 718;
         const yPosPlatform = 800;
 
+        let cody
+
         function preload() {
 
             this.load.spritesheet('brawler', 'assets/brawler48x48.png', { frameWidth: 48, frameHeight: 48 });
@@ -94,25 +96,12 @@
                 key: 'punch',
                 frames: this.anims.generateFrameNumbers('brawler', { frames: [ 15, 16, 17, 18, 17, 15 ] }),
                 frameRate: 8,
-                repeat: -1,
                 repeatDelay: 2000
             });
-            const keys = [ 'idle', 'punch'];
 
-            const cody = this.add.sprite(600, 370);
+            cody = this.add.sprite(600, 370);
             cody.setScale(2);
             cody.play('idle');
-
-            let c = 0;
-            this.input.on('pointerdown', function () {
-                c++;
-                if (c === keys.length)
-                {
-                    c = 0;
-                }
-                cody.play(keys[c]);
-            });
-            //cody.play('idle');
 
             element = this.add.dom(150, 300).createFromCache('nameform');
             cursors = this.input.keyboard.createCursorKeys();
@@ -457,6 +446,9 @@
         function losePoints () {
             score -= 10;
             scoreText.setText('Score: ' + score);
+    
+            cody.playAfterRepeat('punch');
+            cody.chain([ 'idle' ]);
         }
 
         function update(time, delta) {
