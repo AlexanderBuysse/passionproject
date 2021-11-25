@@ -58,6 +58,9 @@
         const cordsRight = 560;
 
         let emitter;
+        let emitter2;
+        let emitter3;
+        let emitter4;
         let particles;
 
         function preload() {
@@ -265,18 +268,60 @@
             particles = this.add.particles('blood');
 
             emitter = particles.createEmitter({
-                x: 400,
-                y: 400,
+                x: cordsLeft,
+                y: 850,
+                lifespan: 5000,
+                angle: { min: 260, max: 270 },
+                speed: { min: 300, max: 500 },
+                scale: { start: 0.6, end: 0 },
+                gravityY: 1000,
+                bounce: 0.9,
+                blendMode: 'ADD',
+                quantity: 4,
+            });
+            emitter.stop();
+            
+            emitter2 = particles.createEmitter({
+                x: cordsUp,
+                y: 850,
                 lifespan: 5000,
                 angle: { min: 225, max: 315 },
                 speed: { min: 300, max: 500 },
                 scale: { start: 0.6, end: 0 },
-                gravityY: 500,
+                gravityY: 1000,
                 bounce: 0.9,
                 blendMode: 'ADD',
-                quantity: 8,
+                quantity: 4,
             });
-            emitter.stop();
+            emitter2.stop();
+
+            emitter3 = particles.createEmitter({
+                x: cordsDown,
+                y: 850,
+                lifespan: 5000,
+                angle: { min: 225, max: 315 },
+                speed: { min: 300, max: 500 },
+                scale: { start: 0.6, end: 0 },
+                gravityY: 1000,
+                bounce: 0.9,
+                blendMode: 'ADD',
+                quantity: 4,
+            });
+            emitter3.stop();
+
+            emitter4 = particles.createEmitter({
+                x: cordsRight,
+                y: 850,
+                lifespan: 5000,
+                angle: { min: 225, max: 315 },
+                speed: { min: 300, max: 500 },
+                scale: { start: 0.6, end: 0 },
+                gravityY: 1000,
+                bounce: 0.9,
+                blendMode: 'ADD',
+                quantity: 4,
+            });
+            emitter4.stop();
         }
         
         function removeArrow (arrows, platforms) {
@@ -405,18 +450,24 @@
 
         if (!doctor) {
             if (zone.body.touching.none && this.input.keyboard.checkDown(cursors.left, 500)) {
-                losePoints ();
-            }
-            if (zone4.body.touching.none && this.input.keyboard.checkDown(cursors.right, 500)) {
+                console.log(`waarom start je niet?`);
+                emitter.start();
+                this.time.delayedCall(150, destroyEmitter, [], this);
                 losePoints ();
             }
             if (zone2.body.touching.none && this.input.keyboard.checkDown(cursors.up, 500)) {
+                emitter2.start();
+                this.time.delayedCall(150, destroyEmitter, [], this);
                 losePoints ();
             }
             if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
-                emitter.start();
+                emitter3.start();
                 this.time.delayedCall(150, destroyEmitter, [], this);
-                console.log(`destroy now`);
+                losePoints ();
+            }
+            if (zone4.body.touching.none && this.input.keyboard.checkDown(cursors.right, 500)) {
+                emitter4.start();
+                this.time.delayedCall(150, destroyEmitter, [], this);
                 losePoints ();
             }
         }
@@ -544,7 +595,9 @@
         }
 
         function destroyEmitter() {
-            console.log(`do your job`);
             emitter.stop();
+            emitter2.stop();
+            emitter3.stop();
+            emitter4.stop();
         }
 }
