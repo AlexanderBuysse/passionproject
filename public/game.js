@@ -73,26 +73,10 @@
             this.load.image('buttonBG', 'assets/button-bg.png');
             this.load.image('buttonText', 'assets/button-text.png');
 
-            this.load.atlas('flares', 'assets/flares.png', 'assets/text/flares.json');
+            this.load.image('blood', 'assets/blood.png');
         }
 
         function create() { 
-            particles = this.add.particles('flares');
-
-            emitter = particles.createEmitter({
-                frame: [ 'red', 'green' ],
-                x: 400,
-                y: 400,
-                lifespan: 4000,
-                angle: { min: 225, max: 315 },
-                speed: { min: 300, max: 500 },
-                scale: { start: 0.6, end: 0 },
-                gravityY: 300,
-                bounce: 0.9,
-                collideTop: false,
-                collideBottom: false,
-                blendMode: 'ADD'
-            });
 
             element = this.add.dom(150, 300).createFromCache('nameform');
             cursors = this.input.keyboard.createCursorKeys();
@@ -278,6 +262,21 @@
 
             bg.on('pointerup', clickButton, this);*/
 
+            particles = this.add.particles('blood');
+
+            emitter = particles.createEmitter({
+                x: 400,
+                y: 400,
+                lifespan: 5000,
+                angle: { min: 225, max: 315 },
+                speed: { min: 300, max: 500 },
+                scale: { start: 0.6, end: 0 },
+                gravityY: 500,
+                bounce: 0.9,
+                blendMode: 'ADD',
+                quantity: 8,
+            });
+            emitter.stop();
         }
         
         function removeArrow (arrows, platforms) {
@@ -415,7 +414,9 @@
                 losePoints ();
             }
             if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
-                this.time.addEvent(2000, destroyEmitter, this)
+                emitter.start();
+                this.time.delayedCall(150, destroyEmitter, [], this);
+                console.log(`destroy now`);
                 losePoints ();
             }
         }
@@ -543,6 +544,7 @@
         }
 
         function destroyEmitter() {
-            emitter.destroy();
+            console.log(`do your job`);
+            emitter.stop();
         }
 }
