@@ -64,7 +64,6 @@
         let particles;
 
         const yPosEmitters = 850;
-
         const yPosZones = 900;
 
         function preload() {
@@ -76,9 +75,6 @@
             this.load.spritesheet('dude', 'assets/dude.png', {frameWidth: 32, framHeight:48});
 
             this.load.html('nameform', 'assets/text/loginform.html');
-
-            this.load.image('buttonBG', 'assets/button-bg.png');
-            this.load.image('buttonText', 'assets/button-text.png');
 
             this.load.image('blood', 'assets/blood.png');
         }
@@ -263,6 +259,7 @@
             //*/
             //this.physics.add.overlap(arrows, platforms, removeArrow, null, this);
             // ----------------------------------------- players ------------------------------
+
             /*let bg = this.add.image(0, 0, 'buttonBG').setInteractive();
             let text = this.add.image(0, 0, 'buttonText');
 
@@ -333,32 +330,34 @@
         function removeArrow (arrows, platforms) {
             arrows.destroy();
             losePoints();
-            switch (arrows.name) {
-                case `left`:
-                    emitter.start();
-                    this.time.delayedCall(150, destroyEmitter, [], this);
-                    break;
+            if(!doctor) {            
+                switch (arrows.name) {
+                    case `left`:
+                        emitter.start();
+                        this.time.delayedCall(150, destroyEmitter, [], this);
+                        break;
 
-                case `up`:
-                    emitter2.start();
-                    this.time.delayedCall(150, destroyEmitter, [], this);
-                    break;
+                    case `up`:
+                        emitter2.start();
+                        this.time.delayedCall(150, destroyEmitter, [], this);
+                        break;
+                    
+                    case `down`:
+                        emitter3.start();
+                        this.time.delayedCall(150, destroyEmitter, [], this);
+                        break;
+                    
+                    case `right`:
+                        emitter4.start();
+                        this.time.delayedCall(150, destroyEmitter, [], this);
+                        break;
                 
-                case `down`:
-                    emitter3.start();
-                    this.time.delayedCall(150, destroyEmitter, [], this);
-                    break;
-                
-                case `right`:
-                    emitter4.start();
-                    this.time.delayedCall(150, destroyEmitter, [], this);
-                    break;
-            
-                default:
-                    console.log(`er is iets fout gegaan`);
-                    break;
+                    default:
+                        console.log(`er is iets fout gegaan`);
+                        break;
+                    }
+                }        
             }
-        }
 
         function removeArrowZone (zones, arrows) {
             if (zones.name===`pressed`){
@@ -368,11 +367,11 @@
             }
         }
 
-        function clickButton ()
+        /*function clickButton ()
         {
             doctor = true;
             //console.log(`button pressed`);
-        }
+        }*/
 
         function SendArrow (direction, time, userPressedKey) {
             var arrowClass = arrowsClass.get();
@@ -507,7 +506,7 @@
         
         // ----------------------------------------- arrow controller ------------------------------  
 
-        if (time - timeWhenFunction >300){
+        if (time - timeWhenFunction >500){
             if (this.input.keyboard.checkDown(cursors.left, 1000))
             {
                 if (doctor) {
