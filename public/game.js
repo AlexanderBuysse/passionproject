@@ -76,6 +76,8 @@
         let gameOver = false;
         let once = true;
 
+        let heartSprite;
+
         function preload() {
 
             this.load.spritesheet('brawler', 'assets/brawler48x48.png', { frameWidth: 48, frameHeight: 48 });
@@ -83,16 +85,29 @@
             this.load.image('ground', 'assets/platform.png');
             this.load.image('arrow', 'assets/arrow.png');
 
-            this.load.spritesheet('dude', 'assets/dude.png', {frameWidth: 32, framHeight:48});
-
             this.load.html('nameform', 'assets/text/loginform.html');
 
             this.load.image('blood', 'assets/blood.png');
             
             this.load.image('heart', 'assets/heart.png');
+            this.load.atlas('heartgif', 'assets/heartSprite.png', 'assets/text/heart.json');
         }
 
         function create() { 
+
+            this.anims.create({
+                key: 'idleheart',
+                frames: this.anims.generateFrameNames('heartgif', {prefix: 'sprite', end: 2, zeroPad:0}),
+                frameRate: 3,
+                repeat: -1
+            });
+
+            this.anims.create({
+                key: 'deathheart',
+                frames: this.anims.generateFrameNames('heartgif', {prefix: 'sprite', end: 17, zeroPad:0}),
+                frameRate: 20,
+                repeat: -1
+            });
 
             this.anims.create({
                 key: 'idle',
@@ -107,6 +122,7 @@
                 frameRate: 8,
                 repeatDelay: 2000
             });
+
 
             cody = this.add.sprite(600, 370);
             cody.setScale(2);
@@ -222,9 +238,14 @@
                 allowGravity: false
             })
             for (let i = 0; i < life; i++) {
-                lifeGroup.create(300+ (i*50), 100, 'heart').setScale(.4).refreshBody();  
+                heartSprite = this.add.sprite(300+ (i*50), 100);
+                heartSprite.setScale(.5);
+                heartSprite.play('idleheart');
+                lifeGroup.add(heartSprite);
+                //lifeGroup.create(300+ (i*50), 100, 'heart').setScale(.4).refreshBody();  
             }
 
+            console.log(lifeGroup);
             // ----------------------------------------- arrows class ------------------------------
 
             // ----------------------------------------- zone ------------------------------
