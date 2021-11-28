@@ -421,9 +421,17 @@
                 cody.play('punch');
                 cody.chain([ 'idle' ]);
             }
+
+            if (!doctor) {
+                life = life -1; 
+                console.log(lifeGroup.children.entries[life]);
+                lifeGroup.children.entries[life].visible = false;
+            }
         }
 
         function update(time, delta) {
+        //console.log(lifeGroup);
+        //console.log();
 
         // ----------------------------------------- zone controller ------------------------------
         zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
