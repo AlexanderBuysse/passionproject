@@ -1,0 +1,56 @@
+{
+    "active": true,
+    "blendMode": 0,
+    "collideBottom": true,
+    "collideLeft": true,
+    "collideRight": true,
+    "collideTop": true,
+    "deathCallback": null,
+    "deathCallbackScope": null,
+    "emitCallback": null,
+    "emitCallbackScope": null,
+    "follow": null,
+    "frequency": 0,
+    "gravityX": 0,
+    "gravityY": 0,
+    "maxParticles": 0,
+    "name": "sparks",
+    "on": true,
+    "particleBringToTop": true,
+    "radial": true,
+    "timeScale": 1,
+    "trackVisible": false,
+    "visible": true,
+    "accelerationX": 0,
+    "accelerationY": 0,
+    "angle": {
+        "min": 0,
+        "max": 360
+    },
+    "alpha": {
+        "start": 1,
+        "end": 0,
+        "ease": "Linear"
+    },
+    "bounce": 0,
+    "delay": 0,
+    "lifespan": 2000,
+    "maxVelocityX": 10000,
+    "maxVelocityY": 10000,
+    "moveToX": 0,
+    "moveToY": 0,
+    "quantity": 1,
+    "rotate": 0,
+    "tint": 16777215,
+    "x": 405,
+    "y": 319,
+    "speed": {
+        "min": 350,
+        "max": 420
+    },
+    "scale": {
+        "start": 1,
+        "end": 0,
+        "ease": "Linear"
+    }
+}

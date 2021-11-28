@@ -78,6 +78,12 @@
 
         let heartSprite;
 
+        let bloodexplosion;
+        let emitterExplosion;
+
+        let cacheJson;
+        let timeInGame;
+
         function preload() {
 
             this.load.spritesheet('brawler', 'assets/brawler48x48.png', { frameWidth: 48, frameHeight: 48 });
@@ -91,9 +97,14 @@
             
             this.load.image('heart', 'assets/heart.png');
             this.load.atlas('heartgif', 'assets/heartSprite.png', 'assets/text/heart.json');
+
+            this.load.image('bloodexplo', 'assets/blood.png');
+            this.load.json('emitter', 'assets/text/explodeblood.json');
         }
 
         function create() { 
+            cacheJson= this.cache.json.get('emitter');
+            bloodexplosion = this.add.particles('bloodexplo');
 
             this.anims.create({
                 key: 'idleheart',
@@ -346,6 +357,7 @@
         function removeArrow (arrows, platforms) {
             arrows.destroy();
             losePoints();
+            //this.time.delayedCall(150, destroyEmitterHeart, [], this);
             if(!doctor) {            
                 switch (arrows.name) {
                     case `left`:
@@ -447,12 +459,13 @@
             }
 
             if (!doctor) {
-                console.log(life);
                 if(life > 0){
                     life = life -1; 
-                    console.log(life);
-                    //console.log(lifeGroup.children.entries[life]);
                     lifeGroup.children.entries[life].play('deathheart');
+                    emitterExplosion = bloodexplosion.createEmitter(cacheJson);
+                    emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y)
+                    emitterExplosion.start();
+                
                 } else {
                     gameOver = true;
                 }
@@ -460,6 +473,7 @@
         }
 
         function update(time, delta) {
+        
         if (gameOver && once) {
             alert(`u are dead`);
             once= false;
@@ -474,6 +488,7 @@
                     arrowInZone(1);
                 } else {
                     losePoints ();
+                    this.time.delayedCall(150, destroyEmitterHeart, [], this);
                 }
             }
         } else {
@@ -521,21 +536,25 @@
                 emitter.start();
                 this.time.delayedCall(150, destroyEmitter, [], this);
                 losePoints ();
+                this.time.delayedCall(150, destroyEmitterHeart, [], this);
             }
             if (zone2.body.touching.none && this.input.keyboard.checkDown(cursors.up, 500)) {
                 emitter2.start();
                 this.time.delayedCall(150, destroyEmitter, [], this);
                 losePoints ();
+                this.time.delayedCall(150, destroyEmitterHeart, [], this);
             }
             if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
                 emitter3.start();
                 this.time.delayedCall(150, destroyEmitter, [], this);
                 losePoints ();
+                this.time.delayedCall(150, destroyEmitterHeart, [], this);
             }
             if (zone4.body.touching.none && this.input.keyboard.checkDown(cursors.right, 500)) {
                 emitter4.start();
                 this.time.delayedCall(150, destroyEmitter, [], this);
                 losePoints ();
+                this.time.delayedCall(150, destroyEmitterHeart, [], this);
             }
         }
         // ----------------------------------------- zone controller ------------------------------
@@ -581,90 +600,16 @@
             }
         } 
         // ----------------------------------------- arrow controller ----------------------------------          
-
-        //----------------------------------------- character controller ------------------------------
-        /*
-        if (cursors.left.isDown)
-        {
-            player.setVelocityX(-160);
-
-            player.anims.play('left', true);
-            socket.emit('left', true);
-            leftDown = true;
-            rightDown= false;
-        }
-        else if (cursors.right.isDown)
-        {
-            player.setVelocityX(160);
-
-            player.anims.play('right', true);
-            socket.emit('right', true);
-            rightDown = true;
-            leftDown= false;
-        }
-        else
-        {
-            player.setVelocityX(0);
-
-            player.anims.play('turn');
-        }
-
-        if(rightDown) {
-            if (cursors.right.isUp) {
-                //console.log(`cursor is right`);
-                socket.emit('right', false);
-                rightDown= false;
-            }
-        }
-
-        
-        if(leftDown) {
-            if (cursors.left.isUp) {
-                //console.log(`cursor is left`);
-                socket.emit('left', false);
-                leftDown=false;
-            }
-        }
-
-        socket.on('left', function (bool) {
-            if (bool) {
-                playerTwo.setVelocityX(-160);
-                playerTwo.anims.play('left', true);
-            }
-            else
-            {
-                playerTwo.setVelocityX(0);
-
-                playerTwo.anims.play('turn');
-            }
-        });
-
-        socket.on('right', function (bool) {
-            if (bool) {
-                playerTwo.setVelocityX(160);
-                playerTwo.anims.play('right', true);
-            }
-            else
-            {
-                playerTwo.setVelocityX(0);
-
-                playerTwo.anims.play('turn');
-            }
-        });
-
-        if (cursors.up.isDown && player.body.touching.down)
-        {
-            player.setVelocityY(-330);
-
-        }
-        //*/
-        //----------------------------------------- character controller ------------------------------
-        }
+    }
 
         function destroyEmitter() {
             emitter.stop();
             emitter2.stop();
             emitter3.stop();
             emitter4.stop();
+        }
+
+        function destroyEmitterHeart() {
+            emitterExplosion.stop();
         }
 }
