@@ -73,6 +73,9 @@
         let life= 10; 
         let lifeGroup;
 
+        let gameOver = false;
+        let once = true;
+
         function preload() {
 
             this.load.spritesheet('brawler', 'assets/brawler48x48.png', { frameWidth: 48, frameHeight: 48 });
@@ -423,15 +426,23 @@
             }
 
             if (!doctor) {
-                life = life -1; 
-                console.log(lifeGroup.children.entries[life]);
-                lifeGroup.children.entries[life].visible = false;
+                console.log(life);
+                if(life > 0){
+                    life = life -1; 
+                    console.log(life);
+                    //console.log(lifeGroup.children.entries[life]);
+                    lifeGroup.children.entries[life].visible = false;
+                } else {
+                    gameOver = true;
+                }
             }
         }
 
         function update(time, delta) {
-        //console.log(lifeGroup);
-        //console.log();
+        if (gameOver && once) {
+            alert(`u are dead`);
+            once= false;
+        }
 
         // ----------------------------------------- zone controller ------------------------------
         zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
