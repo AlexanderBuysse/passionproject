@@ -4,6 +4,7 @@
         width: 800,
         height: 800,
         parent: 'phaser-example',
+        backgroundColor: '#4488aa',
         dom: {
             createContainer: true
         },
@@ -69,6 +70,9 @@
         
         let cody
 
+        let life= 10; 
+        let lifeGroup;
+
         function preload() {
 
             this.load.spritesheet('brawler', 'assets/brawler48x48.png', { frameWidth: 48, frameHeight: 48 });
@@ -81,6 +85,8 @@
             this.load.html('nameform', 'assets/text/loginform.html');
 
             this.load.image('blood', 'assets/blood.png');
+            
+            this.load.image('heart', 'assets/heart.png');
         }
 
         function create() { 
@@ -208,6 +214,14 @@
                 }
             });
 
+            lifeGroup= this.physics.add.group({
+                maxSize: 10,
+                allowGravity: false
+            })
+            for (let i = 0; i < life; i++) {
+                lifeGroup.create(300+ (i*50), 100, 'heart').setScale(.4).refreshBody();  
+            }
+
             // ----------------------------------------- arrows class ------------------------------
 
             // ----------------------------------------- zone ------------------------------
@@ -232,7 +246,7 @@
             zone4.body.setAllowGravity(false);
             zone4.body.moves = false;
 
-            this.add.image(400, 800, 'sky');
+            //this.add.image(400, 800, 'sky');
             scoreText = this.add.text(100, yPosEmitters-100, 'score: 0', { fontSize: '32px', fill: '#000' }); 
             // ----------------------------------------- zone ------------------------------
 
@@ -244,50 +258,6 @@
             this.physics.add.overlap(arrowsClass, zone3, removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, zone4, removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, platforms, removeArrow, null, this);
-
-            // ----------------------------------------- players ------------------------------
-            /*
-            player = this.physics.add.sprite(100, 450, 'dude');
-            playerTwo = this.physics.add.sprite(100, 450, 'dude');
-
-
-            player.setBounce(.2);
-            player.setCollideWorldBounds(true);
-            playerTwo.setBounce(.2);
-            playerTwo.setCollideWorldBounds(true);
-
-            this.anims.create({
-                key: 'left',
-                frames: this.anims.generateFrameNumbers('dude', { start: 0, end: 3 }),
-                frameRate: 10,
-                repeat: -1
-            });
-
-            this.anims.create({
-                key: 'turn',
-                frames: [ { key: 'dude', frame: 4 } ],
-                frameRate: 20
-            });
-
-            this.anims.create({
-                key: 'right',
-                frames: this.anims.generateFrameNumbers('dude', { start: 5, end: 8 }),
-                frameRate: 10,
-                repeat: -1
-            });
-
-            this.physics.add.collider(player, platforms);
-            this.physics.add.collider(playerTwo, platforms);
-            //*/
-            //this.physics.add.overlap(arrows, platforms, removeArrow, null, this);
-            // ----------------------------------------- players ------------------------------
-
-            /*let bg = this.add.image(0, 0, 'buttonBG').setInteractive();
-            let text = this.add.image(0, 0, 'buttonText');
-
-            let container = this.add.container(400, 300, [ bg, text ]);
-
-            bg.on('pointerup', clickButton, this);*/
 
             particles = this.add.particles('blood');
 
