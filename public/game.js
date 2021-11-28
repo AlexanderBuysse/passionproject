@@ -106,7 +106,7 @@
                 key: 'deathheart',
                 frames: this.anims.generateFrameNames('heartgif', {prefix: 'sprite', end: 17, zeroPad:0}),
                 frameRate: 20,
-                repeat: -1
+                repeat: 0
             });
 
             this.anims.create({
@@ -452,7 +452,7 @@
                     life = life -1; 
                     console.log(life);
                     //console.log(lifeGroup.children.entries[life]);
-                    lifeGroup.children.entries[life].visible = false;
+                    lifeGroup.children.entries[life].play('deathheart');
                 } else {
                     gameOver = true;
                 }
