@@ -72,6 +72,9 @@
         const yPosZones = 718;
         const yPosPlatform = 800;
         const xPosPlatform = 850
+
+        const xPosHeart = 60;
+        const yPosHeart = 50;
         
         let cody
 
@@ -294,14 +297,20 @@
                 allowGravity: false
             })
             for (let i = 0; i < life; i++) {
-                heartSprite = this.add.sprite(300+ (i*50), 100);
-                heartSprite.setScale(.5);
-                heartSprite.play('idleheart');
-                lifeGroup.add(heartSprite);
-                //lifeGroup.create(300+ (i*50), 100, 'heart').setScale(.4).refreshBody();  
+                if (i <= 6) {
+                    heartSprite = this.add.sprite(xPosHeart+ (i*50), yPosHeart);
+                    heartSprite.setScale(.5);
+                    heartSprite.play('idleheart');
+                    lifeGroup.add(heartSprite);
+                    console.log(`gaat hier door`);
+;                } else {
+                    console.log(xPosHeart+ ((i-7)*50), yPosHeart +10, i);
+                    heartSprite = this.add.sprite(xPosHeart+ ((i-7)*50), yPosHeart+50);
+                    heartSprite.setScale(.5);
+                    heartSprite.play('idleheart');
+                    lifeGroup.add(heartSprite);
+                }
             }
-
-            console.log(lifeGroup);
             // ----------------------------------------- arrows class ------------------------------
 
             // ----------------------------------------- zone ------------------------------
