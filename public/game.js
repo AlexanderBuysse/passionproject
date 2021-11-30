@@ -75,6 +75,9 @@
 
         const xPosHeart = 60;
         const yPosHeart = 50;
+
+        const xPosTimer = 50;
+        const yPosTimer = 215;
         
         let cody
 
@@ -96,6 +99,11 @@
         let joinRoom;
 
         let gameStart = false;
+
+        let textHeart;
+
+        const fiveMinTimer = 10000;
+        let textTimer;
         
         function preload() {
 
@@ -217,8 +225,8 @@
             });
 
 
-            cody = this.add.sprite(600, 370);
-            cody.setScale(2);
+            cody = this.add.sprite(220, 580);
+            cody.setScale(6);
             cody.play('idle');
 
         
@@ -336,7 +344,8 @@
             zone4.body.moves = false;
 
             //this.add.image(400, 800, 'sky');
-            scoreText = this.add.text(100, yPosEmitters-100, 'score: 0', { fontSize: '32px', fill: '#000' }); 
+            scoreText = this.add.text(xPosTimer+200, yPosTimer+200, 'score: 0', { fontSize: '32px', fill: '#000' }); 
+            textTimer = this.add.text(xPosTimer, yPosTimer, 'time left: 5:00 min', { fontSize: '25px', fill: '#000' })
             // ----------------------------------------- zone ------------------------------
 
 
@@ -413,6 +422,17 @@
             alert(`u are dead`);
             once= false;
         }
+
+        if ((fiveMinTimer-time)<= 0) {
+            //console.log(`het spel is gedaan`);
+            gameOver=true;
+            if (gameOver && once) {
+                alert(`u are dead`);
+                once= false;
+            }   
+        }
+
+        textTimer.setText('time left: ' + (fiveMinTimer-time));
 
         // ----------------------------------------- zone controller ------------------------------
         zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
