@@ -102,7 +102,7 @@
 
         let textHeart;
 
-        const fiveMinTimer = 10000;
+        const fiveMinTimer = 300000;
         let textTimer;
         
         function preload() {
@@ -432,7 +432,7 @@
             }   
         }
 
-        textTimer.setText('time left: ' + (fiveMinTimer-time));
+        textTimer.setText('time left: ' + (millisToMinutesAndSeconds(fiveMinTimer-time)));
 
         // ----------------------------------------- zone controller ------------------------------
         zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
@@ -588,7 +588,14 @@
                         break;
                     }
                 }        
-            }
+        }
+
+        function millisToMinutesAndSeconds(millis) {
+            var minutes = Math.floor(millis / 60000);
+            var seconds = ((millis % 60000) / 1000).toFixed(0);
+            return minutes + ":" + (seconds < 10 ? '0' : '') + seconds;
+        }
+
 
         function removeArrowZone (zones, arrows) {
             if (zones.name===`pressed`){
