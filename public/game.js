@@ -1,10 +1,14 @@
 {
     var config = {
         type: Phaser.AUTO,
-        width: 800,
+        width: 1250,
         height: 800,
         parent: 'phaser-example',
         backgroundColor: '#4488aa',
+        scale: {
+            mode: Phaser.Scale.FIT,
+            autoCenter: Phaser.Scale.CENTER_BOTH,
+        },
         dom: {
             createContainer: true
         },
@@ -84,6 +88,10 @@
         let cacheJson;
         let timeInGame;
 
+        let home
+
+        let gameStart = false;
+        
         function preload() {
 
             this.load.spritesheet('brawler', 'assets/brawler48x48.png', { frameWidth: 48, frameHeight: 48 });
@@ -100,9 +108,51 @@
 
             this.load.image('bloodexplo', 'assets/blood.png');
             this.load.json('emitter', 'assets/text/explodeblood.json');
+
+            this.load.html('home', 'assets/text/home.html')
         }
 
         function create() { 
+            home = this.add.dom(400,370).createFromCache('home');
+
+            element = this.add.dom(625, 800).createFromCache('nameform');
+            cursors = this.input.keyboard.createCursorKeys();
+
+            element.setPerspective(800);
+            element.addListener('click');
+            element.on('click', function (event) {
+
+                if (event.target.name === 'loginButton')
+                {
+                    let inputUsername = this.getChildByName('choose');
+                    if (inputUsername.value === `true` && inputUsername.id === 'doctor')
+                    {
+                        this.removeListener('click');
+                        doctor= true;
+                        gameStart= true; 
+
+                        this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
+
+                        this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
+                            onComplete: function ()
+                            {
+                                element.setVisible(false);
+                                home.setVisible(false);
+                            }
+                        });
+                    }
+                }
+
+            });
+        
+            this.tweens.add({
+                targets: element,
+                y: 300,
+                duration: 1000,
+                ease: 'Power3'
+            });
+            
+
             cacheJson= this.cache.json.get('emitter');
             bloodexplosion = this.add.particles('bloodexplo');
 
@@ -139,40 +189,8 @@
             cody.setScale(2);
             cody.play('idle');
 
-            element = this.add.dom(150, 300).createFromCache('nameform');
-            cursors = this.input.keyboard.createCursorKeys();
 
-            element.setPerspective(800);
-            element.addListener('click');
-            element.on('click', function (event) {
 
-                if (event.target.name === 'loginButton')
-                {
-                    let inputUsername = this.getChildByName('choose');
-                    if (inputUsername.value === `true` && inputUsername.id === 'doctor')
-                    {
-                        this.removeListener('click');
-                        doctor= true;
-
-                        this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
-
-                        this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
-                            onComplete: function ()
-                            {
-                                element.setVisible(false);
-                            }
-                        });
-                    }
-                }
-
-            });
-        
-            this.tweens.add({
-                targets: element,
-                y: 300,
-                duration: 1000,
-                ease: 'Power3'
-            });
         
             // ----------------------------------------- arrows class ------------------------------
             var Arrow = new Phaser.Class({
@@ -353,127 +371,8 @@
             });
             emitter4.stop();
         }
-        
-        function removeArrow (arrows, platforms) {
-            arrows.destroy();
-            losePoints();
-            //this.time.delayedCall(150, destroyEmitterHeart, [], this);
-            if(!doctor) {            
-                switch (arrows.name) {
-                    case `left`:
-                        emitter.start();
-                        this.time.delayedCall(150, destroyEmitter, [], this);
-                        break;
-
-                    case `up`:
-                        emitter2.start();
-                        this.time.delayedCall(150, destroyEmitter, [], this);
-                        break;
-                    
-                    case `down`:
-                        emitter3.start();
-                        this.time.delayedCall(150, destroyEmitter, [], this);
-                        break;
-                    
-                    case `right`:
-                        emitter4.start();
-                        this.time.delayedCall(150, destroyEmitter, [], this);
-                        break;
-                
-                    default:
-                        console.log(`er is iets fout gegaan`);
-                        break;
-                    }
-                }        
-            }
-
-        function removeArrowZone (zones, arrows) {
-            if (zones.name===`pressed`){
-                arrows.destroy();
-                score += 10;
-                scoreText.setText('Score: ' + score);
-            }
-        }
-
-        /*function clickButton ()
-        {
-            doctor = true;
-            //console.log(`button pressed`);
-        }*/
-
-        function SendArrow (direction, time, userPressedKey) {
-            var arrowClass = arrowsClass.get();
-            const cords = GetCords(direction);
-            if (arrowClass)
-            {
-                arrowClass.fire(cords, 100, direction);
-                if (userPressedKey) {
-                    const arrowInfo = [true, direction];
-                    socket.emit('arrow', arrowInfo);
-                    timeWhenFunction= time;
-                }
-            }
-        }
-
-        function GetCords (direction) {
-            if (direction === `left`) {
-                return cordsLeft;
-            } else if (direction === `right`) {
-                return cordsRight;
-            } else
-            if (direction === `up`) {
-                return cordsUp;                
-            } else 
-            if (direction === `down`) {
-                return cordsDown;
-            }
-        }
-
-        function arrowInZone (zoneNumber) {
-            const nameRightZone= nameZone(zoneNumber); 
-            nameRightZone.setName(`pressed`);
-        }
-
-        function nameZone (zoneName) {
-            if (zoneName === 1) {
-                return zone
-            }
-            if (zoneName === 2) {
-                return zone2
-            }
-            if (zoneName === 3) {
-                return zone3
-            }
-            if (zoneName === 4) {
-                return zone4
-            }
-        }
-
-        function losePoints () {
-            score -= 10;
-            scoreText.setText('Score: ' + score);
-                            
-            if (cody.anims.getName() === 'idle') {
-                cody.play('punch');
-                cody.chain([ 'idle' ]);
-            }
-
-            if (!doctor) {
-                if(life > 0){
-                    life = life -1; 
-                    lifeGroup.children.entries[life].play('deathheart');
-                    emitterExplosion = bloodexplosion.createEmitter(cacheJson);
-                    emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y)
-                    emitterExplosion.start();
-                
-                } else {
-                    gameOver = true;
-                }
-            }
-        }
 
         function update(time, delta) {
-        
         if (gameOver && once) {
             alert(`u are dead`);
             once= false;
@@ -600,7 +499,119 @@
             }
         } 
         // ----------------------------------------- arrow controller ----------------------------------          
-    }
+        }
+
+        function removeArrow (arrows, platforms) {
+            arrows.destroy();
+            losePoints();
+            //this.time.delayedCall(150, destroyEmitterHeart, [], this);
+            if(!doctor) {            
+                switch (arrows.name) {
+                    case `left`:
+                        emitter.start();
+                        this.time.delayedCall(150, destroyEmitter, [], this);
+                        break;
+
+                    case `up`:
+                        emitter2.start();
+                        this.time.delayedCall(150, destroyEmitter, [], this);
+                        break;
+                    
+                    case `down`:
+                        emitter3.start();
+                        this.time.delayedCall(150, destroyEmitter, [], this);
+                        break;
+                    
+                    case `right`:
+                        emitter4.start();
+                        this.time.delayedCall(150, destroyEmitter, [], this);
+                        break;
+                
+                    default:
+                        console.log(`er is iets fout gegaan`);
+                        break;
+                    }
+                }        
+            }
+
+        function removeArrowZone (zones, arrows) {
+            if (zones.name===`pressed`){
+                arrows.destroy();
+                score += 10;
+                scoreText.setText('Score: ' + score);
+            }
+        }
+
+        function SendArrow (direction, time, userPressedKey) {
+            var arrowClass = arrowsClass.get();
+            const cords = GetCords(direction);
+            if (arrowClass)
+            {
+                arrowClass.fire(cords, 100, direction);
+                if (userPressedKey) {
+                    const arrowInfo = [true, direction];
+                    socket.emit('arrow', arrowInfo);
+                    timeWhenFunction= time;
+                }
+            }
+        }
+
+        function GetCords (direction) {
+            if (direction === `left`) {
+                return cordsLeft;
+            } else if (direction === `right`) {
+                return cordsRight;
+            } else
+            if (direction === `up`) {
+                return cordsUp;                
+            } else 
+            if (direction === `down`) {
+                return cordsDown;
+            }
+        }
+
+        function arrowInZone (zoneNumber) {
+            const nameRightZone= nameZone(zoneNumber); 
+            nameRightZone.setName(`pressed`);
+        }
+
+        function nameZone (zoneName) {
+            if (zoneName === 1) {
+                return zone
+            }
+            if (zoneName === 2) {
+                return zone2
+            }
+            if (zoneName === 3) {
+                return zone3
+            }
+            if (zoneName === 4) {
+                return zone4
+            }
+        }
+
+        function losePoints () {
+            score -= 10;
+            scoreText.setText('Score: ' + score);
+                            
+            if (cody.anims.getName() === 'idle') {
+                cody.play('punch');
+                cody.chain([ 'idle' ]);
+            }
+
+            if (!doctor) {
+                if(life > 0){
+                    life = life -1; 
+                    lifeGroup.children.entries[life].play('deathheart');
+                    emitterExplosion = bloodexplosion.createEmitter(cacheJson);
+                    emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y)
+                    emitterExplosion.start();
+                
+                } else {
+                    gameOver = true;
+                }
+            }
+        }
 
         function destroyEmitter() {
             emitter.stop();
