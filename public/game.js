@@ -57,10 +57,10 @@
         let button;
         let doctor;
 
-        const cordsLeft = 200;
-        const cordsUp = 320;
-        const cordsDown= 440;
-        const cordsRight = 560;
+        const cordsLeft=450+ 200;
+        const cordsUp=450+ 320;
+        const cordsDown=450+ 440;
+        const cordsRight =450+ 560;
 
         let emitter;
         let emitter2;
@@ -71,6 +71,7 @@
         const yPosEmitters = 650;
         const yPosZones = 718;
         const yPosPlatform = 800;
+        const xPosPlatform = 850
         
         let cody
 
@@ -111,6 +112,9 @@
             this.load.json('emitter', 'assets/text/explodeblood.json');
 
             this.load.html('home', 'assets/text/home.html')
+
+            this.load.image('smallui', 'assets/ui/smallui.png')
+            this.load.image('mediumui', 'assets/ui/mediumui.png')
         }
 
         function create() { 
@@ -119,6 +123,13 @@
 
             element = this.add.dom(625, 800).createFromCache('nameform');
             cursors = this.input.keyboard.createCursorKeys();
+
+            this.add.image(210, 80, 'smallui');
+            this.add.image(210, 232, 'smallui');
+            this.add.image(210, 384, 'smallui');
+            this.add.image(210, 626, 'mediumui');
+            element.setVisible(false);
+            home.setVisible(false);
 
             element.setPerspective(800);
             element.addListener('click');
@@ -321,7 +332,7 @@
 
 
             platforms = this.physics.add.staticGroup()
-            platforms.create(400, yPosPlatform, 'ground').setScale(2).refreshBody()
+            platforms.create(xPosPlatform, yPosPlatform, 'ground').setScale(2).refreshBody()
             this.physics.add.overlap(arrowsClass, zone, removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, zone2,removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, zone3, removeArrowZone, null, this);
