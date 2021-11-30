@@ -88,7 +88,8 @@
         let cacheJson;
         let timeInGame;
 
-        let home
+        let home;
+        let joinRoom;
 
         let gameStart = false;
         
@@ -113,6 +114,7 @@
         }
 
         function create() { 
+        //----------------------------- game loader ----------------------------------------------
             home = this.add.dom(400,370).createFromCache('home');
 
             element = this.add.dom(625, 800).createFromCache('nameform');
@@ -120,30 +122,46 @@
 
             element.setPerspective(800);
             element.addListener('click');
-            element.on('click', function (event) {
+            element.addListener('submit');
+            element.on('submit', function (event) {
+                event.preventDefault();
+                if(event.target[0].checked === true) {
+                    this.removeListener('click');
+                    this.removeListener('submit');
+                    doctor= true;
+                    gameStart= true; 
 
-                if (event.target.name === 'loginButton')
-                {
-                    let inputUsername = this.getChildByName('choose');
-                    if (inputUsername.value === `true` && inputUsername.id === 'doctor')
-                    {
-                        this.removeListener('click');
-                        doctor= true;
-                        gameStart= true; 
+                    this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
 
-                        this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
+                    this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
+                        onComplete: function ()
+                        {
+                            element.setVisible(false);
+                            home.setVisible(false);
+                        }
+                    });
+                } else {
+                    this.removeListener('click');
+                    this.removeListener('submit');
+                    gameStart= true; 
 
-                        this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
-                            onComplete: function ()
-                            {
-                                element.setVisible(false);
-                                home.setVisible(false);
-                            }
-                        });
-                    }
+                    this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
+
+                    this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
+                        onComplete: function ()
+                        {
+                            element.setVisible(false);
+                            home.setVisible(false);
+                        }
+                    });
                 }
-
+            })
+            element.on('click', function (event) {
+                if (event.target.name === 'leaveRoom') {
+                    console.log(`i want to leave the room`);
+                }
             });
+            //----------------------------- game loader ----------------------------------------------
         
             this.tweens.add({
                 targets: element,
@@ -188,8 +206,6 @@
             cody = this.add.sprite(600, 370);
             cody.setScale(2);
             cody.play('idle');
-
-
 
         
             // ----------------------------------------- arrows class ------------------------------

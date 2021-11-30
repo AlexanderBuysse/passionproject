@@ -69,14 +69,17 @@
 </style>
 
 <div class="login">
-    <div class="labels">
-        <label class="label" for="doctor">
-            <input type="radio" id="doctor" name="choose" value="true" checked> doctor
-        </label>
-        <label for="patient" class="label">
-            <input type="radio" id="patient" name="choose" value="true"> patient
-        </label>
-    </div>
-    <input type="submit" value="lock desission" name="loginButton">
+    <button name="leaveRoom">Leave waiting room</button>
+    <form action="get" name="form">
+        <div class="labels">
+            <label class="label" for="doctor">
+                <input type="radio" id="doctor" name="choose" value="true" checked> doctor
+            </label>
+            <label for="patient" class="label">
+                <input type="radio" id="patient" name="choose" value="true"> patient
+            </label>
+        </div>
+        <input type="submit" value="lock desission" name="loginButton">
+    </form>
 </div>
 <div class="shadow"></div>
