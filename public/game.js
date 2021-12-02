@@ -140,6 +140,7 @@
 
             this.load.html('home', 'assets/text/home.html');
             this.load.html('rooms', 'assets/text/rooms.html');
+            this.load.html('menu', 'assets/text/menu.html');
 
             this.load.image('smallui', 'assets/ui/smallui.png')
             this.load.image('mediumui', 'assets/ui/mediumui.png')
@@ -185,6 +186,20 @@
             rooms = this.add.dom(625, 800).createFromCache('rooms');
             rooms.setVisible(false);
 
+            gameMenu = this.add.dom(625, 800).createFromCache('menu');
+            gameMenu.setVisible(false);
+
+            gameMenu.setPerspective(800);
+            gameMenu.addListener('click');
+            gameMenu.addListener('submit');
+            gameMenu.on('submit', function (event) {
+                event.preventDefault();
+                if(event.target[0].checked === true) {
+                    rooms.setVisible(true);
+                    gameMenu.setVisible(false);
+                }
+            })
+
             this.add.image(210, 80, 'smallui');
             this.add.image(210, 232, 'smallui');
             this.add.image(210, 384, 'smallui');
@@ -206,6 +221,8 @@
             rooms.on('click', function (event) {
                 if (event.target.name === 'leaveRooms') {
                     console.log(`i want to leave the rooms bruh`);
+                    rooms.setVisible(false);
+                    gameMenu.setVisible(true);                  
                 }
             });
 
@@ -262,6 +279,12 @@
 
             this.tweens.add({
                 targets: rooms,
+                y: 300,
+                duration: 1000,
+                ease: 'Power3'
+            });
+            this.tweens.add({
+                targets: gameMenu,
                 y: 300,
                 duration: 1000,
                 ease: 'Power3'
