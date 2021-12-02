@@ -98,6 +98,7 @@
         let home;
         let rooms;
         let gameMenu;
+        let tutorial;
 
         let gameStart = false;
 
@@ -141,6 +142,7 @@
             this.load.html('home', 'assets/text/home.html');
             this.load.html('rooms', 'assets/text/rooms.html');
             this.load.html('menu', 'assets/text/menu.html');
+            this.load.html('tutorial', ' assets/text/tutorial.html');
 
             this.load.image('smallui', 'assets/ui/smallui.png')
             this.load.image('mediumui', 'assets/ui/mediumui.png')
@@ -190,8 +192,8 @@
             gameMenu.setVisible(false);
 
             gameMenu.setPerspective(800);
-            gameMenu.addListener('click');
             gameMenu.addListener('submit');
+            gameMenu.addListener('click');
             gameMenu.on('submit', function (event) {
                 event.preventDefault();
                 if(event.target[0].checked === true) {
@@ -199,6 +201,22 @@
                     gameMenu.setVisible(false);
                 }
             })
+            gameMenu.on('click', function (event) {
+                if (event.target.name === 'tutorial') {
+                    tutorial.setVisible(true);
+                    gameMenu.setVisible(false);             
+                }
+            })
+
+            tutorial = this.add.dom(625,800).createFromCache('tutorial');
+            tutorial.setVisible(false);
+            tutorial.addListener('click');
+            tutorial.on('click', function (event) {
+                if (event.target.name === 'mainmenu') {
+                    tutorial.setVisible(false);
+                    gameMenu.setVisible(true);                  
+                }
+            });
 
             this.add.image(210, 80, 'smallui');
             this.add.image(210, 232, 'smallui');
@@ -257,6 +275,7 @@
                         onComplete: function ()
                         {
                             element.setVisible(false);
+                            home.setVisible(false);
                         }
                     });
                 }
@@ -285,6 +304,12 @@
             });
             this.tweens.add({
                 targets: gameMenu,
+                y: 300,
+                duration: 1000,
+                ease: 'Power3'
+            });            
+            this.tweens.add({
+                targets: tutorial,
                 y: 300,
                 duration: 1000,
                 ease: 'Power3'
