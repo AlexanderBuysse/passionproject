@@ -110,6 +110,10 @@
         let textGameSpeed;
 
         let bpm= 0;
+        let textBpm;
+        const xPosBpm = 120;
+        const yPosBpm = 380;
+        
         
         function preload() {
 
@@ -149,6 +153,7 @@
                 return e.data[key];
                 });
                 console.log((parseInt(values[values.length - 4])*10)+ parseInt(values[values.length - 3]));
+                bpm = (parseInt(values[values.length - 4])*10)+ parseInt(values[values.length - 3]);
             };
             ws.onclose = function(e) {
                 console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
@@ -174,8 +179,8 @@
             this.add.image(210, 232, 'smallui');
             this.add.image(210, 384, 'smallui');
             this.add.image(210, 626, 'mediumui');
-            //element.setVisible(false);
-            //home.setVisible(false);
+            element.setVisible(false);
+            home.setVisible(false);
 
             element.setPerspective(800);
             element.addListener('click');
@@ -381,6 +386,7 @@
             //this.add.image(400, 800, 'sky');
             scoreText = this.add.text(xPosTimer+200, yPosTimer+200, 'score: 0', { fontSize: '32px', fill: '#000' }); 
             textTimer = this.add.text(xPosTimer, yPosTimer, 'time left: 5:00 min', { fontSize: '25px', fill: '#000' })
+            textBpm = this.add.text(xPosBpm, yPosBpm, 'BPM: 0', { fontSize: '25px', fill: '#000' })
             // ----------------------------------------- zone ------------------------------
 
 
@@ -453,20 +459,6 @@
         }
 
         function update(time, delta) {
-
-
-        /*const url = "https://dev.pulsoid.net/api/v1/data/heart_rate/latest";
-
-        const options = {
-        headers: {
-            Authorization: "Bearer 726df273-9330-4c18-9c14-c4b0d82384c9"
-        }
-        };
-
-        fetch(url, options)
-        .then( res => res.json() )
-        .then( data => console.log(data) );*/
-
         if (gameOver && once) {
             alert(`u are dead`);
             once= false;
@@ -481,6 +473,7 @@
             }   
         }
 
+        textBpm.setText('BPM: ' + bpm);
         textTimer.setText('time left: ' + (millisToMinutesAndSeconds(fiveMinTimer-time)));
 
         // ----------------------------------------- zone controller ------------------------------
