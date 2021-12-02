@@ -104,6 +104,12 @@
 
         const fiveMinTimer = 300000;
         let textTimer;
+
+        let gameSpeed= 500;
+
+        let textGameSpeed;
+
+        let bpm= 0;
         
         function preload() {
 
@@ -128,7 +134,36 @@
             this.load.image('mediumui', 'assets/ui/mediumui.png')
         }
 
+        function connect() {
+            var ws = new WebSocket('wss://dev.pulsoid.net/api/v1/data/real_time?access_token=726df273-9330-4c18-9c14-c4b0d82384c9');
+            ws.onopen = function() {
+                // subscribe to some channels
+                ws.send(JSON.stringify({
+                    //.... some message the I must send when I connect ....
+                }));
+            };
+            ws.onmessage = function(e) {
+                //console.log('Message:', e.data);
+                var keys = Object.keys(e.data);
+                var values = keys.map(function(key) {
+                return e.data[key];
+                });
+                console.log((parseInt(values[values.length - 4])*10)+ parseInt(values[values.length - 3]));
+            };
+            ws.onclose = function(e) {
+                console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+                setTimeout(function() {
+                connect();
+                }, 1000);
+            };
+            ws.onerror = function(err) {
+                console.error('Socket encountered error: ', err.message, 'Closing socket');
+                ws.close();
+            };
+        }
+
         function create() { 
+            connect();
         //----------------------------- game loader ----------------------------------------------
             home = this.add.dom(400,370).createFromCache('home');
 
@@ -139,8 +174,8 @@
             this.add.image(210, 232, 'smallui');
             this.add.image(210, 384, 'smallui');
             this.add.image(210, 626, 'mediumui');
-            element.setVisible(false);
-            home.setVisible(false);
+            //element.setVisible(false);
+            //home.setVisible(false);
 
             element.setPerspective(800);
             element.addListener('click');
@@ -418,6 +453,20 @@
         }
 
         function update(time, delta) {
+
+
+        /*const url = "https://dev.pulsoid.net/api/v1/data/heart_rate/latest";
+
+        const options = {
+        headers: {
+            Authorization: "Bearer 726df273-9330-4c18-9c14-c4b0d82384c9"
+        }
+        };
+
+        fetch(url, options)
+        .then( res => res.json() )
+        .then( data => console.log(data) );*/
+
         if (gameOver && once) {
             alert(`u are dead`);
             once= false;
@@ -516,7 +565,7 @@
         
         // ----------------------------------------- arrow controller ------------------------------  
 
-        if (time - timeWhenFunction >500){
+        if (time - timeWhenFunction >gameSpeed){
             if (this.input.keyboard.checkDown(cursors.left, 1000))
             {
                 if (doctor) {
@@ -619,6 +668,10 @@
             }
         }
 
+        function getData () {
+            
+        }
+
         function GetCords (direction) {
             if (direction === `left`) {
                 return cordsLeft;
@@ -686,4 +739,14 @@
         function destroyEmitterHeart() {
             emitterExplosion.stop();
         }
+
+        function checkSpeed (speedMs) {
+            if(speedMs === 500){
+                return 1;
+            } else  if (speedMs === 1000) { 
+                return 2;
+            } else if (speedMs === 250) {
+                return 0.5; 
+            } 
+        } 
 }
