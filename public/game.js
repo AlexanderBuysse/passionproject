@@ -96,7 +96,8 @@
         let timeInGame;
 
         let home;
-        let joinRoom;
+        let rooms;
+        let gameMenu;
 
         let gameStart = false;
 
@@ -137,7 +138,8 @@
             this.load.image('bloodexplo', 'assets/blood.png');
             this.load.json('emitter', 'assets/text/explodeblood.json');
 
-            this.load.html('home', 'assets/text/home.html')
+            this.load.html('home', 'assets/text/home.html');
+            this.load.html('rooms', 'assets/text/rooms.html');
 
             this.load.image('smallui', 'assets/ui/smallui.png')
             this.load.image('mediumui', 'assets/ui/mediumui.png')
@@ -167,14 +169,11 @@
 
         function create() { 
             textTimeDoctor = this.add.text(200, 200);
-
             for (var i = 0; i < 1; i++)
             {
-                timerEvents.push(this.time.addEvent({ delay: gameSpeed, loop: true }));
+                timerEvents.push(this.time.addEvent({ delay: 666, loop: true }));
             }
-
             hsv = Phaser.Display.Color.HSVColorWheel();
-
             graphics = this.add.graphics({ x: 500, y: 100 });
 
             connect();
@@ -183,6 +182,8 @@
 
             element = this.add.dom(625, 800).createFromCache('nameform');
             cursors = this.input.keyboard.createCursorKeys();
+            rooms = this.add.dom(625, 800).createFromCache('rooms');
+            rooms.setVisible(false);
 
             this.add.image(210, 80, 'smallui');
             this.add.image(210, 232, 'smallui');
@@ -192,6 +193,23 @@
             //home.setVisible(false);
 
             element.setPerspective(800);
+            rooms.setPerspective(800);
+            rooms.addListener('click');
+            rooms.addListener('submit');
+            rooms.on('submit', function (event) {
+                event.preventDefault();
+                if(event.target[0].checked === true) {
+                    element.setVisible(true);
+                    rooms.setVisible(false);
+                }
+            })
+            rooms.on('click', function (event) {
+                if (event.target.name === 'leaveRooms') {
+                    console.log(`i want to leave the rooms bruh`);
+                }
+            });
+
+
             element.addListener('click');
             element.addListener('submit');
             element.on('submit', function (event) {
@@ -222,7 +240,6 @@
                         onComplete: function ()
                         {
                             element.setVisible(false);
-                            home.setVisible(false);
                         }
                     });
                 }
@@ -230,12 +247,21 @@
             element.on('click', function (event) {
                 if (event.target.name === 'leaveRoom') {
                     console.log(`i want to leave the room`);
+                    element.setVisible(false);
+                    rooms.setVisible(true);
                 }
             });
             //----------------------------- game loader ----------------------------------------------
         
             this.tweens.add({
                 targets: element,
+                y: 300,
+                duration: 1000,
+                ease: 'Power3'
+            });
+
+            this.tweens.add({
+                targets: rooms,
                 y: 300,
                 duration: 1000,
                 ease: 'Power3'
@@ -491,7 +517,7 @@
             for (var i = 0; i < timerEvents.length; i++)
             {
                 if(lastSpeed !== gameSpeed) {
-                   timerEvents[i].reset({ delay: gameSpeed, loop: true }) 
+                   timerEvents[i].reset({ delay: 666, loop: true }) 
                    console.log(`gaat er in`);
                 }
                 lastSpeed = gameSpeed;
