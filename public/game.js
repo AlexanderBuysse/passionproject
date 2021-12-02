@@ -147,13 +147,8 @@
                 }));
             };
             ws.onmessage = function(e) {
-                //console.log('Message:', e.data);
-                var keys = Object.keys(e.data);
-                var values = keys.map(function(key) {
-                return e.data[key];
-                });
-                console.log((parseInt(values[values.length - 4])*10)+ parseInt(values[values.length - 3]));
-                bpm = (parseInt(values[values.length - 4])*10)+ parseInt(values[values.length - 3]);
+                const messageObj = JSON.parse(e.data);
+                bpm = messageObj.data.heart_rate;
             };
             ws.onclose = function(e) {
                 console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);

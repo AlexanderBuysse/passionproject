@@ -1,9 +1,0 @@
-{
-    "token": "726df273-9330-4c18-9c14-c4b0d82384c9",
-    "client_id": "4463b85f-79cd-445f-abee-70a0887f0a85",
-    "expires_in": 630900453,
-    "profile_id": "61a4e388a06d4c1c2492bbb6",
-    "scopes": [
-        "data:heart_rate:read",
-        "data:heart_rate:write","
-
