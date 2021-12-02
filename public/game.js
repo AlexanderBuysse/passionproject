@@ -113,6 +113,11 @@
         let textBpm;
         const xPosBpm = 120;
         const yPosBpm = 380;
+
+        var textTimeDoctor;
+        var graphics;
+        var hsv;
+        var timerEvents = [];
         
         
         function preload() {
@@ -161,6 +166,17 @@
         }
 
         function create() { 
+            textTimeDoctor = this.add.text(200, 200);
+
+            for (var i = 0; i < 1; i++)
+            {
+                timerEvents.push(this.time.addEvent({ delay: gameSpeed, loop: true }));
+            }
+
+            hsv = Phaser.Display.Color.HSVColorWheel();
+
+            graphics = this.add.graphics({ x: 500, y: 100 });
+
             connect();
         //----------------------------- game loader ----------------------------------------------
             home = this.add.dom(400,370).createFromCache('home');
@@ -172,8 +188,8 @@
             this.add.image(210, 232, 'smallui');
             this.add.image(210, 384, 'smallui');
             this.add.image(210, 626, 'mediumui');
-            element.setVisible(false);
-            home.setVisible(false);
+            //element.setVisible(false);
+            //home.setVisible(false);
 
             element.setPerspective(800);
             element.addListener('click');
@@ -380,6 +396,7 @@
             scoreText = this.add.text(xPosTimer+200, yPosTimer+200, 'score: 0', { fontSize: '32px', fill: '#000' }); 
             textTimer = this.add.text(xPosTimer, yPosTimer, 'time left: 5:00 min', { fontSize: '25px', fill: '#000' })
             textBpm = this.add.text(xPosBpm, yPosBpm, 'BPM: 0', { fontSize: '25px', fill: '#000' })
+            textGameSpeed = this.add.text(xPosBpm, yPosBpm-50, 'Gamespeed: 1', { fontSize: '25px', fill: '#000' })
             // ----------------------------------------- zone ------------------------------
 
 
@@ -453,155 +470,179 @@
 
         function checkHeartDoctor () {
             if (bpm >= 100) {
-                console.log(`hartje is hoger dan 100`);
+                //console.log(`hartje is hoger dan 100`);
+                gameSpeed= 900;
             } else if (bpm >= 80) {
-                console.log(`hartje is tussen 80 en 100`);
+                //console.log(`hartje is tussen 80 en 100`);
+                gameSpeed= 500;
             } else if (bpm <= 80) {
-                console.log(`hart onder de 80`);
+                //console.log(`hart onder de 80`);
+                gameSpeed= 300;
             }
         }
 
-        function update(time, delta) {
-        checkHeartDoctor();
-    
-        if (gameOver && once) {
-            alert(`u are dead`);
-            once= false;
-        }
+        let lastSpeed;
 
-        if ((fiveMinTimer-time)<= 0) {
-            //console.log(`het spel is gedaan`);
-            gameOver=true;
+        function update(time, delta) {
+            var output = [];
+
+            graphics.clear();
+
+            for (var i = 0; i < timerEvents.length; i++)
+            {
+                if(lastSpeed !== gameSpeed) {
+                   timerEvents[i].reset({ delay: gameSpeed, loop: true }) 
+                   console.log(`gaat er in`);
+                }
+                lastSpeed = gameSpeed;
+                output.push('Event.progress: ' + timerEvents[i].getProgress().toString().substr(0, 4));
+                //console.log(timerEvents[i]);
+
+                graphics.fillStyle(hsv[i * 8].color, 1);
+                graphics.fillRect(0, i * 16, 500 * timerEvents[i].getProgress(), 8);
+            }
+
+            textTimeDoctor.setText(output);
+            checkHeartDoctor();
+        
             if (gameOver && once) {
                 alert(`u are dead`);
                 once= false;
-            }   
-        }
+            }
 
-        textBpm.setText('BPM: ' + bpm);
-        textTimer.setText('time left: ' + (millisToMinutesAndSeconds(fiveMinTimer-time)));
+            if ((fiveMinTimer-time)<= 0) {
+                //console.log(`het spel is gedaan`);
+                gameOver=true;
+                if (gameOver && once) {
+                    alert(`u are dead`);
+                    once= false;
+                }   
+            }
+            textGameSpeed.setText('Game speed =' + checkSpeed(gameSpeed));
+            textBpm.setText('BPM: ' + bpm);
+            textTimer.setText('time left: ' + (millisToMinutesAndSeconds(fiveMinTimer-time)));
 
-        // ----------------------------------------- zone controller ------------------------------
-        zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
-        
-        if(!zone.body.touching.none) {
-            if(cursors.left.isDown){
-                if (cursors.left.getDuration() <= 500) {
-                    arrowInZone(1);
-                } else {
+            // ----------------------------------------- zone controller ------------------------------
+            zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
+            
+            if(!zone.body.touching.none) {
+                if(cursors.left.isDown){
+                    if (cursors.left.getDuration() <= 500) {
+                        arrowInZone(1);
+                    } else {
+                        losePoints ();
+                        this.time.delayedCall(150, destroyEmitterHeart, [], this);
+                    }
+                }
+            } else {
+                zone.setName(`not pressed yet`);
+            }
+
+            zone2.body.debugBodyColor = zone2.body.touching.none ? 0x00ffff : 0xffff00;
+            
+            if(!zone2.body.touching.none) {
+                if(cursors.up.isDown){
+                    if (cursors.up.getDuration() <= 500) {
+                        arrowInZone(2);
+                    }
+                }
+            } else {
+                zone2.setName(`not pressed yet`);
+            }
+
+            zone3.body.debugBodyColor = zone3.body.touching.none ? 0x00ffff : 0xffff00;
+            
+            if(!zone3.body.touching.none) {
+                if(cursors.down.isDown){
+                    if (cursors.down.getDuration() <= 500) {
+                        arrowInZone(3);
+                    }
+                }
+            } else {
+                zone3.setName(`not pressed yet`);
+            }
+            
+            zone4.body.debugBodyColor = zone4.body.touching.none ? 0x00ffff : 0xffff00;
+            
+            if(!zone4.body.touching.none) {
+                if(cursors.right.isDown){
+                    if (cursors.down.getDuration() <= 500) {
+                        arrowInZone(4);
+                    }
+                }
+            } else {
+                zone4.setName(`not pressed yet`);
+            }
+
+            if (!doctor) {
+                if (zone.body.touching.none && this.input.keyboard.checkDown(cursors.left, 500)) {
+                    emitter.start();
+                    this.time.delayedCall(150, destroyEmitter, [], this);
+                    losePoints ();
+                    this.time.delayedCall(150, destroyEmitterHeart, [], this);
+                }
+                if (zone2.body.touching.none && this.input.keyboard.checkDown(cursors.up, 500)) {
+                    emitter2.start();
+                    this.time.delayedCall(150, destroyEmitter, [], this);
+                    losePoints ();
+                    this.time.delayedCall(150, destroyEmitterHeart, [], this);
+                }
+                if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
+                    emitter3.start();
+                    this.time.delayedCall(150, destroyEmitter, [], this);
+                    losePoints ();
+                    this.time.delayedCall(150, destroyEmitterHeart, [], this);
+                }
+                if (zone4.body.touching.none && this.input.keyboard.checkDown(cursors.right, 500)) {
+                    emitter4.start();
+                    this.time.delayedCall(150, destroyEmitter, [], this);
                     losePoints ();
                     this.time.delayedCall(150, destroyEmitterHeart, [], this);
                 }
             }
-        } else {
-            zone.setName(`not pressed yet`);
-        }
+            // ----------------------------------------- zone controller ------------------------------
+            
+            // ----------------------------------------- arrow controller ------------------------------  
 
-        zone2.body.debugBodyColor = zone2.body.touching.none ? 0x00ffff : 0xffff00;
-        
-        if(!zone2.body.touching.none) {
-            if(cursors.up.isDown){
-                if (cursors.up.getDuration() <= 500) {
-                    arrowInZone(2);
+            if (time - timeWhenFunction >gameSpeed){
+                if (this.input.keyboard.checkDown(cursors.left, 1000))
+                {
+                    if (doctor) {
+                        SendArrow(`left`, time, true);
+                    } else {
+                        console.log(`left`);
+                    }
+                } 
+
+                if (this.input.keyboard.checkDown(cursors.right, 1000))
+                {
+                    if (doctor) {
+                        SendArrow(`right`, time, true);
+                    } else {
+                        console.log(`right`);
+                    }
+
                 }
-            }
-        } else {
-            zone2.setName(`not pressed yet`);
-        }
-
-        zone3.body.debugBodyColor = zone3.body.touching.none ? 0x00ffff : 0xffff00;
         
-        if(!zone3.body.touching.none) {
-            if(cursors.down.isDown){
-                if (cursors.down.getDuration() <= 500) {
-                    arrowInZone(3);
+                if (this.input.keyboard.checkDown(cursors.up, 1000))
+                {
+                    if (doctor) {
+                        SendArrow(`up`, time, true);
+                    } else {
+                        console.log(`up`);
+                    }
                 }
-            }
-        } else {
-            zone3.setName(`not pressed yet`);
-        }
-        
-        zone4.body.debugBodyColor = zone4.body.touching.none ? 0x00ffff : 0xffff00;
-        
-        if(!zone4.body.touching.none) {
-            if(cursors.right.isDown){
-                if (cursors.down.getDuration() <= 500) {
-                    arrowInZone(4);
-                }
-            }
-        } else {
-            zone4.setName(`not pressed yet`);
-        }
 
-        if (!doctor) {
-            if (zone.body.touching.none && this.input.keyboard.checkDown(cursors.left, 500)) {
-                emitter.start();
-                this.time.delayedCall(150, destroyEmitter, [], this);
-                losePoints ();
-                this.time.delayedCall(150, destroyEmitterHeart, [], this);
-            }
-            if (zone2.body.touching.none && this.input.keyboard.checkDown(cursors.up, 500)) {
-                emitter2.start();
-                this.time.delayedCall(150, destroyEmitter, [], this);
-                losePoints ();
-                this.time.delayedCall(150, destroyEmitterHeart, [], this);
-            }
-            if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
-                emitter3.start();
-                this.time.delayedCall(150, destroyEmitter, [], this);
-                losePoints ();
-                this.time.delayedCall(150, destroyEmitterHeart, [], this);
-            }
-            if (zone4.body.touching.none && this.input.keyboard.checkDown(cursors.right, 500)) {
-                emitter4.start();
-                this.time.delayedCall(150, destroyEmitter, [], this);
-                losePoints ();
-                this.time.delayedCall(150, destroyEmitterHeart, [], this);
-            }
-        }
-        // ----------------------------------------- zone controller ------------------------------
-        
-        // ----------------------------------------- arrow controller ------------------------------  
-
-        if (time - timeWhenFunction >gameSpeed){
-            if (this.input.keyboard.checkDown(cursors.left, 1000))
-            {
-                if (doctor) {
-                    SendArrow(`left`, time, true);
-                } else {
-                    console.log(`left`);
+                if (this.input.keyboard.checkDown(cursors.down, 1000))
+                {
+                    if (doctor) {
+                        SendArrow(`down`, time, true);
+                    } else {
+                        console.log(`down`);
+                    }
                 }
             } 
-
-            if (this.input.keyboard.checkDown(cursors.right, 1000))
-            {
-                if (doctor) {
-                    SendArrow(`right`, time, true);
-                } else {
-                    console.log(`right`);
-                }
-
-            }
-    
-            if (this.input.keyboard.checkDown(cursors.up, 1000))
-            {
-                if (doctor) {
-                    SendArrow(`up`, time, true);
-                } else {
-                    console.log(`up`);
-                }
-            }
-
-            if (this.input.keyboard.checkDown(cursors.down, 1000))
-            {
-                if (doctor) {
-                    SendArrow(`down`, time, true);
-                } else {
-                    console.log(`down`);
-                }
-            }
-        } 
-        // ----------------------------------------- arrow controller ----------------------------------          
+            // ----------------------------------------- arrow controller ----------------------------------          
         }
 
         function removeArrow (arrows, platforms) {
@@ -741,9 +782,9 @@
         function checkSpeed (speedMs) {
             if(speedMs === 500){
                 return 1;
-            } else  if (speedMs === 1000) { 
+            } else  if (speedMs === 900) { 
                 return 2;
-            } else if (speedMs === 250) {
+            } else if (speedMs === 300) {
                 return 0.5; 
             } 
         } 
