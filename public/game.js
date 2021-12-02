@@ -141,9 +141,7 @@
         function connect() {
             var ws = new WebSocket('wss://dev.pulsoid.net/api/v1/data/real_time?access_token=726df273-9330-4c18-9c14-c4b0d82384c9');
             ws.onopen = function() {
-                // subscribe to some channels
                 ws.send(JSON.stringify({
-                    //.... some message the I must send when I connect ....
                 }));
             };
             ws.onmessage = function(e) {
@@ -453,7 +451,19 @@
             emitter4.stop();
         }
 
+        function checkHeartDoctor () {
+            if (bpm >= 100) {
+                console.log(`hartje is hoger dan 100`);
+            } else if (bpm >= 80) {
+                console.log(`hartje is tussen 80 en 100`);
+            } else if (bpm <= 80) {
+                console.log(`hart onder de 80`);
+            }
+        }
+
         function update(time, delta) {
+        checkHeartDoctor();
+    
         if (gameOver && once) {
             alert(`u are dead`);
             once= false;
