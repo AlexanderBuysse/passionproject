@@ -66,16 +66,48 @@
         width: 620px;
         justify-content: space-between;
     }
+
+    .rooms {
+        display: flex;
+        flex-direction: column;
+    } 
 </style>
 
 <div class="login">
     <button name="leaveRooms">Back to menu</button>
     <h2>Join a room</h2>
-    <form action="get" name="form">
-        <input type="checkbox" id="room1" name="room" value="true" checked> Room 1
-        <input type="checkbox" id="room2" name="room" value="true"> Room 2
+    <form action="get" name="form" class="rooms">
+        <label for="room1">
+            <input type="radio" id="room1" name="room" value="true" checked> Room 1
+        </label>
+        <label for="room2">
+            <input type="radio" id="room2" name="room" value="true" checked> Room 2
+        </label>
+        <label for="room3">
+            <input type="radio" id="room3" name="room" value="true" checked> Room 3
+        </label>
+        <label for="room4">
+            <input type="radio" id="room4" name="room" value="true" checked> Room 4
+        </label>
+        <label for="room5">
+            <input type="radio" id="room5" name="room" value="true" checked> Room 5
+        </label>
+        <label for="room6">
+            <input type="radio" id="room6" name="room" value="true" checked> Room 6
+        </label>
+        <label for="room7">
+            <input type="radio" id="room7" name="room" value="true" checked> Room 7
+        </label>
+        <label for="room8">
+            <input type="radio" id="room8" name="room" value="true" checked> Room 8
+        </label>
+        <label for="room9">
+            <input type="radio" id="room9" name="room" value="true" checked> Room 9
+        </label>
+        <label for="room10">
+            <input type="radio" id="room10" name="room" value="true" checked> Room 10
+        </label>
         <input type="submit" value="Join operation" name="room1">
     </form>
-    <button class="newroom" name="newRoom" value="newRoom">newRoom</button>
 </div>
 <div class="shadow"></div>

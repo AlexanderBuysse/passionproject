@@ -266,19 +266,15 @@
             rooms.addListener('submit');
             rooms.on('submit', function (event) {
                 event.preventDefault();
-                if(event.target[0].checked === true) {
+                for (let i = 0; i < 10; i++) {
+                    if(event.target[i].checked === true) {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    socket.emit("room", `room1`);
-                }
-                if(event.target[1].checked === true) {
-                    element.setVisible(true);
-                    rooms.setVisible(false);
-                    socket.emit("room", `room2`);
+                    socket.emit("room", `room${i+1}`);
+                    }
                 }
             })
             rooms.on('click', function (event) {
-                console.log(`rooms event click`, event.target.name);
                 if (event.target.name === 'leaveRooms') {
                     rooms.setVisible(false);
                     gameMenu.setVisible(true);       
