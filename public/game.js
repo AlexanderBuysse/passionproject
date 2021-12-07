@@ -630,7 +630,7 @@
             if (level >= 2 ) {
                 checkheartBeat()
             }
-            console.log(level);
+            //console.log(level);
 
             var output = [];
 
@@ -666,7 +666,7 @@
                     once= false;
                 }   
             }
-            textGameSpeed.setText('Game speed =' + checkSpeed(gameSpeed));
+            textGameSpeed.setText('Game speed =' + level);
             textBpm.setText('BPM: ' + bpm);
             textTimer.setText('time left: ' + (millisToMinutesAndSeconds(fiveMinTimer-time)));
 
