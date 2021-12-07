@@ -587,6 +587,16 @@
             }
         }
 
+        function checkheartBeat() {
+            if((averageHeartBeat-bpm) >= 5) {
+                console.log(`hartslag laag`);
+            }
+            if((averageHeartBeat-bpm) <= -5) {
+                console.log(`hartslag te hoog`);
+            }
+
+        }
+
         let lastSpeed;
 
         function averageOfArray (arr) {
@@ -599,6 +609,11 @@
                 heartRateGemid.pop();
                 heartRateGemid.push(`end`);
                 console.log(averageHeartBeat);
+                level = 2;
+            }
+
+            if (level >= 2 ) {
+                checkheartBeat()
             }
 
             var output = [];
