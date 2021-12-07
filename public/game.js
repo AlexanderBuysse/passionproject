@@ -590,14 +590,28 @@
         function checkheartBeat() {
             if((averageHeartBeat-bpm) >= 5) {
                 console.log(`hartslag laag`);
+                if(updateLevel === level ) {
+                    if(level !== 2){
+                        level--;
+                    } 
+                }
             }
             if((averageHeartBeat-bpm) <= -5) {
                 console.log(`hartslag te hoog`);
+                if(updateLevel === level ) {
+                    level++;
+                }
             }
-
+            if((averageHeartBeat-bpm) > -5 && (averageHeartBeat-bpm) < 5) {
+                console.log(`tussen gemiddeld`);
+                if(updateLevel !== level ) {
+                    level = updateLevel;
+                }
+            }
         }
 
         let lastSpeed;
+        let updateLevel;
 
         function averageOfArray (arr) {
             return arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
@@ -610,11 +624,13 @@
                 heartRateGemid.push(`end`);
                 console.log(averageHeartBeat);
                 level = 2;
+                updateLevel= 2;
             }
 
             if (level >= 2 ) {
                 checkheartBeat()
             }
+            console.log(level);
 
             var output = [];
 
@@ -635,7 +651,7 @@
             }
 
             textTimeDoctor.setText(output);
-            checkHeartDoctor();
+            //checkHeartDoctor();
         
             if (gameOver && once) {
                 alert(`u are dead`);
