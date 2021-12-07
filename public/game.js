@@ -127,6 +127,8 @@
         var timerEvents = [];
 
         let averageHeartBeat;
+
+        let room;
         
         
         function preload() {
@@ -267,18 +269,24 @@
                 if(event.target[0].checked === true) {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    socket.emit("room1", `room 1`);
+                    socket.emit("room", `room1`);
                 }
                 if(event.target[1].checked === true) {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    socket.emit("room2", `room 2`);
+                    socket.emit("room", `room2`);
                 }
             })
             rooms.on('click', function (event) {
+                console.log(`rooms event click`, event.target.name);
                 if (event.target.name === 'leaveRooms') {
                     rooms.setVisible(false);
-                    gameMenu.setVisible(true);                  
+                    gameMenu.setVisible(true);       
+                }
+                if (event.target.name === 'newRoom') {
+                    //rooms.createElement(`p`, `red`, `hello there`);
+                    //random code wat er voor zorgt dat er extra ruimtes zijn
+                    
                 }
             });
 
@@ -466,6 +474,9 @@
                 if(doctor) {
                     level = levelFromSocket;
                 }
+            });
+            socket.on(`rooms`, function (rooms) {
+                console.log(rooms);
             });
 
             lifeGroup= this.physics.add.group({

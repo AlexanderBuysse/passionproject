@@ -6,6 +6,8 @@ const { Server } = require("socket.io");
 const io = new Server(server);
 
 let users = [];
+let roomSelected;
+let rooms = [];
 
 app.use(express.static('public'));
 
@@ -18,31 +20,27 @@ io.on('connection', (socket) => {
         userList(socket.id);
     });
 
-    socket.on(`room1`, (room) => {
+    socket.on(`room`, (room) => {
         console.log(room);
-        socket.join("room1");
-    })
-
-    socket.on(`room2`, (room) => {
-        console.log(room);
-        socket.join("room2");
-    })
-
-    socket.on(`arrow`, (arrayInfo) => {
-        if(socket.rooms.has(`room1`) && socket.rooms.has(socket.id)) {
-            io.to("room1").emit('arrow', arrayInfo);
+        socket.join(room);
+        roomSelected= room;
+        if(!rooms.includes(room)) {
+            rooms.push(room);
         }
-        if(socket.rooms.has(`room2`) && socket.rooms.has(socket.id)) {
-            io.to("room2").emit('arrow', arrayInfo);
+        if(!rooms.includes(room)) {
+            io.emit(`rooms`, rooms);
+        }
+    })
+
+    socket.on(`level`, (level) => {
+        if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+            io.to(roomSelected).emit('level', level);
         }
     });
 
-    socket.on(`level`, (level) => {
-        if(socket.rooms.has(`room1`) && socket.rooms.has(socket.id)) {
-            io.to("room1").emit('level', level);
-        }
-        if(socket.rooms.has(`room2`) && socket.rooms.has(socket.id)) {
-            io.to("room2").emit('level', level);
+    socket.on(`arrow`, (arrayInfo) => {
+        if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+            io.to(roomSelected).emit('arrow', arrayInfo);
         }
     });
 });
