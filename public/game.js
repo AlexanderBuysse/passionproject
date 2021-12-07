@@ -644,6 +644,38 @@
             return arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
         }
 
+        function changeLevel (time) {
+            switch (time) {
+                case 60000:
+                    updateLevel++
+                    level++
+                    socket.emit("level", level);
+                    break;
+                case 120000:
+                    updateLevel++
+                    level++
+                    socket.emit("level", level);
+                    break;
+                case 180000:
+                    updateLevel++
+                    level++
+                    socket.emit("level", level);
+                    break;
+                case 240000:
+                    updateLevel++
+                    level++
+                    socket.emit("level", level);
+                    break;
+                case 300000:
+                    console.log(`the game is over`);
+                    break;
+            
+                default:
+                    console.log(`something went wrong`);
+                    break;
+            }
+        }
+
         function update(time, delta) {
             if (heartRateGemid.length === 10 && heartRateGemid[9] !== `end`) {
                 averageHeartBeat= averageOfArray(heartRateGemid);
@@ -659,6 +691,7 @@
                 if (level >= 2 ) {
                     checkheartBeat()
                 }
+                changeLevel(time);
             }
             levelGameSpeed();
             
