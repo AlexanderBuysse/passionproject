@@ -99,6 +99,8 @@
         let rooms;
         let gameMenu;
         let tutorial;
+        let doctorWin;
+        let patientWin;
 
         let gameStart = false;
 
@@ -108,6 +110,9 @@
         let textTimer;
 
         let gameSpeed= 500;
+        let level =1;
+        let heartRateGemid = [];
+        let arrowsCaught = 0;
 
         let textGameSpeed;
 
@@ -120,6 +125,8 @@
         var graphics;
         var hsv;
         var timerEvents = [];
+
+        let averageHeartBeat;
         
         
         function preload() {
@@ -142,7 +149,9 @@
             this.load.html('home', 'assets/text/home.html');
             this.load.html('rooms', 'assets/text/rooms.html');
             this.load.html('menu', 'assets/text/menu.html');
-            this.load.html('tutorial', ' assets/text/tutorial.html');
+            this.load.html('tutorial', 'assets/text/tutorial.html');
+            this.load.html('patientwin', 'assets/text/patientwin.html');
+            this.load.html('doctorwin', 'assets/text/doctorwin.html')
 
             this.load.image('smallui', 'assets/ui/smallui.png')
             this.load.image('mediumui', 'assets/ui/mediumui.png')
@@ -191,6 +200,9 @@
             gameMenu = this.add.dom(625, 800).createFromCache('menu');
             gameMenu.setVisible(false);
 
+            doctorWin = this.add.dom(625, 800).createFromCache('doctorwin');
+            patientWin = this.add.dom(625, 800).createFromCache('patientwin');
+
             gameMenu.setPerspective(800);
             gameMenu.addListener('submit');
             gameMenu.addListener('click');
@@ -205,6 +217,26 @@
                 if (event.target.name === 'tutorial') {
                     tutorial.setVisible(true);
                     gameMenu.setVisible(false);             
+                }
+            })
+
+            doctorWin.setPerspective(800);
+            doctorWin.addListener('click');
+            doctorWin.setVisible(false);
+            doctorWin.on('click', function (event) {
+                if (event.target.name === 'tutorial') {
+                    doctorWin.setVisible(false);
+                    gameMenu.setVisible(true);             
+                }
+            })
+
+            patientWin.setPerspective(800);
+            patientWin.addListener('click');
+            patientWin.setVisible(false);
+            patientWin.on('click', function (event) {
+                if (event.target.name === 'tutorial') {
+                    tutorial.setVisible(false);
+                    gameMenu.setVisible(true);             
                 }
             })
 
@@ -557,7 +589,15 @@
 
         let lastSpeed;
 
+        function averageOfArray (arr) {
+            return arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
+        }
+
         function update(time, delta) {
+            if (heartRateGemid.length === 10) {
+                averageHeartBeat= averageOfArray(heartRateGemid);
+            }
+
             var output = [];
 
             graphics.clear();
@@ -662,7 +702,6 @@
                     this.time.delayedCall(150, destroyEmitterHeart, [], this);
                 }
                 if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
-                    emitter3.start();
                     this.time.delayedCall(150, destroyEmitter, [], this);
                     losePoints ();
                     this.time.delayedCall(150, destroyEmitterHeart, [], this);
@@ -764,6 +803,10 @@
                 arrows.destroy();
                 score += 10;
                 scoreText.setText('Score: ' + score);
+                if (level === 1 && heartRateGemid.length !== 10) {
+                    heartRateGemid.push(bpm);
+                } 
+                console.log(heartRateGemid);
             }
         }
 
@@ -779,10 +822,6 @@
                     timeWhenFunction= time;
                 }
             }
-        }
-
-        function getData () {
-            
         }
 
         function GetCords (direction) {
