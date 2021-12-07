@@ -17,17 +17,33 @@ io.on('connection', (socket) => {
         console.log('user disconnected');
         userList(socket.id);
     });
-    socket.on(`join room`, (room) => {
+
+    socket.on(`room1`, (room) => {
         console.log(room);
-        socket.join("some room");
+        socket.join("room1");
+    })
+
+    socket.on(`room2`, (room) => {
+        console.log(room);
+        socket.join("room2");
     })
 
     socket.on(`arrow`, (arrayInfo) => {
-        io.emit('arrow', arrayInfo);
+        if(socket.rooms.has(`room1`) && socket.rooms.has(socket.id)) {
+            io.to("room1").emit('arrow', arrayInfo);
+        }
+        if(socket.rooms.has(`room2`) && socket.rooms.has(socket.id)) {
+            io.to("room2").emit('arrow', arrayInfo);
+        }
     });
 
     socket.on(`level`, (level) => {
-        io.emit('level', level);
+        if(socket.rooms.has(`room1`) && socket.rooms.has(socket.id)) {
+            io.to("room1").emit('level', level);
+        }
+        if(socket.rooms.has(`room2`) && socket.rooms.has(socket.id)) {
+            io.to("room2").emit('level', level);
+        }
     });
 });
 

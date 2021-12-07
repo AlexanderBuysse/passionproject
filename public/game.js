@@ -179,7 +179,7 @@
             };
         }
 
-        function create() { 
+        function create() {
             textTimeDoctor = this.add.text(200, 200);
             // timer is of screen now
             /*for (var i = 0; i < 1; i++)
@@ -267,11 +267,16 @@
                 if(event.target[0].checked === true) {
                     element.setVisible(true);
                     rooms.setVisible(false);
+                    socket.emit("room1", `room 1`);
+                }
+                if(event.target[1].checked === true) {
+                    element.setVisible(true);
+                    rooms.setVisible(false);
+                    socket.emit("room2", `room 2`);
                 }
             })
             rooms.on('click', function (event) {
                 if (event.target.name === 'leaveRooms') {
-                    console.log(`i want to leave the rooms bruh`);
                     rooms.setVisible(false);
                     gameMenu.setVisible(true);                  
                 }
@@ -295,6 +300,7 @@
                         {
                             element.setVisible(false);
                             home.setVisible(false);
+                            //socket emit room1Function
                         }
                     });
                 } else {
@@ -309,6 +315,7 @@
                         {
                             element.setVisible(false);
                             home.setVisible(false);
+                            //socket emit room1Function
                         }
                     });
                 }
@@ -615,7 +622,6 @@
 
         function checkheartBeat() {
             if((averageHeartBeat-bpm) >= 5) {
-                console.log(`hartslag laag`);
                 if(updateLevel === level ) {
                     if(level !== 2){
                         level--;
