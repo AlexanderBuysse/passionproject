@@ -470,9 +470,8 @@
                     heartSprite.setScale(.5);
                     heartSprite.play('idleheart');
                     lifeGroup.add(heartSprite);
-                    console.log(`gaat hier door`);
 ;                } else {
-                    console.log(xPosHeart+ ((i-7)*50), yPosHeart +10, i);
+                    //console.log(xPosHeart+ ((i-7)*50), yPosHeart +10, i);
                     heartSprite = this.add.sprite(xPosHeart+ ((i-7)*50), yPosHeart+50);
                     heartSprite.setScale(.5);
                     heartSprite.play('idleheart');
@@ -644,35 +643,26 @@
             return arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
         }
 
-        function changeLevel (time) {
-            switch (time) {
-                case 60000:
-                    updateLevel++
-                    level++
-                    socket.emit("level", level);
-                    break;
-                case 120000:
-                    updateLevel++
-                    level++
-                    socket.emit("level", level);
-                    break;
-                case 180000:
-                    updateLevel++
-                    level++
-                    socket.emit("level", level);
-                    break;
-                case 240000:
-                    updateLevel++
-                    level++
-                    socket.emit("level", level);
-                    break;
-                case 300000:
-                    console.log(`the game is over`);
-                    break;
-            
-                default:
-                    console.log(`something went wrong`);
-                    break;
+        function changeLevel (timeF) {
+            if (timeF >= 60000 && level=== 2 ) {
+                console.log(`higher number`);
+                updateLevel++
+                level++
+                socket.emit("level", level);    
+            } else if(timeF >= 120000 && level=== 3) {
+                updateLevel++
+                level++
+                socket.emit("level", level);     
+            } else if (timeF >= 180000 && level=== 4) {
+                updateLevel++
+                level++
+                socket.emit("level", level);
+            } else if (timeF >= 240000 && level=== 4) {
+                updateLevel++
+                level++
+                socket.emit("level", level);
+            } else if (timeF >= 300000 && level=== 5) {
+                console.log(`game over`);
             }
         }
 
@@ -683,7 +673,7 @@
                 heartRateGemid.push(`end`);
                 console.log(averageHeartBeat);
                 level = 2;
-                
+                socket.emit("level", level);
                 updateLevel= 2;
             }
 
@@ -704,8 +694,7 @@
             for (var i = 0; i < timerEvents.length; i++)
             {
                 if(lastSpeed !== gameSpeed) {
-                   timerEvents[i].reset({ delay: 666, loop: true }) 
-                   console.log(`gaat er in`);
+                   timerEvents[i].reset({ delay: 666, loop: true });
                 }
                 lastSpeed = gameSpeed;
                 output.push('Event.progress: ' + timerEvents[i].getProgress().toString().substr(0, 4));
