@@ -454,6 +454,11 @@
                     }
                 }
             });
+            socket.on('level', function (levelFromSocket) {
+                if(doctor) {
+                    level = levelFromSocket;
+                }
+            });
 
             lifeGroup= this.physics.add.group({
                 maxSize: 10,
@@ -529,7 +534,6 @@
                 quantity: 4,
             });
             emitter.stop();
-
             
             emitter2 = particles.createEmitter({
                 x: cordsUp,
@@ -587,25 +591,48 @@
             }
         }
 
+        function levelGameSpeed () {
+            switch (level) {
+                case 1:
+                    gameSpeed= 900;
+                    break;
+                case 2:
+                    gameSpeed= 300;
+                    break;
+                case 3:
+                    gameSpeed=500
+                    break;
+                case 4:
+                    gameSpeed=300
+                    break;
+                case 5:
+                    gameSpeed=100
+                    break;
+                default:
+                    break;
+            }         
+        }
+
         function checkheartBeat() {
             if((averageHeartBeat-bpm) >= 5) {
                 console.log(`hartslag laag`);
                 if(updateLevel === level ) {
                     if(level !== 2){
                         level--;
+                        socket.emit('level', level);
                     } 
                 }
             }
             if((averageHeartBeat-bpm) <= -5) {
-                console.log(`hartslag te hoog`);
                 if(updateLevel === level ) {
                     level++;
+                    socket.emit('level', level);
                 }
             }
             if((averageHeartBeat-bpm) > -5 && (averageHeartBeat-bpm) < 5) {
-                console.log(`tussen gemiddeld`);
                 if(updateLevel !== level ) {
                     level = updateLevel;
+                    socket.emit('level', level);
                 }
             }
         }
@@ -624,12 +651,17 @@
                 heartRateGemid.push(`end`);
                 console.log(averageHeartBeat);
                 level = 2;
+                
                 updateLevel= 2;
             }
 
-            if (level >= 2 ) {
-                checkheartBeat()
+            if (!doctor) {
+                if (level >= 2 ) {
+                    checkheartBeat()
+                }
             }
+            levelGameSpeed();
+            
             //console.log(level);
 
             var output = [];
@@ -666,7 +698,7 @@
                     once= false;
                 }   
             }
-            textGameSpeed.setText('Game speed =' + level);
+            textGameSpeed.setText('level =' + level);
             textBpm.setText('BPM: ' + bpm);
             textTimer.setText('time left: ' + (millisToMinutesAndSeconds(fiveMinTimer-time)));
 

@@ -13,30 +13,21 @@ io.on('connection', (socket) => {
     console.log(`${socket.id} connected`);
     //socket.join("some room");
     userList(`${socket.id}`);
-
     socket.on('disconnect', () => {
         console.log('user disconnected');
         userList(socket.id);
-    });
-    socket.on('chat message', (msg) => {
-            if(socket.rooms.has(`some room`) && socket.rooms.has(socket.id)) {
-                console.log(`user is in room 1`);
-                io.to("some room").emit('chat message', msg);
-            }
     });
     socket.on(`join room`, (room) => {
         console.log(room);
         socket.join("some room");
     })
-    socket.on(`left`, (bool) => {
-        io.emit('left', bool);
-    });
-        socket.on(`right`, (bool) => {
-        io.emit('right', bool);
-    });
 
     socket.on(`arrow`, (arrayInfo) => {
         io.emit('arrow', arrayInfo);
+    });
+
+    socket.on(`level`, (level) => {
+        io.emit('level', level);
     });
 });
 
