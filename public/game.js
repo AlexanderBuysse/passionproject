@@ -594,8 +594,11 @@
         }
 
         function update(time, delta) {
-            if (heartRateGemid.length === 10) {
+            if (heartRateGemid.length === 10 && heartRateGemid[9] !== `end`) {
                 averageHeartBeat= averageOfArray(heartRateGemid);
+                heartRateGemid.pop();
+                heartRateGemid.push(`end`);
+                console.log(averageHeartBeat);
             }
 
             var output = [];
@@ -805,8 +808,7 @@
                 scoreText.setText('Score: ' + score);
                 if (level === 1 && heartRateGemid.length !== 10) {
                     heartRateGemid.push(bpm);
-                } 
-                console.log(heartRateGemid);
+                }
             }
         }
 
