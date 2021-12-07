@@ -181,12 +181,13 @@
 
         function create() { 
             textTimeDoctor = this.add.text(200, 200);
-            for (var i = 0; i < 1; i++)
+            // timer is of screen now
+            /*for (var i = 0; i < 1; i++)
             {
                 timerEvents.push(this.time.addEvent({ delay: 666, loop: true }));
             }
             hsv = Phaser.Display.Color.HSVColorWheel();
-            graphics = this.add.graphics({ x: 500, y: 100 });
+            graphics = this.add.graphics({ x: 500, y: 100 });*/
 
             connect();
         //----------------------------- game loader ----------------------------------------------
@@ -469,8 +470,8 @@
                     heartSprite = this.add.sprite(xPosHeart+ (i*50), yPosHeart);
                     heartSprite.setScale(.5);
                     heartSprite.play('idleheart');
-                    lifeGroup.add(heartSprite);
-;                } else {
+                    lifeGroup.add(heartSprite);                
+                    } else {
                     //console.log(xPosHeart+ ((i-7)*50), yPosHeart +10, i);
                     heartSprite = this.add.sprite(xPosHeart+ ((i-7)*50), yPosHeart+50);
                     heartSprite.setScale(.5);
@@ -644,24 +645,24 @@
         }
 
         function changeLevel (timeF) {
-            if (timeF >= 60000 && level=== 2 ) {
+            if (timeF >= 60000 && updateLevel=== 2 ) {
                 console.log(`higher number`);
                 updateLevel++
                 level++
                 socket.emit("level", level);    
-            } else if(timeF >= 120000 && level=== 3) {
+            } else if(timeF >= 120000 && updateLevel=== 3) {
                 updateLevel++
                 level++
                 socket.emit("level", level);     
-            } else if (timeF >= 180000 && level=== 4) {
+            } else if (timeF >= 180000 && updateLevel=== 4) {
                 updateLevel++
                 level++
                 socket.emit("level", level);
-            } else if (timeF >= 240000 && level=== 4) {
+            } else if (timeF >= 240000 && updateLevel=== 4) {
                 updateLevel++
                 level++
                 socket.emit("level", level);
-            } else if (timeF >= 300000 && level=== 5) {
+            } else if (timeF >= 300000 && updateLevel=== 5) {
                 console.log(`game over`);
             }
         }
@@ -687,24 +688,24 @@
             
             //console.log(level);
 
-            var output = [];
+            // var output = [];
 
-            graphics.clear();
+            // graphics.clear();
 
-            for (var i = 0; i < timerEvents.length; i++)
-            {
-                if(lastSpeed !== gameSpeed) {
-                   timerEvents[i].reset({ delay: 666, loop: true });
-                }
-                lastSpeed = gameSpeed;
-                output.push('Event.progress: ' + timerEvents[i].getProgress().toString().substr(0, 4));
-                //console.log(timerEvents[i]);
+            // for (var i = 0; i < timerEvents.length; i++)
+            // {
+            //     if(lastSpeed !== gameSpeed) {
+            //        timerEvents[i].reset({ delay: 666, loop: true });
+            //     }
+            //     lastSpeed = gameSpeed;
+            //     output.push('Event.progress: ' + timerEvents[i].getProgress().toString().substr(0, 4));
+            //     //console.log(timerEvents[i]);
 
-                graphics.fillStyle(hsv[i * 8].color, 1);
-                graphics.fillRect(0, i * 16, 500 * timerEvents[i].getProgress(), 8);
-            }
+            //     graphics.fillStyle(hsv[i * 8].color, 1);
+            //     graphics.fillRect(0, i * 16, 500 * timerEvents[i].getProgress(), 8);
+            // }
 
-            textTimeDoctor.setText(output);
+            // textTimeDoctor.setText(output);
             //checkHeartDoctor();
         
             if (gameOver && once) {
