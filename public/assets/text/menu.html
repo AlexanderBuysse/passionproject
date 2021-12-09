@@ -1,54 +1,31 @@
 <style>
-    .login {
-        background: #eceeee;
+    .loginMenu {
         border-radius: 6px;
         height: 600px;
         margin: 250px auto 0;
         width: 1000px;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
+        justify-content: center;
         align-items: center;
     }
 
-    input[type="submit"] {
-        width: 240px;
-        height: 35px;
-        display: block;
-        font-family: Arial, "Helvetica", sans-serif;
-        font-size: 16px;
-        font-weight: bold;
-        color: #fff;
+    .submitMenu {
+        font-family: poleno, sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 30px;
+        width: 235px;
+        background-color: #ff3e36;
+        height: 40px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         text-decoration: none;
-        text-transform: uppercase;
-        text-align: center;
-        text-shadow: 1px 1px 0px #37a69b;
-        padding-top: 6px;
         position: relative;
         cursor: pointer;
         border: none;
-        background-color: #37a69b;
-        background-image: linear-gradient(top, #3db0a6, #3111);
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        border-bottom-left-radius: 5px;
-        box-shadow: inset 0px 1px 0px #2ab7ec, 0px 5px 0px 0px #497a78, 0px 10px 5px #999;
-    }
-
-    .shadow {
-        background: #000;
-        border-radius: 12px 12px 4px 4px;
-        box-shadow: 0 0 20px 10px #000;
-        height: 12px;
-        margin: 30px auto;
-        opacity: 0.2;
-        width: 270px;
-    }
-
-    input[type="submit"]:active {
-        top: 3px;
-        box-shadow: inset 0px 1px 0px #2ab7ec, 0px 2px 0px 0px #31524d, 0px 5px 3px #999;
+        margin-top: 10px;
     }
 
     .label {
@@ -66,14 +43,42 @@
         width: 620px;
         justify-content: space-between;
     }
+
+    .title-font {
+        font-family: poleno, sans-serif;
+        font-weight: 600;
+        font-style: normal;
+    }
+
+    .opacity {
+        background-color:rgba(0, 0, 0, 0)
+    }
+
+    .hide {
+        display: none;
+    }
+
+    .imgTitle {
+        margin-bottom: 30px;
+    }
+
+    .mainMenu {
+        padding-top: 105px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
 </style>
 
-<div class="login">
-    <button name="tutorial">to the tutorial</button>
-    <h2>Project Dance Doctor</h2>
-    <form action="get" name="form">
-        <input type="checkbox" id="gamebox" name="game" value="true" checked> Play game
-        <input type="submit" value="play game" name="game">
-    </form>
+<div class="loginMenu opacity">
+    <div class="mainMenu">
+        <img src="./assets/design/title.png" class="imgTitle" alt="title" width="368" height="152">
+        <form action="get" name="form">
+            <input class="hide" type="checkbox" id="gamebox" name="game" value="true" checked>
+            <p class="hide">Play game</p>
+            <input class="submitMenu" type="submit" value="play" name="game">
+        </form>
+        <button class="submitMenu" name="tutorial">tutorial</button>
+    </div>
 </div>
-<div class="shadow"></div>
