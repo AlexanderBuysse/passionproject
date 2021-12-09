@@ -1,80 +1,72 @@
 <style>
     .login {
-        background: #eceeee;
-        border-radius: 6px;
-        height: 600px;
+        background: #1c1917;
+        height: 686px;
         margin: 250px auto 0;
-        width: 1000px;
+        width: 1027px;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
         align-items: center;
+        border: 5px solid #b8baad;
     }
 
-    .submitLogin {
-        width: 240px;
-        height: 35px;
-        display: block;
-        font-family: Arial, "Helvetica", sans-serif;
-        font-size: 16px;
-        font-weight: bold;
-        color: #fff;
-        text-decoration: none;
-        text-transform: uppercase;
-        text-align: center;
-        text-shadow: 1px 1px 0px #37a69b;
-        padding-top: 6px;
-        position: relative;
-        cursor: pointer;
-        border: none;
-        background-color: #37a69b;
-        background-image: linear-gradient(top, #3db0a6, #3111);
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        border-bottom-left-radius: 5px;
-        box-shadow: inset 0px 1px 0px #2ab7ec, 0px 5px 0px 0px #497a78, 0px 10px 5px #999;
+    .moreWidth {
+        width: 315px;
     }
 
-    .shadow {
-        background: #000;
-        border-radius: 12px 12px 4px 4px;
-        box-shadow: 0 0 20px 10px #000;
-        height: 12px;
-        margin: 30px auto;
-        opacity: 0.2;
-        width: 270px;
-    }
-
-    .label {
-        width: 300px;
-        height: 400px;
-        background-color: white;
+    .labels-login {
         display: flex;
-        justify-content: center;
+        flex-direction: row;
+    }
+
+    .label-flex{
+        display: flex;
+        flex-direction: column;
         align-items: center;
-        border-radius: .2rem;
+        font-family: futura-pt, sans-serif;
+        font-weight: 500;
+        font-style: normal;
+        color: #b8baad;
+        font-size: 21px;
     }
 
-    .labels {
+    .box-person {
+        width: 500px;
         display: flex;
-        width: 620px;
         justify-content: space-between;
+    }
+
+    .form-character {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .topmarginLogin {
+        margin-top: 20px;
     }
 </style>
 
 <div class="login">
-    <button name="leaveRoom">Leave waiting room</button>
-    <form action="get" name="form">
-        <div class="labels">
-            <label class="label" for="doctor">
-                <input type="radio" id="doctor" name="choose" value="true" checked> doctor
+    <div class="bordermenu_bottom">
+        <button name="leaveRoom" class="moreWidth submitMenu marginMenu downButton">Leave Waiting Room</button>
+        <h2 class="titleMenu">Waiting Room</h2>
+    </div>
+    <form action="get" name="form" class="rooms form-character">
+        <div class="labels-login box-person">
+            <label for="doctor" class="label-flex">
+                <img src="./assets/design/doctorselect.png" alt="doctor" width="225" height="320">
+                <span>
+                    <span>Select Doctor</span><input type="radio" id="doctor" name="choose" value="true" checked>
+                </span>
             </label>
-            <label for="patient" class="label">
-                <input type="radio" id="patient" name="choose" value="true"> patient
+            <label for="patient" class="label-flex">
+                <img src="./assets/design/patientselect.png" alt="patient" width="225" height="320">
+                <span>
+                    <span>Select Patient</span><input type="radio" id="patient" name="choose" value="true">
+                </span>
             </label>
         </div>
-        <input type="submit" value="lock desission" name="loginButton">
+        <input class="submitButtonInput topmarginLogin" type="submit" value="Lock Desission" name="loginButton">
     </form>
 </div>
-<div class="shadow"></div>

@@ -76,8 +76,8 @@
         const xPosHeart = 60;
         const yPosHeart = 50;
 
-        const xPosTimer = 50;
-        const yPosTimer = 215;
+        const xPosTimer = 76;
+        const yPosTimer = 235;
         
         let cody
 
@@ -118,8 +118,8 @@
 
         let bpm= 0;
         let textBpm;
-        const xPosBpm = 120;
-        const yPosBpm = 380;
+        const xPosBpm = 235;
+        const yPosBpm = 340;
 
         var textTimeDoctor;
         var graphics;
@@ -155,8 +155,16 @@
             this.load.html('patientwin', 'assets/text/patientwin.html');
             this.load.html('doctorwin', 'assets/text/doctorwin.html')
 
-            this.load.image('smallui', 'assets/ui/smallui.png')
-            this.load.image('mediumui', 'assets/ui/mediumui.png')
+            this.load.image('smallui', 'assets/design/smallui1.png')
+            this.load.image('smallui2', 'assets/design/smallui2.png')
+            this.load.image('smallui3', 'assets/design/smallui3.png')
+            this.load.image('mediumui', 'assets/design/bigui.png')
+            this.load.image('line', 'assets/design/line.png')            
+            this.load.image('hart', 'assets/design/hart.png')
+            this.load.image('long', 'assets/design/long.png')
+            this.load.image('lever', 'assets/design/lever.png')
+            this.load.image('hersenen', 'assets/design/hersenen.png')
+            this.load.image('platformBlack', 'assets/design/platform.png')
         }
 
         function connect() {
@@ -254,8 +262,8 @@
             });
 
             this.add.image(210, 80, 'smallui');
-            this.add.image(210, 232, 'smallui');
-            this.add.image(210, 384, 'smallui');
+            this.add.image(210, 232, 'smallui2');
+            this.add.image(210, 384, 'smallui3');
             this.add.image(210, 626, 'mediumui');
             //element.setVisible(false);
             //home.setVisible(false);
@@ -518,10 +526,11 @@
             zone4.body.moves = false;
 
             //this.add.image(400, 800, 'sky');
-            scoreText = this.add.text(xPosTimer+200, yPosTimer+200, 'score: 0', { fontSize: '32px', fill: '#000' }); 
-            textTimer = this.add.text(xPosTimer, yPosTimer, 'time left: 5:00 min', { fontSize: '25px', fill: '#000' })
-            textBpm = this.add.text(xPosBpm, yPosBpm, 'BPM: 0', { fontSize: '25px', fill: '#000' })
-            textGameSpeed = this.add.text(xPosBpm, yPosBpm-50, 'Gamespeed: 1', { fontSize: '25px', fill: '#000' })
+            this.add.image(350, 332, 'line');
+            scoreText = this.add.text(xPosTimer+200, yPosTimer+200, 'score: 0', { fontSize: '32px', fill: '#b8baad', fontFamily: 'futura-pt, sans serif' }); 
+            textTimer = this.add.text(xPosTimer, yPosTimer, '5:00', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
+            textBpm = this.add.text(xPosBpm, yPosBpm, '0', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
+            textGameSpeed = this.add.text(268, 220, '1X', { fontSize: '50px', fill: '#ff3e36', fontFamily: 'poleno,  sans serif' })
             // ----------------------------------------- zone ------------------------------
 
 
@@ -734,9 +743,9 @@
                     once= false;
                 }   
             }
-            textGameSpeed.setText('level =' + level);
-            textBpm.setText('BPM: ' + bpm);
-            textTimer.setText('time left: ' + (millisToMinutesAndSeconds(fiveMinTimer-time)));
+            textGameSpeed.setText(level+ 'X');
+            textBpm.setText(bpm);
+            textTimer.setText(millisToMinutesAndSeconds(fiveMinTimer-time));
 
             // ----------------------------------------- zone controller ------------------------------
             zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
