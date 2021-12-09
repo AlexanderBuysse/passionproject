@@ -36,61 +36,44 @@
         margin-top: 35px;
     }
 
-    .submitRoom {
-        width: 240px;
-        height: 35px;
-        display: block;
-        font-family: Arial, "Helvetica", sans-serif;
-        font-size: 16px;
-        font-weight: bold;
-        color: #fff;
-        text-decoration: none;
-        text-transform: uppercase;
-        text-align: center;
-        text-shadow: 1px 1px 0px #37a69b;
-        padding-top: 6px;
-        position: relative;
-        cursor: pointer;
-        border: none;
-        background-color: #37a69b;
-        background-image: linear-gradient(top, #3db0a6, #3111);
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-        border-bottom-right-radius: 5px;
-        border-bottom-left-radius: 5px;
-        box-shadow: inset 0px 1px 0px #2ab7ec, 0px 5px 0px 0px #497a78, 0px 10px 5px #999;
+    .room-input {
+        font-family: futura-pt, sans-serif;
+        font-weight: 500;
+        font-style: normal;
+        color: #b8baad;
+        font-size: 21px;
     }
 
-    .shadow {
-        background: #000;
-        border-radius: 12px 12px 4px 4px;
-        box-shadow: 0 0 20px 10px #000;
-        height: 12px;
-        margin: 30px auto;
-        opacity: 0.2;
-        width: 270px;
-    }
-
-    .label {
-        width: 300px;
-        height: 400px;
-        background-color: white;
+    .room-div {
+        width: 730px;
+        height: 65px;
         display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: .2rem;
-    }
-
-    .labels {
-        display: flex;
-        width: 620px;
         justify-content: space-between;
+        padding: 0 20px;
+        align-items: center;
+    }
+
+    .borderBottomGrey {
+        border-bottom: 2px solid #b8baad;
+    }
+
+    .submitButtonInput {
+        text-decoration: none;
+        width: 188px;
+        height: 32px;
+        font-family: futura-pt, sans-serif;
+        font-weight: 500;
+        font-style: normal;
+        color: #ff3e36;
+        font-size: 21px;
+        border: solid 2px #ff3e36;
+        background-color:rgba(0, 0, 0, 0);
+        cursor: pointer;
     }
 
     .rooms {
-        display: flex;
-        flex-direction: column;
-    } 
+        margin-top: 65px;
+    }
 </style>
 
 <div class="menu">
@@ -99,22 +82,35 @@
         <h2 class="titleMenu">Join a surgery</h2>
     </div>
     <form action="get" name="form" class="rooms">
-        <label for="room1">
-            <input type="radio" id="room1" name="room" value="true" checked> Room 1
-        </label>
-        <label for="room2">
-            <input type="radio" id="room2" name="room" value="true" checked> Room 2
-        </label>
-        <label for="room3">
-            <input type="radio" id="room3" name="room" value="true" checked> Room 3
-        </label>
-        <label for="room4">
-            <input type="radio" id="room4" name="room" value="true" checked> Room 4
-        </label>
-        <label for="room5">
-            <input type="radio" id="room5" name="room" value="true" checked> Room 5
-        </label>
-        <input type="submit" value="Join operation" name="room1">
+        <div class="room-div borderBottomGrey">
+            <label class="room-input" for="room1">
+                <input class="hide" type="radio" id="room1" name="room" value="true" checked> Waiting room 1
+            </label>
+            <input class="submitButtonInput" type="submit" value="Join" name="room1">     
+        </div>
+        <div  class="room-div borderBottomGrey">
+            <label class="room-input" for="room2">
+                <input class="hide" type="radio" id="room2" name="room" value="true" > Waiting room 2
+            </label>
+            <input class="submitButtonInput" type="submit" value="Join" name="room2">
+        </div>
+        <div  class="room-div borderBottomGrey">
+            <label class="room-input" for="room3">
+                <input class="hide" type="radio" id="room3" name="room" value="true" > Waiting room 3
+            </label>
+            <input class="submitButtonInput" type="submit" value="Join" name="room3">
+        </div>
+        <div  class="room-div borderBottomGrey">
+            <label class="room-input" for="room4">
+                <input class="hide" type="radio" id="room4" name="room" value="true" > Waiting room 4
+            </label>
+            <input class="submitButtonInput" type="submit" value="Join" name="room4">
+        </div>
+        <div  class="room-div">
+            <label class="room-input" for="room5">
+                <input class="hide" type="radio" id="room5" name="room" value="true" > Waiting room 5
+            </label>
+            <input class="submitButtonInput" type="submit" value="Join" name="room5">
+        </div>
     </form>
 </div>
-<div class="shadow"></div>
