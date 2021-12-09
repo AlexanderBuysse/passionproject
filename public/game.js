@@ -74,14 +74,14 @@
         const xPosPlatform = 850
 
         const xPosHeart = 60;
-        const yPosHeart = 50;
+        const yPosHeart = 105;
 
         const xPosTimer = 76;
         const yPosTimer = 235;
         
         let cody
 
-        let life= 10; 
+        let life= 7; 
         let lifeGroup;
 
         let gameOver = false;
@@ -106,7 +106,7 @@
 
         let textHeart;
 
-        const fiveMinTimer = 300000;
+        let fiveMinTimer = 5000;
         let textTimer;
 
         let gameSpeed= 500;
@@ -129,6 +129,11 @@
         let averageHeartBeat;
 
         let room;
+        let indie;
+
+        let handDoctor;
+
+        let tweenDoctor;
         
         
         function preload() {
@@ -173,6 +178,8 @@
             this.load.image('handDoctor', 'assets/design/handDoctor.png')
             this.load.image('headDoctor', 'assets/design/headDoctor.png')
             this.load.image('headPatient', 'assets/design/headPatient.png')
+
+            this.load.image('indie', 'assets/design/indie.png');
         }
 
         function connect() {
@@ -198,14 +205,8 @@
         }
 
         function create() {
+            handDoctor = this.add.image(cordsLeft, -50, 'handDoctor');
             textTimeDoctor = this.add.text(200, 200);
-            // timer is of screen now
-            /*for (var i = 0; i < 1; i++)
-            {
-                timerEvents.push(this.time.addEvent({ delay: 666, loop: true }));
-            }
-            hsv = Phaser.Display.Color.HSVColorWheel();
-            graphics = this.add.graphics({ x: 500, y: 100 });*/
 
             connect();
         //----------------------------- game loader ----------------------------------------------
@@ -273,8 +274,8 @@
             this.add.image(210, 232, 'smallui2');
             this.add.image(210, 384, 'smallui3');
             this.add.image(210, 626, 'mediumui');
-            element.setVisible(false);
-            home.setVisible(false);
+            //element.setVisible(false);
+            //home.setVisible(false);
 
             element.setPerspective(800);
             rooms.setPerspective(800);
@@ -321,6 +322,7 @@
                             element.setVisible(false);
                             home.setVisible(false);
                             //socket emit room1Function
+                            gameStarted= true;
                         }
                     });
                 } else {
@@ -336,6 +338,7 @@
                             element.setVisible(false);
                             home.setVisible(false);
                             //socket emit room1Function
+                            gameStarted= true;
                         }
                     });
                 }
@@ -374,6 +377,13 @@
                 duration: 1000,
                 ease: 'Power3'
             });
+
+            this.tweens.add({
+                targets: handDoctor,
+                x: cordsRight,
+                duration: 250,
+                ease: 'Power3'
+            });
             
 
             cacheJson= this.cache.json.get('emitter');
@@ -393,29 +403,24 @@
                 repeat: 0
             });
 
-            // this.anims.create({
-            //     key: 'idle',
-            //     frames: this.anims.generateFrameNumbers('brawler', { frames: [ 5, 6, 7, 8 ] }),
-            //     frameRate: 8,
-            //     repeat: -1
-            // });
+            this.anims.create({
+                key: 'idle',
+                frames: this.anims.generateFrameNumbers('brawler', { frames: [ 5, 6, 7, 8 ] }),
+                frameRate: 8,
+                repeat: -1
+            });
 
-            // this.anims.create({
-            //     key: 'punch',
-            //     frames: this.anims.generateFrameNumbers('brawler', { frames: [ 15, 16, 17, 18, 17, 15 ] }),
-            //     frameRate: 8,
-            //     repeatDelay: 2000
-            // });
+            this.anims.create({
+                key: 'punch',
+                frames: this.anims.generateFrameNumbers('brawler', { frames: [ 15, 16, 17, 18, 17, 15 ] }),
+                frameRate: 8,
+                repeatDelay: 2000
+            });
 
 
-            // cody = this.add.sprite(220, 580);
-            // cody.setScale(6);
-            // cody.play('idle');
-            if(doctor) {
-                this.add.image(220, 630, 'headDoctor');
-            } else {
-                this.add.image(220,630, 'headPatient');
-            }
+            cody = this.add.sprite(220, 580);
+            cody.setScale(6);
+            cody.play('idle');
 
 
         
@@ -547,13 +552,6 @@
             textGameSpeed = this.add.text(268, 220, '1X', { fontSize: '50px', fill: '#ff3e36', fontFamily: 'poleno,  sans serif' })
             // ----------------------------------------- zone ------------------------------
 
-            const arrowLeft = this.add.image(cordsLeft, yPosZones, 'arrowZone');
-            const arrowRight =this.add.image(cordsRight, yPosZones, 'arrowZone');
-            const arrowUp = this.add.image(cordsUp, yPosZones, 'arrowZone');
-            const arrowDown = this.add.image(cordsDown, yPosZones, 'arrowZone');
-            arrowRight.setRotation(15.7);
-            arrowUp.setRotation(1.55);
-            arrowDown.setRotation(4.72);
             this.add.image(700,400, 'spiral').setDepth(-1);
             this.add.image(620, 720, 'hart').setDepth(1);
             this.add.image(760, 720, 'long').setDepth(1);
@@ -624,6 +622,8 @@
                 quantity: 4,
             });
             emitter4.stop();
+
+            indie= this.add.image(210, 424, 'indie');
         }
 
         function checkHeartDoctor () {
@@ -667,6 +667,7 @@
                     if(level !== 2){
                         level--;
                         socket.emit('level', level);
+                        indie.setPosition(95, 424)
                     } 
                 }
             }
@@ -674,12 +675,14 @@
                 if(updateLevel === level ) {
                     level++;
                     socket.emit('level', level);
+                    indie.setPosition(320, 424);
                 }
             }
             if((averageHeartBeat-bpm) > -5 && (averageHeartBeat-bpm) < 5) {
                 if(updateLevel !== level ) {
                     level = updateLevel;
                     socket.emit('level', level);
+                    indie.setPosition(210, 424);
                 }
             }
         }
@@ -713,6 +716,9 @@
                 console.log(`game over`);
             }
         }
+
+        let onceDoctor = true;
+        let gameStarted = false;
 
         function update(time, delta) {
             if (heartRateGemid.length === 10 && heartRateGemid[9] !== `end`) {
@@ -755,15 +761,42 @@
             // textTimeDoctor.setText(output);
             //checkHeartDoctor();
         
-            if (gameOver && once) {
+            if (gameOver && once&& gameStarted) {
                 alert(`u are dead`);
                 once= false;
             }
 
-            if ((fiveMinTimer-time)<= 0) {
+            if(gameStarted) {
+                if (onceDoctor) {
+                    if(doctor) {
+                        this.add.image(220, 630, 'headDoctor');
+                        const arrowLeft = this.add.image(cordsLeft, 150, 'arrowZone');
+                        const arrowRight =this.add.image(cordsRight, 150, 'arrowZone');
+                        const arrowUp = this.add.image(cordsUp, 150, 'arrowZone');
+                        const arrowDown = this.add.image(cordsDown, 150, 'arrowZone');
+                        arrowRight.setRotation(15.7);
+                        arrowUp.setRotation(1.55);
+                        arrowDown.setRotation(4.72);
+                    } else {
+                        this.add.image(220,630, 'headPatient');
+                        const arrowLeft = this.add.image(cordsLeft, yPosZones, 'arrowZone');
+                        const arrowRight =this.add.image(cordsRight, yPosZones, 'arrowZone');
+                        const arrowUp = this.add.image(cordsUp, yPosZones, 'arrowZone');
+                        const arrowDown = this.add.image(cordsDown, yPosZones, 'arrowZone');
+                        arrowRight.setRotation(15.7);
+                        arrowUp.setRotation(1.55);
+                        arrowDown.setRotation(4.72);
+                    }
+                    fiveMinTimer = 300000;
+                    onceDoctor = false;
+                }
+            }
+
+
+            if ((fiveMinTimer-time)<= 0 && gameStarted) {
                 //console.log(`het spel is gedaan`);
                 gameOver=true;
-                if (gameOver && once) {
+                if (gameOver && once && gameStarted) {
                     alert(`u are dead`);
                     once= false;
                 }   
@@ -956,6 +989,7 @@
                     const arrowInfo = [true, direction];
                     socket.emit('arrow', arrowInfo);
                     timeWhenFunction= time;
+                    handDoctor.setPosition(GetCords(direction),-50);
                 }
             }
         }
