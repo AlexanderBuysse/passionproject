@@ -4,7 +4,7 @@
         width: 1250,
         height: 800,
         parent: 'phaser-example',
-        backgroundColor: '#4488aa',
+        backgroundColor: '#1c1917',
         scale: {
             mode: Phaser.Scale.FIT,
             autoCenter: Phaser.Scale.CENTER_BOTH,
@@ -15,7 +15,7 @@
         physics: {
             default: 'arcade',
             arcade: {
-                debug: true,
+                debug: false,
                 gravity: { y: 400 }
             }
         },
@@ -57,10 +57,10 @@
         let button;
         let doctor;
 
-        const cordsLeft=450+ 200;
+        const cordsLeft=450+ 170;
         const cordsUp=450+ 320;
-        const cordsDown=450+ 440;
-        const cordsRight =450+ 560;
+        const cordsDown=450+ 480;
+        const cordsRight =450+ 630;
 
         let emitter;
         let emitter2;
@@ -68,9 +68,9 @@
         let emitter4;
         let particles;
 
-        const yPosEmitters = 650;
-        const yPosZones = 718;
-        const yPosPlatform = 800;
+        const yPosEmitters = 700;
+        const yPosZones = 630;
+        const yPosPlatform = 760;
         const xPosPlatform = 850
 
         const xPosHeart = 60;
@@ -153,18 +153,26 @@
             this.load.html('menu', 'assets/text/menu.html');
             this.load.html('tutorial', 'assets/text/tutorial.html');
             this.load.html('patientwin', 'assets/text/patientwin.html');
-            this.load.html('doctorwin', 'assets/text/doctorwin.html')
+            this.load.html('doctorwin', 'assets/text/doctorwin.html');
 
-            this.load.image('smallui', 'assets/design/smallui1.png')
-            this.load.image('smallui2', 'assets/design/smallui2.png')
-            this.load.image('smallui3', 'assets/design/smallui3.png')
-            this.load.image('mediumui', 'assets/design/bigui.png')
-            this.load.image('line', 'assets/design/line.png')            
-            this.load.image('hart', 'assets/design/hart.png')
-            this.load.image('long', 'assets/design/long.png')
-            this.load.image('lever', 'assets/design/lever.png')
-            this.load.image('hersenen', 'assets/design/hersenen.png')
-            this.load.image('platformBlack', 'assets/design/platform.png')
+            this.load.image('smallui', 'assets/design/smallui1.png');
+            this.load.image('smallui2', 'assets/design/smallui2.png');
+            this.load.image('smallui3', 'assets/design/smallui3.png');
+            this.load.image('mediumui', 'assets/design/bigui.png');
+            this.load.image('line', 'assets/design/line.png');     
+            this.load.image('hart', 'assets/design/hart.png');
+            this.load.image('long', 'assets/design/long.png');
+            this.load.image('lever', 'assets/design/lever.png');
+            this.load.image('hersenen', 'assets/design/hersenen.png');
+            this.load.image('platformBlack', 'assets/design/platform.png');
+
+            this.load.image('spiral', 'assets/design/spiral.png');
+
+            this.load.image('arrowZone', 'assets/design/arrows.png');
+
+            this.load.image('handDoctor', 'assets/design/handDoctor.png')
+            this.load.image('headDoctor', 'assets/design/headDoctor.png')
+            this.load.image('headPatient', 'assets/design/headPatient.png')
         }
 
         function connect() {
@@ -265,8 +273,8 @@
             this.add.image(210, 232, 'smallui2');
             this.add.image(210, 384, 'smallui3');
             this.add.image(210, 626, 'mediumui');
-            //element.setVisible(false);
-            //home.setVisible(false);
+            element.setVisible(false);
+            home.setVisible(false);
 
             element.setPerspective(800);
             rooms.setPerspective(800);
@@ -385,24 +393,30 @@
                 repeat: 0
             });
 
-            this.anims.create({
-                key: 'idle',
-                frames: this.anims.generateFrameNumbers('brawler', { frames: [ 5, 6, 7, 8 ] }),
-                frameRate: 8,
-                repeat: -1
-            });
+            // this.anims.create({
+            //     key: 'idle',
+            //     frames: this.anims.generateFrameNumbers('brawler', { frames: [ 5, 6, 7, 8 ] }),
+            //     frameRate: 8,
+            //     repeat: -1
+            // });
 
-            this.anims.create({
-                key: 'punch',
-                frames: this.anims.generateFrameNumbers('brawler', { frames: [ 15, 16, 17, 18, 17, 15 ] }),
-                frameRate: 8,
-                repeatDelay: 2000
-            });
+            // this.anims.create({
+            //     key: 'punch',
+            //     frames: this.anims.generateFrameNumbers('brawler', { frames: [ 15, 16, 17, 18, 17, 15 ] }),
+            //     frameRate: 8,
+            //     repeatDelay: 2000
+            // });
 
 
-            cody = this.add.sprite(220, 580);
-            cody.setScale(6);
-            cody.play('idle');
+            // cody = this.add.sprite(220, 580);
+            // cody.setScale(6);
+            // cody.play('idle');
+            if(doctor) {
+                this.add.image(220, 630, 'headDoctor');
+            } else {
+                this.add.image(220,630, 'headPatient');
+            }
+
 
         
             // ----------------------------------------- arrows class ------------------------------
@@ -533,9 +547,20 @@
             textGameSpeed = this.add.text(268, 220, '1X', { fontSize: '50px', fill: '#ff3e36', fontFamily: 'poleno,  sans serif' })
             // ----------------------------------------- zone ------------------------------
 
-
+            const arrowLeft = this.add.image(cordsLeft, yPosZones, 'arrowZone');
+            const arrowRight =this.add.image(cordsRight, yPosZones, 'arrowZone');
+            const arrowUp = this.add.image(cordsUp, yPosZones, 'arrowZone');
+            const arrowDown = this.add.image(cordsDown, yPosZones, 'arrowZone');
+            arrowRight.setRotation(15.7);
+            arrowUp.setRotation(1.55);
+            arrowDown.setRotation(4.72);
+            this.add.image(700,400, 'spiral').setDepth(-1);
+            this.add.image(620, 720, 'hart').setDepth(1);
+            this.add.image(760, 720, 'long').setDepth(1);
+            this.add.image(940, 720, 'hersenen').setDepth(1);
+            this.add.image(1100, 720, 'lever').setDepth(1);
             platforms = this.physics.add.staticGroup()
-            platforms.create(xPosPlatform, yPosPlatform, 'ground').setScale(2).refreshBody()
+            platforms.create(xPosPlatform, yPosPlatform, 'platformBlack').refreshBody()
             this.physics.add.overlap(arrowsClass, zone, removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, zone2,removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, zone3, removeArrowZone, null, this);
@@ -813,6 +838,7 @@
                     this.time.delayedCall(150, destroyEmitterHeart, [], this);
                 }
                 if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
+                    emitter3.start();
                     this.time.delayedCall(150, destroyEmitter, [], this);
                     losePoints ();
                     this.time.delayedCall(150, destroyEmitterHeart, [], this);
