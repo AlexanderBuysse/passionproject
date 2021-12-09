@@ -1,14 +1,39 @@
 <style>
-    .login {
-        background: #eceeee;
-        border-radius: 6px;
-        height: 600px;
+    .menu {
+        background: #1c1917;
+        height: 686px;
         margin: 250px auto 0;
-        width: 1000px;
+        width: 1027px;
         display: flex;
         flex-direction: column;
-        justify-content: space-around;
         align-items: center;
+        border: 5px solid #b8baad;
+    }
+
+    .titleMenu {
+        font-family: poleno, sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: 50px;
+        color: #b8baad;
+    }
+
+    .bordermenu_bottom {
+        width: 875px;
+        height: 150px;
+        border-bottom: 5px solid #b8baad;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .downButton {
+        margin-bottom: -30px;
+        margin-top: 35px;
+    }
+
+    .marginMenu {
+        margin-top: 35px;
     }
 
     .submitRoom {
@@ -68,9 +93,11 @@
     } 
 </style>
 
-<div class="login">
-    <button name="leaveRooms">Back to menu</button>
-    <h2>Join a room</h2>
+<div class="menu">
+    <div class="bordermenu_bottom">
+        <button name="leaveRooms" class="submitMenu marginMenu downButton">Back to menu</button>
+        <h2 class="titleMenu">Join a surgery</h2>
+    </div>
     <form action="get" name="form" class="rooms">
         <label for="room1">
             <input type="radio" id="room1" name="room" value="true" checked> Room 1
@@ -86,21 +113,6 @@
         </label>
         <label for="room5">
             <input type="radio" id="room5" name="room" value="true" checked> Room 5
-        </label>
-        <label for="room6">
-            <input type="radio" id="room6" name="room" value="true" checked> Room 6
-        </label>
-        <label for="room7">
-            <input type="radio" id="room7" name="room" value="true" checked> Room 7
-        </label>
-        <label for="room8">
-            <input type="radio" id="room8" name="room" value="true" checked> Room 8
-        </label>
-        <label for="room9">
-            <input type="radio" id="room9" name="room" value="true" checked> Room 9
-        </label>
-        <label for="room10">
-            <input type="radio" id="room10" name="room" value="true" checked> Room 10
         </label>
         <input type="submit" value="Join operation" name="room1">
     </form>
