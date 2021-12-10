@@ -13,12 +13,23 @@ app.use(express.static('public'));
 
 io.on('connection', (socket) => {
     console.log(`${socket.id} connected`);
-    //socket.join("some room");
     userList(`${socket.id}`);
     socket.on('disconnect', () => {
         console.log('user disconnected');
+        rooms = [];
         userList(socket.id);
     });
+
+    socket.on(`getRoom`, (bol) => {
+        console.log(rooms[0]);
+        const object = {
+            room: rooms[0],
+            addCounter:false
+        };
+        if (rooms[0] !== undefined) {
+            io.emit(`rooms`, object);
+        }
+    })
 
     socket.on(`room`, (room) => {
         console.log(room);
@@ -27,8 +38,15 @@ io.on('connection', (socket) => {
         if(!rooms.includes(room)) {
             rooms.push(room);
         }
-        if(!rooms.includes(room)) {
-            io.emit(`rooms`, rooms);
+
+        const object = {
+            room :roomSelected,
+            socketId: socket.id,
+            addCounter: true
+        };
+
+        if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+            io.emit(`rooms`, object);
         }
     })
 

@@ -228,7 +228,6 @@
             gameMenu.setPerspective(800);
             gameMenu.addListener('submit');
             gameMenu.addListener('click');
-            console.log(gameMenu.getChildByID(`ptag`));
             gameMenu.on('submit', function (event) {
                 event.preventDefault();
                 if(event.target[0].checked === true) {
@@ -286,7 +285,6 @@
             rooms.addListener('submit');
             rooms.on('submit', function (event) {
                 event.preventDefault();
-                console.log(event.target);
                 // for (let i = 0; i < 5; i++) {
                 //     if(event.target[i].checked === true) {
                 //     element.setVisible(true);
@@ -298,7 +296,7 @@
             rooms.on('click', function (event) {
                 if (event.target.name === 'leaveRooms') {
                     rooms.setVisible(false);
-                    gameMenu.setVisible(true);       
+                    gameMenu.setVisible(true);  
                 }
                 if (event.target.name === 'room1') {
                     element.setVisible(true);
@@ -534,8 +532,21 @@
                     level = levelFromSocket;
                 }
             });
-            socket.on(`rooms`, function (rooms) {
-                console.log(rooms);
+            socket.on(`rooms`, function (roomsObject) {
+                console.log(roomsObject);
+                //hier komterug
+                const textRooms = rooms.getChildByID(`${roomsObject.room}Counter`).textContent;
+                if(roomsObject.addCounter) {
+                    if (textRooms === `1/2`){
+                    rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `2/2`;
+                    } else if (textRooms === `0/2`) {
+                        rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `1/2`;
+                    }
+                    const array = roomsObject.room.split(``);
+                    element.getChildByID(`roomNumber`).textContent = array[4];
+                } else {
+                    rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `1/2`;
+                }
             });
 
             lifeGroup= this.physics.add.group({
@@ -755,8 +766,14 @@
 
         let onceDoctor = true;
         let gameStarted = false;
+        let onceRoom = true;
 
         function update(time, delta) {
+            if (onceRoom) {
+                socket.emit(`getRoom`, true);
+                onceRoom = false;
+            }
+
             if (doctorWin && gameStarted) {
                 doctorWinHtml.setVisible(true);
                 home.setVisible(true);
