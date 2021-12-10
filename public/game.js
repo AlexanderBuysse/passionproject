@@ -99,8 +99,6 @@
         let rooms;
         let gameMenu;
         let tutorial;
-        let doctorWin;
-        let patientWin;
 
         let gameStart = false;
 
@@ -134,6 +132,10 @@
         let handDoctor;
 
         let tweenDoctor;
+        let doctorWin = false;
+        let patientWin = false;        
+        let doctorWinHtml;
+        let patientWinHtml;
         
         
         function preload() {
@@ -220,12 +222,13 @@
             gameMenu = this.add.dom(625, 800).createFromCache('menu');
             gameMenu.setVisible(false);
 
-            doctorWin = this.add.dom(625, 800).createFromCache('doctorwin');
-            patientWin = this.add.dom(625, 800).createFromCache('patientwin');
+            doctorWinHtml= this.add.dom(625, 800).createFromCache('doctorwin');
+            patientWinHtml = this.add.dom(625, 800).createFromCache('patientwin');
 
             gameMenu.setPerspective(800);
             gameMenu.addListener('submit');
             gameMenu.addListener('click');
+            console.log(gameMenu.getChildByID(`ptag`));
             gameMenu.on('submit', function (event) {
                 event.preventDefault();
                 if(event.target[0].checked === true) {
@@ -240,22 +243,22 @@
                 }
             })
 
-            doctorWin.setPerspective(800);
-            doctorWin.addListener('click');
-            doctorWin.setVisible(false);
-            doctorWin.on('click', function (event) {
+            doctorWinHtml.setPerspective(800);
+            doctorWinHtml.addListener('click');
+            doctorWinHtml.setVisible(false);
+            doctorWinHtml.on('click', function (event) {
                 if (event.target.name === 'tutorial') {
-                    doctorWin.setVisible(false);
+                    doctorWinHtml.setVisible(false);
                     gameMenu.setVisible(true);             
                 }
             })
 
-            patientWin.setPerspective(800);
-            patientWin.addListener('click');
-            patientWin.setVisible(false);
-            patientWin.on('click', function (event) {
+            patientWinHtml.setPerspective(800);
+            patientWinHtml.addListener('click');
+            patientWinHtml.setVisible(false);
+            patientWinHtml.on('click', function (event) {
                 if (event.target.name === 'tutorial') {
-                    tutorial.setVisible(false);
+                    patientWinHtml.setVisible(false);
                     gameMenu.setVisible(true);             
                 }
             })
@@ -283,23 +286,44 @@
             rooms.addListener('submit');
             rooms.on('submit', function (event) {
                 event.preventDefault();
-                for (let i = 0; i < 10; i++) {
-                    if(event.target[i].checked === true) {
-                    element.setVisible(true);
-                    rooms.setVisible(false);
-                    socket.emit("room", `room${i+1}`);
-                    }
-                }
+                console.log(event.target);
+                // for (let i = 0; i < 5; i++) {
+                //     if(event.target[i].checked === true) {
+                //     element.setVisible(true);
+                //     rooms.setVisible(false);
+                //     socket.emit("room", `room${i+1}`);
+                //     }
+                // }
             })
             rooms.on('click', function (event) {
                 if (event.target.name === 'leaveRooms') {
                     rooms.setVisible(false);
                     gameMenu.setVisible(true);       
                 }
-                if (event.target.name === 'newRoom') {
-                    //rooms.createElement(`p`, `red`, `hello there`);
-                    //random code wat er voor zorgt dat er extra ruimtes zijn
-                    
+                if (event.target.name === 'room1') {
+                    element.setVisible(true);
+                    rooms.setVisible(false);
+                    socket.emit("room", `room1`);
+                }
+                if (event.target.name === 'room2') {
+                    element.setVisible(true);
+                    rooms.setVisible(false);
+                    socket.emit("room", `room2`);
+                }
+                if (event.target.name === 'room3') {
+                    element.setVisible(true);
+                    rooms.setVisible(false);
+                    socket.emit("room", `room3`);
+                }
+                if (event.target.name === 'room4') {
+                    element.setVisible(true);
+                    rooms.setVisible(false);
+                    socket.emit("room", `room4`);
+                }
+                if (event.target.name === 'room5') {
+                    element.setVisible(true);
+                    rooms.setVisible(false);
+                    socket.emit("room", `room5`);
                 }
             });
 
@@ -373,6 +397,18 @@
             });            
             this.tweens.add({
                 targets: tutorial,
+                y: 300,
+                duration: 1000,
+                ease: 'Power3'
+            });
+            this.tweens.add({
+                targets: doctorWinHtml,
+                y: 300,
+                duration: 1000,
+                ease: 'Power3'
+            });
+            this.tweens.add({
+                targets: patientWinHtml,
                 y: 300,
                 duration: 1000,
                 ease: 'Power3'
@@ -721,6 +757,18 @@
         let gameStarted = false;
 
         function update(time, delta) {
+            if (doctorWin && gameStarted) {
+                doctorWinHtml.setVisible(true);
+                home.setVisible(true);
+                gameStarted= false;
+            }
+
+            if(patientWin && gameStarted) {
+                patientWinHtml.setVisible(true);
+                home.setVisible(true);
+                gameStarted= false;
+            }
+
             if (heartRateGemid.length === 10 && heartRateGemid[9] !== `end`) {
                 averageHeartBeat= averageOfArray(heartRateGemid);
                 heartRateGemid.pop();
@@ -762,8 +810,8 @@
             //checkHeartDoctor();
         
             if (gameOver && once&& gameStarted) {
-                alert(`u are dead`);
                 once= false;
+                doctorWin= true;
             }
 
             if(gameStarted) {
@@ -797,8 +845,8 @@
                 //console.log(`het spel is gedaan`);
                 gameOver=true;
                 if (gameOver && once && gameStarted) {
-                    alert(`u are dead`);
                     once= false;
+                    patientWin = true;
                 }   
             }
             textGameSpeed.setText(level+ 'X');
@@ -857,7 +905,7 @@
                 zone4.setName(`not pressed yet`);
             }
 
-            if (!doctor) {
+            if (!doctor && gameStarted) {
                 if (zone.body.touching.none && this.input.keyboard.checkDown(cursors.left, 500)) {
                     emitter.start();
                     this.time.delayedCall(150, destroyEmitter, [], this);

@@ -74,6 +74,17 @@
     .rooms {
         margin-top: 65px;
     }
+
+    .roomsIndie {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .room-inputIndie {
+        margin-right: 10px;
+    }
 </style>
 
 <div class="menu">
@@ -86,31 +97,46 @@
             <label class="room-input" for="room1">
                 <input class="hide" type="radio" id="room1" name="room" value="true" checked> Waiting room 1
             </label>
-            <input class="submitButtonInput" type="submit" value="Join" name="room1">     
+            <div class="roomsIndie">
+                <p class="room-input room-inputIndie">0/2</p>
+                <input class="submitButtonInput" type="submit" value="Join" name="room1">
+            </div>        
         </div>
         <div  class="room-div borderBottomGrey">
             <label class="room-input" for="room2">
                 <input class="hide" type="radio" id="room2" name="room" value="true" > Waiting room 2
             </label>
-            <input class="submitButtonInput" type="submit" value="Join" name="room2">
+            <div class="roomsIndie">
+                <p class="room-input room-inputIndie">0/2</p>
+                <input class="submitButtonInput" type="submit" value="Join" name="room2">
+            </div>
         </div>
         <div  class="room-div borderBottomGrey">
             <label class="room-input" for="room3">
                 <input class="hide" type="radio" id="room3" name="room" value="true" > Waiting room 3
             </label>
-            <input class="submitButtonInput" type="submit" value="Join" name="room3">
+            <div class="roomsIndie">
+                <p class="room-input room-inputIndie">0/2</p>
+                <input class="submitButtonInput" type="submit" value="Join" name="room3">
+            </div>
         </div>
         <div  class="room-div borderBottomGrey">
             <label class="room-input" for="room4">
                 <input class="hide" type="radio" id="room4" name="room" value="true" > Waiting room 4
             </label>
-            <input class="submitButtonInput" type="submit" value="Join" name="room4">
+            <div class="roomsIndie">
+                <p class="room-input room-inputIndie">0/2</p>
+                <input class="submitButtonInput" type="submit" value="Join" name="room4">
+            </div>        
         </div>
         <div  class="room-div">
             <label class="room-input" for="room5">
                 <input class="hide" type="radio" id="room5" name="room" value="true" > Waiting room 5
             </label>
-            <input class="submitButtonInput" type="submit" value="Join" name="room5">
+            <div class="roomsIndie">
+                <p class="room-input room-inputIndie">0/2</p>
+                <input class="submitButtonInput" type="submit" value="Join" name="room5">
+            </div>        
         </div>
     </form>
 </div>
