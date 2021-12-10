@@ -723,16 +723,22 @@
                     gameSpeed= 900;
                     break;
                 case 2:
-                    gameSpeed= 300;
+                    gameSpeed= 800;
                     break;
                 case 3:
                     gameSpeed=500
                     break;
                 case 4:
-                    gameSpeed=300
+                    gameSpeed=400
                     break;
                 case 5:
-                    gameSpeed=100
+                    gameSpeed=300
+                    break;
+                case 6:
+                    gameSpeed=200
+                    break;
+                case 7:
+                    gameSpeed=150
                     break;
                 default:
                     break;
@@ -803,7 +809,7 @@
 
         function update(time, delta) {
             if(gameStartReally && onceStartGame) {
-                fiveMinTimer = 10000;
+                fiveMinTimer = 300000;
                 timeStart= time;
                 onceStartGame = false;
             }
