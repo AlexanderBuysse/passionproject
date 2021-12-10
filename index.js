@@ -73,6 +73,19 @@ io.on('connection', (socket) => {
             io.to(roomSelected).emit('arrow', arrayInfo);
         }
     });
+
+    socket.on(`gameOver`, (bool)=>{
+        console.log(bool);
+        if(bool) {
+            if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+                io.to(roomSelected).emit('gameWinner', `patient`);
+            }
+        } else {
+            if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+                io.to(roomSelected).emit('gameWinner', `doctor`);
+            }
+        }
+    });
 });
 
 // adds and deletes users of id

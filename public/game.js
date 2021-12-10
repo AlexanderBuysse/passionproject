@@ -141,6 +141,8 @@
         let playerTwo= false;
 
         let gameStartReally = false;
+        let patientDied= false;
+        let doctorDied= false;
         
         
         function preload() {
@@ -568,6 +570,15 @@
                     gameStartReally = true;
                 }
             })
+            socket.on(`gameWinner`, function (string) {
+                console.log(string);
+                if (string === `doctor`) {
+                    doctorWin=true;
+                } 
+                if (string === `patient`) {
+                    patientWin=true;
+                }
+            })
 
             lifeGroup= this.physics.add.group({
                 maxSize: 10,
@@ -787,8 +798,16 @@
         let onceDoctor = true;
         let gameStarted = false;
         let onceRoom = true;
+        let onceStartGame = true;
+        let timeStart;
 
         function update(time, delta) {
+            if(gameStartReally && onceStartGame) {
+                fiveMinTimer = 10000;
+                timeStart= time;
+                onceStartGame = false;
+            }
+
             if (onceRoom) {
                 socket.emit(`getRoom`, true);
                 onceRoom = false;
@@ -823,35 +842,16 @@
                 changeLevel(time);
             }
             levelGameSpeed();
-            
-            //console.log(level);
 
-            // var output = [];
-
-            // graphics.clear();
-
-            // for (var i = 0; i < timerEvents.length; i++)
-            // {
-            //     if(lastSpeed !== gameSpeed) {
-            //        timerEvents[i].reset({ delay: 666, loop: true });
-            //     }
-            //     lastSpeed = gameSpeed;
-            //     output.push('Event.progress: ' + timerEvents[i].getProgress().toString().substr(0, 4));
-            //     //console.log(timerEvents[i]);
-
-            //     graphics.fillStyle(hsv[i * 8].color, 1);
-            //     graphics.fillRect(0, i * 16, 500 * timerEvents[i].getProgress(), 8);
-            // }
-
-            // textTimeDoctor.setText(output);
-            //checkHeartDoctor();
-        
-            //console.log(gameStartReally);
-            if (gameOver && once&& gameStartReally) {
-                console.log(`dit zou moeten werken`);
+            if (gameOver && once && gameStartReally &&patientDied) {
                 once= false;
-                doctorWin= true;
+                socket.emit(`gameOver`, false);
             }
+            
+            if (gameOver && once && gameStartReally&&doctorDied) {
+                once= false;
+                socket.emit(`gameOver`, true);
+            }  
 
             if(gameStarted) {
                 if (onceDoctor) {
@@ -874,23 +874,17 @@
                         arrowUp.setRotation(1.55);
                         arrowDown.setRotation(4.72);
                     }
-                    fiveMinTimer = 300000;
                     onceDoctor = false;
                 }
             }
 
-
-            if ((fiveMinTimer-time)<= 0 && gameStartReally) {
+            if ((fiveMinTimer-(time- timeStart))<= 0 && gameStartReally) {
                 gameOver=true;
-                console.log(`dit gebeurt`);
+                doctorDied= true;
             }
-            if (gameOver && once && gameStartReally) {
-                once= false;
-                patientWin = true;
-            }   
             textGameSpeed.setText(level+ 'X');
             textBpm.setText(bpm);
-            textTimer.setText(millisToMinutesAndSeconds(fiveMinTimer-time));
+            textTimer.setText(millisToMinutesAndSeconds(fiveMinTimer-(time- timeStart)));
 
             // ----------------------------------------- zone controller ------------------------------
             zone.body.debugBodyColor = zone.body.touching.none ? 0x00ffff : 0xffff00;
@@ -944,7 +938,7 @@
                 zone4.setName(`not pressed yet`);
             }
 
-            if (!doctor && gameStarted) {
+            if (!doctor && gameStarted &&gameStartReally) {
                 if (zone.body.touching.none && this.input.keyboard.checkDown(cursors.left, 500)) {
                     emitter.start();
                     this.time.delayedCall(150, destroyEmitter, [], this);
@@ -1135,6 +1129,7 @@
                 } else {
                     console.log(`no lifes left`);
                     gameOver = true;
+                    patientDied=true;
                 }
             }
         }
