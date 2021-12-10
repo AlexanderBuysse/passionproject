@@ -136,6 +136,11 @@
         let patientWin = false;        
         let doctorWinHtml;
         let patientWinHtml;
+
+        let playerOne= false;
+        let playerTwo= false;
+
+        let gameStartReally = false;
         
         
         function preload() {
@@ -344,7 +349,8 @@
                             element.setVisible(false);
                             home.setVisible(false);
                             //socket emit room1Function
-                            gameStarted= true;
+                            socket.emit('playerOne', true);
+                            gameStarted=true;
                         }
                     });
                 } else {
@@ -360,7 +366,8 @@
                             element.setVisible(false);
                             home.setVisible(false);
                             //socket emit room1Function
-                            gameStarted= true;
+                            socket.emit('playerTwo', true);
+                            gameStarted=true;
                         }
                     });
                 }
@@ -538,7 +545,7 @@
                 const textRooms = rooms.getChildByID(`${roomsObject.room}Counter`).textContent;
                 if(roomsObject.addCounter) {
                     if (textRooms === `1/2`){
-                    rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `2/2`;
+                        rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `2/2`;
                     } else if (textRooms === `0/2`) {
                         rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `1/2`;
                     }
@@ -548,6 +555,19 @@
                     rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `1/2`;
                 }
             });
+
+            socket.on(`playerOneTrue` , function (bool) {
+                playerOne= true;
+                if(playerOne&&playerTwo) {
+                    gameStartReally = true;
+                }
+            })
+            socket.on(`playerTwoTrue` , function (bool) {
+                playerTwo= true;
+                if(playerOne&&playerTwo) {
+                    gameStartReally = true;
+                }
+            })
 
             lifeGroup= this.physics.add.group({
                 maxSize: 10,
@@ -774,13 +794,13 @@
                 onceRoom = false;
             }
 
-            if (doctorWin && gameStarted) {
+            if (doctorWin && gameStartReally) {
                 doctorWinHtml.setVisible(true);
                 home.setVisible(true);
                 gameStarted= false;
             }
 
-            if(patientWin && gameStarted) {
+            if(patientWin && gameStartReally) {
                 patientWinHtml.setVisible(true);
                 home.setVisible(true);
                 gameStarted= false;
@@ -826,7 +846,9 @@
             // textTimeDoctor.setText(output);
             //checkHeartDoctor();
         
-            if (gameOver && once&& gameStarted) {
+            //console.log(gameStartReally);
+            if (gameOver && once&& gameStartReally) {
+                console.log(`dit zou moeten werken`);
                 once= false;
                 doctorWin= true;
             }
@@ -858,14 +880,14 @@
             }
 
 
-            if ((fiveMinTimer-time)<= 0 && gameStarted) {
-                //console.log(`het spel is gedaan`);
+            if ((fiveMinTimer-time)<= 0 && gameStartReally) {
                 gameOver=true;
-                if (gameOver && once && gameStarted) {
-                    once= false;
-                    patientWin = true;
-                }   
+                console.log(`dit gebeurt`);
             }
+            if (gameOver && once && gameStartReally) {
+                once= false;
+                patientWin = true;
+            }   
             textGameSpeed.setText(level+ 'X');
             textBpm.setText(bpm);
             textTimer.setText(millisToMinutesAndSeconds(fiveMinTimer-time));
@@ -1111,6 +1133,7 @@
                     emitterExplosion.start();
                 
                 } else {
+                    console.log(`no lifes left`);
                     gameOver = true;
                 }
             }

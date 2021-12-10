@@ -31,6 +31,18 @@ io.on('connection', (socket) => {
         }
     })
 
+    socket.on(`playerOne`, (bool)=> {
+        if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+            io.to(roomSelected).emit('playerOneTrue', true);
+        }
+    })
+
+    socket.on(`playerTwo`, (bool)=> {
+        if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+            io.to(roomSelected).emit('playerTwoTrue', true);
+        }
+    })
+
     socket.on(`room`, (room) => {
         console.log(room);
         socket.join(room);
