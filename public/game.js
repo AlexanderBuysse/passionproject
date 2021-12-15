@@ -1038,6 +1038,7 @@
         function removeArrow (arrows, platforms) {
             arrows.destroy();
             losePoints(arrows.name);
+            activateOnlyWhenSocketHasBeenSend=true;
             //this.time.delayedCall(150, destroyEmitterHeart, [], this);
             if(!doctor) {            
                 switch (arrows.name) {
