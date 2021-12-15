@@ -108,7 +108,7 @@
         let textTimer;
 
         let gameSpeed= 500;
-        let level = 1;
+        let level = 5;
         let heartRateGemid = [];
         let arrowsCaught = 0;
 
@@ -516,6 +516,13 @@
                     if(level===3) {
                         this.rotation = this.rotation+.1;
                     }
+                    if(level === 4){
+                        this.alpha= this.alpha-.01; 
+                    }
+                    if(level === 5) {
+                        this.alpha= this.alpha-.01; 
+                        this.rotation = this.rotation+.1;
+                    }
 
                     if (this.y > 1000)
                     {
@@ -545,7 +552,16 @@
                 if(!doctor) {
                     if (arrayInfo[0]) {
                         SendArrow(arrayInfo[1], 0, false);
-                        handDoctor.setPosition(GetCords(arrayInfo[1]),-50);
+                        //handDoctor.setPosition(GetCords(arrayInfo[1]),-50);
+                        scene.tweens.add({
+                            targets: handDoctor,
+                            x: GetCords(arrayInfo[1]),
+                            duration: 150,
+                            ease: 'Elastic',
+                            onComplete : function () {
+                                // here comes different animaitons for the combo meter
+                            }
+                        });
                     }
                 }
             });
@@ -762,10 +778,10 @@
                     gameSpeed=500;
                     break;
                 case 4:
-                    gameSpeed=400;
+                    gameSpeed=500;
                     break;
                 case 5:
-                    gameSpeed=300;
+                    gameSpeed=600;
                     break;
                 case 6:
                     gameSpeed=200;
@@ -1186,7 +1202,16 @@
                     const arrowInfo = [true, direction];
                     socket.emit('arrow', arrowInfo);
                     timeWhenFunction= time;
-                    handDoctor.setPosition(GetCords(direction),-50);
+                    //handDoctor.setPosition(GetCords(direction),-50);
+                    scene.tweens.add({
+                        targets: handDoctor,
+                        x: GetCords(direction),
+                        duration: 150,
+                        ease: 'Elastic',
+                        onComplete : function () {
+                            // here comes different animaitons for the combo meter
+                        }
+                    });
                 }
             }
         }
