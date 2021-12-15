@@ -108,7 +108,7 @@
         let textTimer;
 
         let gameSpeed= 500;
-        let level =1;
+        let level = 1;
         let heartRateGemid = [];
         let arrowsCaught = 0;
 
@@ -284,7 +284,8 @@
             this.add.image(210, 232, 'smallui2');
             this.add.image(210, 384, 'smallui3');
             this.add.image(210, 626, 'mediumui');
-            //element.setVisible(false);
+            element.setVisible(false);
+            rooms.setVisible(true);
             //home.setVisible(false);
 
             element.setPerspective(800);
@@ -504,6 +505,10 @@
                 update: function (time, delta)
                 {
                     this.y += this.speed * delta *.5;
+
+                    if(level===3) {
+                        this.rotation = this.rotation+.1;
+                    }
 
                     if (this.y > 1000)
                     {
@@ -1190,7 +1195,7 @@
         }
 
         function losePoints (direction) {
-            score -= 10;
+            score = 0;
             scoreText.setText('Score: ' + score);
                             
             if (cody.anims.getName() === 'idle') {
