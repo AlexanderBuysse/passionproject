@@ -35,13 +35,19 @@ io.on('connection', (socket) => {
         if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
             io.to(roomSelected).emit('playerOneTrue', true);
         }
-    })
+    });
 
     socket.on(`playerTwo`, (bool)=> {
         if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
             io.to(roomSelected).emit('playerTwoTrue', true);
         }
-    })
+    });
+
+    socket.on(`playerMissed`, (direction)=> {
+        if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+            io.to(roomSelected).emit('playerMissed', direction);
+        }
+    });
 
     socket.on(`room`, (room) => {
         console.log(room);

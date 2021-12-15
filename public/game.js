@@ -15,7 +15,7 @@
         physics: {
             default: 'arcade',
             arcade: {
-                debug: false,
+                debug: true,
                 gravity: { y: 400 }
             }
         },
@@ -189,6 +189,7 @@
             this.load.image('headPatient', 'assets/design/headPatient.png')
 
             this.load.image('indie', 'assets/design/indie.png');
+            this.load.image('spuit', 'assets/design/spuit1.png');
         }
 
         function connect() {
@@ -476,7 +477,7 @@
 
                 function Arrow (scene)
                 {
-                    Phaser.GameObjects.Image.call(this, scene, 0, 0, 'arrow');
+                    Phaser.GameObjects.Image.call(this, scene, 0, 0, 'spuit');
 
                     this.speed = Phaser.Math.GetSpeed(600, 1);
                     //this.speed = .5;
@@ -579,9 +580,21 @@
                     patientWin=true;
                 }
             })
+            socket.on(`playerMissed`, function (direction) {
+                if(doctor) {
+                    const missedEmitter = GetEmitter(direction);
+                    missedEmitter.start();
+                    life = life -1; 
+                    lifeGroup.children.entries[life].play('deathheart');
+                    emitterExplosion = bloodexplosion.createEmitter(cacheJson);
+                    emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y)
+                    emitterExplosion.start();
+                    activateOnlyWhenSocketHasBeenSend=true;
+                }
+            });
 
             lifeGroup= this.physics.add.group({
-                maxSize: 10,
+                maxSize: 7,
                 allowGravity: false
             })
             for (let i = 0; i < life; i++) {
@@ -726,19 +739,19 @@
                     gameSpeed= 800;
                     break;
                 case 3:
-                    gameSpeed=500
+                    gameSpeed=500;
                     break;
                 case 4:
-                    gameSpeed=400
+                    gameSpeed=400;
                     break;
                 case 5:
-                    gameSpeed=300
+                    gameSpeed=300;
                     break;
                 case 6:
-                    gameSpeed=200
+                    gameSpeed=200;
                     break;
                 case 7:
-                    gameSpeed=150
+                    gameSpeed=150;
                     break;
                 default:
                     break;
@@ -806,8 +819,15 @@
         let onceRoom = true;
         let onceStartGame = true;
         let timeStart;
+        let activateOnlyWhenSocketHasBeenSend = false;
 
         function update(time, delta) {
+            if (activateOnlyWhenSocketHasBeenSend) {
+                activateOnlyWhenSocketHasBeenSend = false;
+                this.time.delayedCall(150, destroyEmitter, [], this);
+                this.time.delayedCall(150, destroyEmitterHeart, [], this);             
+            }
+
             if(gameStartReally && onceStartGame) {
                 fiveMinTimer = 300000;
                 timeStart= time;
@@ -900,7 +920,7 @@
                     if (cursors.left.getDuration() <= 500) {
                         arrowInZone(1);
                     } else {
-                        losePoints ();
+                        losePoints();
                         this.time.delayedCall(150, destroyEmitterHeart, [], this);
                     }
                 }
@@ -948,25 +968,25 @@
                 if (zone.body.touching.none && this.input.keyboard.checkDown(cursors.left, 500)) {
                     emitter.start();
                     this.time.delayedCall(150, destroyEmitter, [], this);
-                    losePoints ();
+                    losePoints (`left`);
                     this.time.delayedCall(150, destroyEmitterHeart, [], this);
                 }
                 if (zone2.body.touching.none && this.input.keyboard.checkDown(cursors.up, 500)) {
                     emitter2.start();
                     this.time.delayedCall(150, destroyEmitter, [], this);
-                    losePoints ();
+                    losePoints (`up`);
                     this.time.delayedCall(150, destroyEmitterHeart, [], this);
                 }
                 if (zone3.body.touching.none && this.input.keyboard.checkDown(cursors.down, 500)) {
                     emitter3.start();
                     this.time.delayedCall(150, destroyEmitter, [], this);
-                    losePoints ();
+                    losePoints (`down`);
                     this.time.delayedCall(150, destroyEmitterHeart, [], this);
                 }
                 if (zone4.body.touching.none && this.input.keyboard.checkDown(cursors.right, 500)) {
                     emitter4.start();
                     this.time.delayedCall(150, destroyEmitter, [], this);
-                    losePoints ();
+                    losePoints (`right`);
                     this.time.delayedCall(150, destroyEmitterHeart, [], this);
                 }
             }
@@ -1017,7 +1037,7 @@
 
         function removeArrow (arrows, platforms) {
             arrows.destroy();
-            losePoints();
+            losePoints(arrows.name);
             //this.time.delayedCall(150, destroyEmitterHeart, [], this);
             if(!doctor) {            
                 switch (arrows.name) {
@@ -1095,6 +1115,20 @@
             }
         }
 
+        function GetEmitter (direction) {
+            if (direction === `left`) {
+                return emitter;
+            } else if (direction === `right`) {
+                return emitter4;
+            } else
+            if (direction === `up`) {
+                return emitter2;                
+            } else 
+            if (direction === `down`) {
+                return emitter3;
+            }
+        }
+
         function arrowInZone (zoneNumber) {
             const nameRightZone= nameZone(zoneNumber); 
             nameRightZone.setName(`pressed`);
@@ -1115,7 +1149,7 @@
             }
         }
 
-        function losePoints () {
+        function losePoints (direction) {
             score -= 10;
             scoreText.setText('Score: ' + score);
                             
@@ -1131,12 +1165,11 @@
                     emitterExplosion = bloodexplosion.createEmitter(cacheJson);
                     emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y)
                     emitterExplosion.start();
-                
                 } else {
-                    console.log(`no lifes left`);
                     gameOver = true;
                     patientDied=true;
                 }
+                socket.emit(`playerMissed`, direction);
             }
         }
 
