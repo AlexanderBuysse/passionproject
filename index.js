@@ -22,10 +22,13 @@ io.on('connection', (socket) => {
     userList(`${socket.id}`);
     socket.on('disconnect', () => {
         console.log('user disconnected');
-        rooms = [];
+        //rooms = [];
         userList(socket.id);
-        let roomLeft= getRightRoom(roomSelected);
-        roomLeft.pop();
+        if(roomSelected) {
+            let roomLeft= getRightRoom(roomSelected);
+            roomLeft.pop();
+            io.to(roomSelected).emit('twoPlayersInRoom', false);
+        } 
     });
 
     socket.on(`getRoom`, (bol) => {
@@ -93,11 +96,16 @@ io.on('connection', (socket) => {
 
         let roomCounter = getRightRoom(room);
         roomCounter.push(`user`);
-        console.log(roomCounter);
         if(roomCounter.length=== 2) {
-            console.log(`er zijn twee spelers in de ruimte`);
+            if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+                io.to(roomSelected).emit('twoPlayersInRoom', true);
+            }     
+        }
+        if (roomCounter.length=== 1 || roomCounter.length=== 0) {
+            if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+                io.to(roomSelected).emit('twoPlayersInRoom', false);
+            }     
         } 
-
 
         if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
             io.emit(`rooms`, object);

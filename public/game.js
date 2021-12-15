@@ -622,6 +622,10 @@
                 }
             });
 
+            socket.on(`twoPlayersInRoom`, function (bool) {
+                personedJoined = bool;
+            });
+
             lifeGroup= this.physics.add.group({
                 maxSize: 7,
                 allowGravity: false
