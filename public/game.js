@@ -534,6 +534,7 @@
                     if (arrayInfo[0]) {
                         console.log(`a arrow has been send`);
                         SendArrow(arrayInfo[1], 0, false);
+                        handDoctor.setPosition(GetCords(arrayInfo[1]),-50);
                     }
                 }
             });
