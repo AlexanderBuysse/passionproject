@@ -203,13 +203,13 @@
                 bpm = messageObj.data.heart_rate;
             };
             ws.onclose = function(e) {
-                console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+                //console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
                 setTimeout(function() {
                 connect();
                 }, 1000);
             };
             ws.onerror = function(err) {
-                console.error('Socket encountered error: ', err.message, 'Closing socket');
+                //console.error('Socket encountered error: ', err.message, 'Closing socket');
                 ws.close();
             };
         }
@@ -218,7 +218,7 @@
             handDoctor = this.add.image(cordsLeft, -50, 'handDoctor');
             textTimeDoctor = this.add.text(200, 200);
 
-            connect();
+            //connect();
         //----------------------------- game loader ----------------------------------------------
             home = this.add.dom(400,370).createFromCache('home');
 
@@ -591,6 +591,13 @@
                     emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y)
                     emitterExplosion.explode(200, lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y);
                     activateOnlyWhenSocketHasBeenSend=true;
+                }
+            });
+            socket.on(`arrowWasRight`, function (direction) {
+                if (doctor) {
+                    const zone = getZone(direction);
+                    zone.setName(`pressed`);
+                    console.log(direction);
                 }
             });
 
@@ -1077,13 +1084,43 @@
 
 
         function removeArrowZone (zones, arrows) {
-            if (zones.name===`pressed`){
-                arrows.destroy();
-                score += 10;
-                scoreText.setText('Score: ' + score);
-                if (level === 1 && heartRateGemid.length !== 10) {
-                    heartRateGemid.push(bpm);
-                }
+                if (zones.name===`pressed`){
+                    console.log(arrows);
+                    arrows.destroy();
+                    score += 10;
+                    scoreText.setText('Score: ' + score);
+                    if (level === 1 && heartRateGemid.length !== 10) {
+                        heartRateGemid.push(bpm);
+                    }
+                    socket.emit(`arrowWasRight`, getDirectionZone (zones.x));
+            }
+        }
+
+        function getDirectionZone (x) {
+            if (x === 620) {
+                return `left`;
+            } else if (x === 1080) {
+                return `right`;
+            } else
+            if (x === 770) {
+                return `up`;                
+            } else 
+            if (x === 930) {
+                return `down`;
+            }
+        }
+
+        function getZone (direction) {
+            if (direction === `left`) {
+                return zone;
+            } else if (direction === `right`) {
+                return zone4;
+            } else
+            if (direction === `up`) {
+                return zone2;                
+            } else 
+            if (direction === `down`) {
+                return zone3;
             }
         }
 
@@ -1131,8 +1168,10 @@
         }
 
         function arrowInZone (zoneNumber) {
-            const nameRightZone= nameZone(zoneNumber); 
-            nameRightZone.setName(`pressed`);
+            if(!doctor) {
+                const nameRightZone= nameZone(zoneNumber);
+                nameRightZone.setName(`pressed`);
+            }
         }
 
         function nameZone (zoneName) {
@@ -1183,6 +1222,7 @@
 
         function destroyEmitterHeart() {
             //emitterExplosion.stop();
+            console.log(`Deze functie doet niets meer maar omdat het te veel werk is om het weg te doen zet ik er nu een leuk tekstje in.`)
         }
 
         function checkSpeed (speedMs) {

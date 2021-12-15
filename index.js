@@ -49,6 +49,12 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on(`arrowWasRight`, (direction)=> {
+        if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+            io.to(roomSelected).emit('arrowWasRight', direction);
+        }
+    });
+
     socket.on(`room`, (room) => {
         console.log(room);
         socket.join(room);
