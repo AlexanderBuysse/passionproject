@@ -143,6 +143,8 @@
         let gameStartReally = false;
         let patientDied= false;
         let doctorDied= false;
+
+        let scene;
         
         
         function preload() {
@@ -193,7 +195,7 @@
         }
 
         function connect() {
-            var ws = new WebSocket('wss://dev.pulsoid.net/api/v1/data/real_time?access_token=726df273-9330-4c18-9c14-c4b0d82384c9');
+            var ws = new WebSocket('wss://dev.pulsoid.net/api/v1/data/real_time?access_token=ca88ff26-710a-4bb8-81f6-bc32ffcabe5d');
             ws.onopen = function() {
                 ws.send(JSON.stringify({
                 }));
@@ -203,22 +205,23 @@
                 bpm = messageObj.data.heart_rate;
             };
             ws.onclose = function(e) {
-                //console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
+                console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
                 setTimeout(function() {
                 connect();
                 }, 1000);
             };
             ws.onerror = function(err) {
-                //console.error('Socket encountered error: ', err.message, 'Closing socket');
+                console.error('Socket encountered error: ', err.message, 'Closing socket');
                 ws.close();
             };
         }
 
         function create() {
+            scene = this;
             handDoctor = this.add.image(cordsLeft, -50, 'handDoctor');
             textTimeDoctor = this.add.text(200, 200);
 
-            //connect();
+            connect();
         //----------------------------- game loader ----------------------------------------------
             home = this.add.dom(400,370).createFromCache('home');
 
@@ -650,7 +653,7 @@
 
             //this.add.image(400, 800, 'sky');
             this.add.image(350, 332, 'line');
-            scoreText = this.add.text(xPosTimer+200, yPosTimer+200, 'score: 0', { fontSize: '32px', fill: '#b8baad', fontFamily: 'futura-pt, sans serif' }); 
+            scoreText = this.add.text(xPosTimer+200, yPosTimer+200, 'Combo', { fontSize: '32px', fill: '#b8baad', fontFamily: 'futura-pt, sans serif' }); 
             textTimer = this.add.text(xPosTimer, yPosTimer, '5:00', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
             textBpm = this.add.text(xPosBpm, yPosBpm, '0', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
             textGameSpeed = this.add.text(268, 220, '1X', { fontSize: '50px', fill: '#ff3e36', fontFamily: 'poleno,  sans serif' })
@@ -674,7 +677,7 @@
             emitter = particles.createEmitter({
                 x: cordsLeft,
                 y: yPosEmitters,
-                lifespan: 5000,
+                lifespan: 5000, 
                 angle: { min: 265, max: 275 },
                 speed: { min: 300, max: 500 },
                 scale: { start: 0.6, end: 0 },
@@ -1090,15 +1093,30 @@
 
         function removeArrowZone (zones, arrows) {
                 if (zones.name===`pressed`){
-                    console.log(arrows);
                     arrows.destroy();
                     score += 10;
-                    scoreText.setText('Score: ' + score);
+                    newCombo();
                     if (level === 1 && heartRateGemid.length !== 10) {
                         heartRateGemid.push(bpm);
                     }
                     socket.emit(`arrowWasRight`, getDirectionZone (zones.x));
             }
+        }
+
+        function newCombo () {
+            scoreText.setText('combo: ' + score);
+            scene.tweens.add({
+                targets: scoreText,
+                alpha: 1,
+                duration: 5000,
+                onComplete : function () {
+                    scene.tweens.add({
+                        targets: scoreText,
+                        alpha: 0,
+                        duration: 1000
+                    })
+                }
+            })
         }
 
         function getDirectionZone (x) {
@@ -1227,7 +1245,7 @@
 
         function destroyEmitterHeart() {
             //emitterExplosion.stop();
-            console.log(`Deze functie doet niets meer maar omdat het te veel werk is om het weg te doen zet ik er nu een leuk tekstje in.`)
+            //console.log(`Deze functie doet niets meer maar omdat het te veel werk is om het weg te doen zet ik er nu een leuk tekstje in.`)
         }
 
         function checkSpeed (speedMs) {
