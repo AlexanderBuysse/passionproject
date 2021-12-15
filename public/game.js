@@ -588,7 +588,7 @@
                     lifeGroup.children.entries[life].play('deathheart');
                     emitterExplosion = bloodexplosion.createEmitter(cacheJson);
                     emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y)
-                    emitterExplosion.start();
+                    emitterExplosion.explode(200, lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y);
                     activateOnlyWhenSocketHasBeenSend=true;
                 }
             });
@@ -1038,7 +1038,6 @@
         function removeArrow (arrows, platforms) {
             arrows.destroy();
             losePoints(arrows.name);
-            activateOnlyWhenSocketHasBeenSend=true;
             //this.time.delayedCall(150, destroyEmitterHeart, [], this);
             if(!doctor) {            
                 switch (arrows.name) {
@@ -1164,8 +1163,8 @@
                     life = life -1; 
                     lifeGroup.children.entries[life].play('deathheart');
                     emitterExplosion = bloodexplosion.createEmitter(cacheJson);
-                    emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y)
-                    emitterExplosion.start();
+                    emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y);
+                    emitterExplosion.explode(200, lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y);
                 } else {
                     gameOver = true;
                     patientDied=true;
@@ -1182,7 +1181,7 @@
         }
 
         function destroyEmitterHeart() {
-            emitterExplosion.stop();
+            //emitterExplosion.stop();
         }
 
         function checkSpeed (speedMs) {
