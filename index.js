@@ -9,6 +9,12 @@ let users = [];
 let roomSelected;
 let rooms = [];
 
+let room1=[];
+let room2=[];
+let room3=[];
+let room4=[];
+let room5=[];
+
 app.use(express.static('public'));
 
 io.on('connection', (socket) => {
@@ -18,6 +24,8 @@ io.on('connection', (socket) => {
         console.log('user disconnected');
         rooms = [];
         userList(socket.id);
+        let roomLeft= getRightRoom(roomSelected);
+        roomLeft.pop();
     });
 
     socket.on(`getRoom`, (bol) => {
@@ -55,6 +63,20 @@ io.on('connection', (socket) => {
         }
     });
 
+    const getRightRoom = (roomJoined) => { 
+        if(roomJoined === `room1`) {
+            return room1
+        } else if (roomJoined === `room2`) {
+            return room2
+        }else if (roomJoined === `room3`) {
+            return room3
+        }else if (roomJoined=== `room4`) {
+            return room4
+        }else if (roomJoined === `room5`) {
+            return room5
+        }
+    }
+
     socket.on(`room`, (room) => {
         console.log(room);
         socket.join(room);
@@ -68,6 +90,14 @@ io.on('connection', (socket) => {
             socketId: socket.id,
             addCounter: true
         };
+
+        let roomCounter = getRightRoom(room);
+        roomCounter.push(`user`);
+        console.log(roomCounter);
+        if(roomCounter.length=== 2) {
+            console.log(`er zijn twee spelers in de ruimte`);
+        } 
+
 
         if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
             io.emit(`rooms`, object);

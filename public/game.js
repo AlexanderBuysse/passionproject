@@ -108,7 +108,7 @@
         let textTimer;
 
         let gameSpeed= 500;
-        let level = 5;
+        let level = 1;
         let heartRateGemid = [];
         let arrowsCaught = 0;
 
@@ -148,6 +148,8 @@
 
         const yPosComboText = 500;
         const xPosComboText = 500;
+
+        let personedJoined = false;
         
         
         function preload() {
@@ -346,41 +348,42 @@
             element.addListener('submit');
             element.on('submit', function (event) {
                 event.preventDefault();
-                if(event.target[0].checked === true) {
-                    this.removeListener('click');
-                    this.removeListener('submit');
-                    doctor= true;
-                    gameStart= true; 
+                if (personedJoined) {
+                    if(event.target[0].checked === true) {
+                        this.removeListener('click');
+                        this.removeListener('submit');
+                        doctor= true;
+                        gameStart= true; 
 
-                    this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
+                        this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
+                        this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
+                            onComplete: function ()
+                            {
+                                element.setVisible(false);
+                                home.setVisible(false);
+                                //socket emit room1Function
+                                socket.emit('playerOne', true);
+                                gameStarted=true;
+                            }
+                        });
+                    } else {
+                        this.removeListener('click');
+                        this.removeListener('submit');
+                        gameStart= true; 
 
-                    this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
-                        onComplete: function ()
-                        {
-                            element.setVisible(false);
-                            home.setVisible(false);
-                            //socket emit room1Function
-                            socket.emit('playerOne', true);
-                            gameStarted=true;
-                        }
-                    });
-                } else {
-                    this.removeListener('click');
-                    this.removeListener('submit');
-                    gameStart= true; 
+                        this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
 
-                    this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
-
-                    this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
-                        onComplete: function ()
-                        {
-                            element.setVisible(false);
-                            home.setVisible(false);
-                            //socket emit room1Function
-                            socket.emit('playerTwo', true);
-                            gameStarted=true;
-                        }
-                    });
+                        this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
+                            onComplete: function ()
+                            {
+                                element.setVisible(false);
+                                home.setVisible(false);
+                                //socket emit room1Function
+                                socket.emit('playerTwo', true);
+                                gameStarted=true;
+                            }
+                        });
+                    }                    
                 }
             })
             element.on('click', function (event) {
@@ -427,13 +430,6 @@
                 targets: patientWinHtml,
                 y: 300,
                 duration: 1000,
-                ease: 'Power3'
-            });
-
-            this.tweens.add({
-                targets: handDoctor,
-                x: cordsRight,
-                duration: 250,
                 ease: 'Power3'
             });
             
@@ -552,14 +548,12 @@
                 if(!doctor) {
                     if (arrayInfo[0]) {
                         SendArrow(arrayInfo[1], 0, false);
-                        //handDoctor.setPosition(GetCords(arrayInfo[1]),-50);
                         scene.tweens.add({
                             targets: handDoctor,
                             x: GetCords(arrayInfo[1]),
                             duration: 150,
                             ease: 'Elastic',
                             onComplete : function () {
-                                // here comes different animaitons for the combo meter
                             }
                         });
                     }
