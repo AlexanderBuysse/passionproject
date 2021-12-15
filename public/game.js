@@ -145,6 +145,9 @@
         let doctorDied= false;
 
         let scene;
+
+        const yPosComboText = 500;
+        const xPosComboText = 500;
         
         
         function preload() {
@@ -162,6 +165,7 @@
             this.load.atlas('heartgif', 'assets/heartSprite.png', 'assets/text/heart.json');
 
             this.load.image('bloodexplo', 'assets/blood.png');
+            this.load.image('good', 'assets/good.png');
             this.load.json('emitter', 'assets/text/explodeblood.json');
 
             this.load.html('home', 'assets/text/home.html');
@@ -540,7 +544,6 @@
             socket.on('arrow', function (arrayInfo) {
                 if(!doctor) {
                     if (arrayInfo[0]) {
-                        console.log(`a arrow has been send`);
                         SendArrow(arrayInfo[1], 0, false);
                         handDoctor.setPosition(GetCords(arrayInfo[1]),-50);
                     }
@@ -653,7 +656,8 @@
 
             //this.add.image(400, 800, 'sky');
             this.add.image(350, 332, 'line');
-            scoreText = this.add.text(xPosTimer+200, yPosTimer+200, 'Combo', { fontSize: '32px', fill: '#b8baad', fontFamily: 'futura-pt, sans serif' }); 
+            scoreText = this.add.text(xPosComboText, yPosComboText, 'Combo', { fontSize: '32px', fill: '#b8baad', fontFamily: 'futura-pt, sans serif' }); 
+            scoreText.setAlpha(0);
             textTimer = this.add.text(xPosTimer, yPosTimer, '5:00', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
             textBpm = this.add.text(xPosBpm, yPosBpm, '0', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
             textGameSpeed = this.add.text(268, 220, '1X', { fontSize: '50px', fill: '#ff3e36', fontFamily: 'poleno,  sans serif' })
@@ -1094,8 +1098,10 @@
         function removeArrowZone (zones, arrows) {
                 if (zones.name===`pressed`){
                     arrows.destroy();
-                    score += 10;
-                    newCombo();
+                    score += 1;
+                    if (!doctor) {
+                        newCombo();
+                    }
                     if (level === 1 && heartRateGemid.length !== 10) {
                         heartRateGemid.push(bpm);
                     }
@@ -1103,18 +1109,41 @@
             }
         }
 
+        let comboReset = true;
+
         function newCombo () {
             scoreText.setText('combo: ' + score);
+                let particlesGood = scene.add.particles('good');
+
+                let emitterGood = particlesGood.createEmitter({
+                    speed: 500,
+                    scale: { start: 1, end:0 }
+                });
+                emitterGood.stop();
+                emitterGood.explode(20, xPosComboText+50, yPosComboText+5);
+
             scene.tweens.add({
                 targets: scoreText,
                 alpha: 1,
-                duration: 5000,
+                duration: 500,
                 onComplete : function () {
+                    // here comes different animaitons for the combo meter
+                    if( comboReset) {
                     scene.tweens.add({
                         targets: scoreText,
-                        alpha: 0,
-                        duration: 1000
-                    })
+                        alpha: 1,
+                        duration: 4000,
+                        onComplete : function () {
+                                scene.tweens.add({
+                                    targets: scoreText,
+                                    alpha: 0,
+                                    duration: 1000
+                                });
+                            comboReset=true
+                        }
+                    });
+                    }
+                    comboReset=false;
                 }
             })
         }
@@ -1214,7 +1243,8 @@
 
         function losePoints (direction) {
             score = 0;
-            scoreText.setText('Score: ' + score);
+            scoreText.setText('combo: ' + score);
+
                             
             if (cody.anims.getName() === 'idle') {
                 cody.play('punch');
