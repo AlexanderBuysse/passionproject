@@ -136,6 +136,7 @@
         let patientWin = false;        
         let doctorWinHtml;
         let patientWinHtml;
+        let countdown;
 
         let playerOne= false;
         let playerTwo= false;
@@ -174,6 +175,7 @@
             this.load.html('home', 'assets/text/home.html');
             this.load.html('rooms', 'assets/text/rooms.html');
             this.load.html('menu', 'assets/text/menu.html');
+            this.load.html('countdown', 'assets/text/countdown.html');
             this.load.html('tutorial', 'assets/text/tutorial.html');
             this.load.html('patientwin', 'assets/text/patientwin.html');
             this.load.html('doctorwin', 'assets/text/doctorwin.html');
@@ -239,6 +241,9 @@
 
             gameMenu = this.add.dom(625, 800).createFromCache('menu');
             gameMenu.setVisible(false);
+
+            countdown = this.add.dom(625, 800).createFromCache('countdown');
+            countdown.setVisible(false);
 
             doctorWinHtml= this.add.dom(625, 800).createFromCache('doctorwin');
             patientWinHtml = this.add.dom(625, 800).createFromCache('patientwin');
@@ -354,6 +359,7 @@
                         this.removeListener('click');
                         this.removeListener('submit');
                         element.getChildByID(`submitlogin`).classList.add(`nothing`);
+                        element.getChildByID(`patient`).disabled = true;
                         doctor= true;
                         gameStart= true; 
                         socket.emit('playerOne', true);
@@ -362,6 +368,7 @@
                         this.removeListener('click');
                         this.removeListener('submit');
                         element.getChildByID(`submitlogin`).classList.add(`nothing`);
+                        element.getChildByID(`doctor`).disabled = true;
                         gameStart= true; 
                         socket.emit('playerTwo', true);
                         gameStarted=true;
@@ -406,6 +413,12 @@
             });
             this.tweens.add({
                 targets: patientWinHtml,
+                y: 300,
+                duration: 1000,
+                ease: 'Power3'
+            });
+            this.tweens.add({
+                targets: countdown,
                 y: 300,
                 duration: 1000,
                 ease: 'Power3'
@@ -761,16 +774,16 @@
                     gameSpeed=500;
                     break;
                 case 4:
-                    gameSpeed=500;
+                    gameSpeed=400;
                     break;
                 case 5:
-                    gameSpeed=600;
+                    gameSpeed=400;
                     break;
                 case 6:
-                    gameSpeed=200;
+                    gameSpeed=400;
                     break;
                 case 7:
-                    gameSpeed=150;
+                    gameSpeed=400;
                     break;
                 default:
                     break;
@@ -839,6 +852,7 @@
         let onceStartGame = true;
         let timeStart;
         let activateOnlyWhenSocketHasBeenSend = false;
+        let counterTime = 5
 
         function update(time, delta) {
             if (activateOnlyWhenSocketHasBeenSend) {
@@ -850,12 +864,23 @@
             if(gameStartReally && onceStartGame) {
                 onceStartGame = false;
                 element.setVisible(false);
-                this.time.delayedCall(5000, delay, [], this);
+                countdown.setVisible(true);
+                this.time.delayedCall(1000, countdownF, [], this);
+                this.time.delayedCall(2000, countdownF, [], this);
+                this.time.delayedCall(3000, countdownF, [], this);
+                this.time.delayedCall(4000, countdownF, [], this);
+                this.time.delayedCall(5000, countdownF, [], this);
+                this.time.delayedCall(5100, delay, [], this);
+            }
+
+            function countdownF () {
+                countdown.getChildByID(`count`).textContent = counterTime--;
             }
 
             function delay () {
                 fiveMinTimer = 300000;
                 timeStart= time;
+                countdown.setVisible(false);
                 home.setVisible(false);
             }
 
@@ -1101,16 +1126,16 @@
 
 
         function removeArrowZone (zones, arrows) {
-                if (zones.name===`pressed`){
-                    arrows.destroy();
-                    score += 1;
-                    if (!doctor) {
-                        newCombo();
-                    }
-                    if (level === 1 && heartRateGemid.length !== 10) {
-                        heartRateGemid.push(bpm);
-                    }
-                    socket.emit(`arrowWasRight`, getDirectionZone (zones.x));
+            if (zones.name===`pressed`) {
+                arrows.destroy();
+                score += 1;
+                if (!doctor) {
+                    newCombo();
+                }
+                if (level === 1 && heartRateGemid.length !== 10) {
+                    heartRateGemid.push(bpm);
+                }
+                socket.emit(`arrowWasRight`, getDirectionZone (zones.x));
             }
         }
 
