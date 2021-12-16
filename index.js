@@ -22,7 +22,6 @@ io.on('connection', (socket) => {
     userList(`${socket.id}`);
     socket.on('disconnect', () => {
         console.log('user disconnected');
-        //rooms = [];
         userList(socket.id);
         if(roomSelected) {
             let roomLeft= getRightRoom(roomSelected);

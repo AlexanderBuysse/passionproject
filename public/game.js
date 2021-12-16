@@ -152,6 +152,7 @@
 
         let personedJoined = false;
         let selectDoctor = false;
+        let oneplayerGame = false;
         
         
         function preload() {
@@ -373,6 +374,8 @@
                         socket.emit('playerTwo', true);
                         gameStarted=true;
                     }                    
+                } else {
+                    element.getChildByID(`submitlogin`).value=`Lock descission`
                 }
             })
             //element.getChildByID(`doctor`).checked=false;
@@ -567,8 +570,6 @@
                     }
                     const array = roomsObject.room.split(``);
                     element.getChildByID(`roomNumber`).textContent = array[4];
-                } else {
-                    rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `1/2`;
                 }
             });
 
@@ -616,11 +617,12 @@
             socket.on(`twoPlayersInRoom`, function (bool) {
                 personedJoined = bool;
             });
-
+            
             socket.on(`playerInRoom`, function (wop) {
-                if(wop === `not` && !element.getChildByID(`doctor`).checked) {
-                    //element.getChildByID(`doctor`).disabled=true;
-                    //kijken voor character selector
+                if(wop === `not`) {
+                    oneplayerGame = true;
+                } else {
+                    oneplayerGame = false;
                 }
             });
 
@@ -853,8 +855,16 @@
         let timeStart;
         let activateOnlyWhenSocketHasBeenSend = false;
         let counterTime = 3;
+        let oncePersonedJoined= true;
 
         function update(time, delta) {
+            if (oncePersonedJoined) {
+                if (personedJoined) {
+                    element.getChildByID(`loginsubmit`).value=`lock`;
+                    oncePersonedJoined = false;
+                }                
+            }
+
             if (activateOnlyWhenSocketHasBeenSend) {
                 activateOnlyWhenSocketHasBeenSend = false;
                 this.time.delayedCall(150, destroyEmitter, [], this);
