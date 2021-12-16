@@ -353,6 +353,7 @@
                     if(event.target[0].checked === true) {
                         this.removeListener('click');
                         this.removeListener('submit');
+                        element.getChildByID(`submitlogin`).classList.add(`nothing`);
                         doctor= true;
                         gameStart= true; 
                         socket.emit('playerOne', true);
@@ -360,6 +361,7 @@
                     } else {
                         this.removeListener('click');
                         this.removeListener('submit');
+                        element.getChildByID(`submitlogin`).classList.add(`nothing`);
                         gameStart= true; 
                         socket.emit('playerTwo', true);
                         gameStarted=true;
