@@ -150,6 +150,7 @@
         const xPosComboText = 500;
 
         let personedJoined = false;
+        let selectDoctor = false;
         
         
         function preload() {
@@ -314,7 +315,7 @@
             rooms.on('click', function (event) {
                 if (event.target.name === 'leaveRooms') {
                     rooms.setVisible(false);
-                    gameMenu.setVisible(true);  
+                    gameMenu.setVisible(true);
                 }
                 if (event.target.name === 'room1') {
                     element.setVisible(true);
@@ -354,44 +355,19 @@
                         this.removeListener('submit');
                         doctor= true;
                         gameStart= true; 
-
-                        this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
-                        this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
-                            onComplete: function ()
-                            {
-                                element.setVisible(false);
-                                home.setVisible(false);
-                                //socket emit room1Function
-                                socket.emit('playerOne', true);
-                                gameStarted=true;
-                            }
-                        });
+                        socket.emit('playerOne', true);
+                        gameStarted=true;
                     } else {
                         this.removeListener('click');
                         this.removeListener('submit');
                         gameStart= true; 
-
-                        this.scene.tweens.add({ targets: element.rotate3d, x: 1, w: 90, duration: 1000, ease: 'Power3' });
-
-                        this.scene.tweens.add({ targets: element, scaleX: 2, scaleY: 2, y: 700, duration: 1000, ease: 'Power3',
-                            onComplete: function ()
-                            {
-                                element.setVisible(false);
-                                home.setVisible(false);
-                                //socket emit room1Function
-                                socket.emit('playerTwo', true);
-                                gameStarted=true;
-                            }
-                        });
+                        socket.emit('playerTwo', true);
+                        gameStarted=true;
                     }                    
                 }
             })
+            //element.getChildByID(`doctor`).checked=false;
             element.on('click', function (event) {
-                if (event.target.name === 'leaveRoom') {
-                    console.log(`i want to leave the room`);
-                    element.setVisible(false);
-                    rooms.setVisible(true);
-                }
             });
             //----------------------------- game loader ----------------------------------------------
         
@@ -624,6 +600,13 @@
 
             socket.on(`twoPlayersInRoom`, function (bool) {
                 personedJoined = bool;
+            });
+
+            socket.on(`playerInRoom`, function (wop) {
+                if(wop === `not` && !element.getChildByID(`doctor`).checked) {
+                    //element.getChildByID(`doctor`).disabled=true;
+                    //kijken voor character selector
+                }
             });
 
             lifeGroup= this.physics.add.group({
@@ -863,9 +846,15 @@
             }
 
             if(gameStartReally && onceStartGame) {
+                onceStartGame = false;
+                element.setVisible(false);
+                this.time.delayedCall(5000, delay, [], this);
+            }
+
+            function delay () {
                 fiveMinTimer = 300000;
                 timeStart= time;
-                onceStartGame = false;
+                home.setVisible(false);
             }
 
             if (onceRoom) {

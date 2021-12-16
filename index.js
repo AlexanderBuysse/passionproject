@@ -28,7 +28,7 @@ io.on('connection', (socket) => {
             let roomLeft= getRightRoom(roomSelected);
             roomLeft.pop();
             io.to(roomSelected).emit('twoPlayersInRoom', false);
-        } 
+        }
     });
 
     socket.on(`getRoom`, (bol) => {
@@ -99,13 +99,14 @@ io.on('connection', (socket) => {
         if(roomCounter.length=== 2) {
             if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
                 io.to(roomSelected).emit('twoPlayersInRoom', true);
+                io.to(roomSelected).emit('playerInRoom', `not`);
             }     
         }
-        if (roomCounter.length=== 1 || roomCounter.length=== 0) {
+        if (roomCounter.length=== 1) {
             if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
                 io.to(roomSelected).emit('twoPlayersInRoom', false);
-            }     
-        } 
+            }
+        }
 
         if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
             io.emit(`rooms`, object);
