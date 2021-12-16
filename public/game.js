@@ -152,7 +152,6 @@
 
         let personedJoined = false;
         let selectDoctor = false;
-        let oneplayerGame = false;
         
         
         function preload() {
@@ -362,9 +361,12 @@
                         element.getChildByID(`submitlogin`).classList.add(`nothing`);
                         element.getChildByID(`patient`).disabled = true;
                         doctor= true;
-                        gameStart= true; 
+                        gameStart= true;
                         socket.emit('playerOne', true);
                         gameStarted=true;
+                        if (!playerOne && !playerTwo) {
+                            socket.emit(`characterChosen`, `doctor`);
+                        };
                     } else {
                         this.removeListener('click');
                         this.removeListener('submit');
@@ -373,9 +375,11 @@
                         gameStart= true; 
                         socket.emit('playerTwo', true);
                         gameStarted=true;
+                        console.log(playerOne, playerTwo);
+                        if (!playerOne && !playerTwo) {
+                            socket.emit(`characterChosen`, `patient`);
+                        };
                     }                    
-                } else {
-                    element.getChildByID(`submitlogin`).value=`Lock descission`
                 }
             })
             //element.getChildByID(`doctor`).checked=false;
@@ -573,6 +577,7 @@
                 }
             });
 
+
             socket.on(`playerOneTrue` , function (bool) {
                 playerOne= true;
                 if(playerOne&&playerTwo) {
@@ -617,12 +622,23 @@
             socket.on(`twoPlayersInRoom`, function (bool) {
                 personedJoined = bool;
             });
-            
+
             socket.on(`playerInRoom`, function (wop) {
-                if(wop === `not`) {
-                    oneplayerGame = true;
-                } else {
-                    oneplayerGame = false;
+                if(wop === `not` && !element.getChildByID(`doctor`).checked) {
+                    //element.getChildByID(`doctor`).disabled=true;
+                    //kijken voor character selector
+                }
+            });
+            socket.on(`disableCharacter`, function (string) {
+                console.log(string);
+                //console.log(gameStarted);
+                if (string === `doctor` && !gameStarted) {
+                    element.getChildByID(string).disabled=true;
+                    element.getChildByID(`patient`).checked=true;
+                }
+                if (string === `patient` && !gameStarted) {
+                    element.getChildByID(string).disabled=true;
+                    element.getChildByID(`doctor`).checked=true;
                 }
             });
 
@@ -855,16 +871,15 @@
         let timeStart;
         let activateOnlyWhenSocketHasBeenSend = false;
         let counterTime = 3;
-        let oncePersonedJoined= true;
+        let onceTimePls = true;
 
         function update(time, delta) {
-            if (oncePersonedJoined) {
-                if (personedJoined) {
-                    element.getChildByID(`loginsubmit`).value=`lock`;
-                    oncePersonedJoined = false;
-                }                
-            }
-
+            if (onceTimePls) {
+                if (personedJoined) {
+                    element.getChildByID(`submitlogin`).value= `Lock descision`
+                    onceTimePls = false;
+                }; 
+            };
             if (activateOnlyWhenSocketHasBeenSend) {
                 activateOnlyWhenSocketHasBeenSend = false;
                 this.time.delayedCall(150, destroyEmitter, [], this);

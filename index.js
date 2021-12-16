@@ -65,6 +65,12 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on(`characterChosen`, (string) => {
+        if(socket.rooms.has(roomSelected) && socket.rooms.has(socket.id)) {
+            io.to(roomSelected).emit('disableCharacter', string);
+        }
+    });
+
     const getRightRoom = (roomJoined) => { 
         if(roomJoined === `room1`) {
             return room1
