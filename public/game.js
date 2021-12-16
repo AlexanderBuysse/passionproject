@@ -852,7 +852,7 @@
         let onceStartGame = true;
         let timeStart;
         let activateOnlyWhenSocketHasBeenSend = false;
-        let counterTime = 5
+        let counterTime = 3;
 
         function update(time, delta) {
             if (activateOnlyWhenSocketHasBeenSend) {
@@ -869,7 +869,6 @@
                 this.time.delayedCall(2000, countdownF, [], this);
                 this.time.delayedCall(3000, countdownF, [], this);
                 this.time.delayedCall(4000, countdownF, [], this);
-                this.time.delayedCall(5000, countdownF, [], this);
                 this.time.delayedCall(5100, delay, [], this);
             }
 
