@@ -1,4 +1,10 @@
 {
+  "engines": {
+    "node": "12.17.x"
+  },
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "express": "4",
     "phaser": "3.55.2",
