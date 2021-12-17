@@ -311,13 +311,6 @@
             rooms.addListener('submit');
             rooms.on('submit', function (event) {
                 event.preventDefault();
-                // for (let i = 0; i < 5; i++) {
-                //     if(event.target[i].checked === true) {
-                //     element.setVisible(true);
-                //     rooms.setVisible(false);
-                //     socket.emit("room", `room${i+1}`);
-                //     }
-                // }
             })
             rooms.on('click', function (event) {
                 if (event.target.name === 'leaveRooms') {
@@ -388,7 +381,6 @@
                     }                    
                 }
             })
-            //element.getChildByID(`doctor`).checked=false;
             element.on('click', function (event) {
             });
             //----------------------------- game loader ----------------------------------------------
