@@ -152,6 +152,8 @@
 
         let personedJoined = false;
         let selectDoctor = false;
+
+        let roomSelected;
         
         
         function preload() {
@@ -326,26 +328,31 @@
                     element.setVisible(true);
                     rooms.setVisible(false);
                     socket.emit("room", `room1`);
+                    roomSelected = `room1`;
                 }
                 if (event.target.name === 'room2') {
                     element.setVisible(true);
                     rooms.setVisible(false);
                     socket.emit("room", `room2`);
+                    roomSelected = `room2`;
                 }
                 if (event.target.name === 'room3') {
                     element.setVisible(true);
                     rooms.setVisible(false);
                     socket.emit("room", `room3`);
+                    roomSelected = `room3`;
                 }
                 if (event.target.name === 'room4') {
                     element.setVisible(true);
                     rooms.setVisible(false);
                     socket.emit("room", `room4`);
+                    roomSelected = `room4`;
                 }
                 if (event.target.name === 'room5') {
                     element.setVisible(true);
                     rooms.setVisible(false);
                     socket.emit("room", `room5`);
+                    roomSelected = `room5`;
                 }
             });
 
@@ -362,10 +369,10 @@
                         element.getChildByID(`patient`).disabled = true;
                         doctor= true;
                         gameStart= true;
-                        socket.emit('playerOne', true);
+                        socket.emit('playerOne', [true, roomSelected]);
                         gameStarted=true;
                         if (!playerOne && !playerTwo) {
-                            socket.emit(`characterChosen`, `doctor`);
+                            socket.emit(`characterChosen`, [`doctor`, roomSelected]);
                         };
                     } else {
                         this.removeListener('click');
@@ -373,11 +380,10 @@
                         element.getChildByID(`submitlogin`).classList.add(`nothing`);
                         element.getChildByID(`doctor`).disabled = true;
                         gameStart= true; 
-                        socket.emit('playerTwo', true);
+                        socket.emit('playerTwo', [true, roomSelected]);
                         gameStarted=true;
-                        console.log(playerOne, playerTwo);
                         if (!playerOne && !playerTwo) {
-                            socket.emit(`characterChosen`, `patient`);
+                            socket.emit(`characterChosen`, [`patient`, roomSelected]);
                         };
                     }                    
                 }
@@ -563,20 +569,44 @@
                 }
             });
             socket.on(`rooms`, function (roomsObject) {
-                console.log(roomsObject);
-                //hier komterug
-                const textRooms = rooms.getChildByID(`${roomsObject.room}Counter`).textContent;
-                if(roomsObject.addCounter) {
-                    if (textRooms === `1/2`){
-                        rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `2/2`;
-                    } else if (textRooms === `0/2`) {
-                        rooms.getChildByID(`${roomsObject.room}Counter`).textContent= `1/2`;
+                const selectRooms = number => {
+                    if (number === 0 ){
+                        return `room1`
                     }
-                    const array = roomsObject.room.split(``);
-                    element.getChildByID(`roomNumber`).textContent = array[4];
+                    if (number === 1 ){
+                        return `room2`
+                    }
+                    if (number === 2){
+                        return `room3`
+                    }
+                    if (number === 3){
+                        return `room4`
+                    }
+                    if (number === 4 ){
+                        return `room5`
+                    }
+                }
+                //console.log(roomsObject);
+                for (let i = 0; i < roomsObject.length; i++) {
+                    const roomstring = selectRooms(i);
+                    for (let j = 0; j < 3; j++) {
+                        if (roomsObject[i].length===j ){
+                            rooms.getChildByID(`${roomstring}Counter`).textContent= `${j}/2`; 
+                            if (j === 2) {
+                                rooms.getChildByID(`${roomstring}Submit`).disabled= true;
+                                rooms.getChildByID(`${roomstring}Submit`).value= `Full`;
+                            }else { 
+                                rooms.getChildByID(`${roomstring}Submit`).disabled= false;
+                                rooms.getChildByID(`${roomstring}Submit`).value= `Join`;        
+                            }
+                        }
+                    }
                 }
             });
-
+            socket.on(`left`, function (left) {
+                console.log(left);
+                window.location.reload();
+            })
 
             socket.on(`playerOneTrue` , function (bool) {
                 playerOne= true;
@@ -591,7 +621,6 @@
                 }
             })
             socket.on(`gameWinner`, function (string) {
-                console.log(string);
                 if (string === `doctor`) {
                     doctorWin=true;
                 } 
@@ -615,7 +644,6 @@
                 if (doctor) {
                     const zone = getZone(direction);
                     zone.setName(`pressed`);
-                    console.log(direction);
                 }
             });
 
@@ -630,8 +658,6 @@
                 }
             });
             socket.on(`disableCharacter`, function (string) {
-                console.log(string);
-                //console.log(gameStarted);
                 if (string === `doctor` && !gameStarted) {
                     element.getChildByID(string).disabled=true;
                     element.getChildByID(`patient`).checked=true;
@@ -653,7 +679,6 @@
                     heartSprite.play('idleheart');
                     lifeGroup.add(heartSprite);                
                     } else {
-                    //console.log(xPosHeart+ ((i-7)*50), yPosHeart +10, i);
                     heartSprite = this.add.sprite(xPosHeart+ ((i-7)*50), yPosHeart+50);
                     heartSprite.setScale(.5);
                     heartSprite.play('idleheart');
@@ -769,13 +794,10 @@
 
         function checkHeartDoctor () {
             if (bpm >= 100) {
-                //console.log(`hartje is hoger dan 100`);
                 gameSpeed= 900;
             } else if (bpm >= 80) {
-                //console.log(`hartje is tussen 80 en 100`);
                 gameSpeed= 500;
             } else if (bpm <= 80) {
-                //console.log(`hart onder de 80`);
                 gameSpeed= 300;
             }
         }
@@ -813,7 +835,7 @@
                 if(updateLevel === level ) {
                     if(level !== 2){
                         level--;
-                        socket.emit('level', level);
+                        socket.emit('level', [level, roomSelected]);
                         indie.setPosition(95, 424)
                     } 
                 }
@@ -821,14 +843,14 @@
             if((averageHeartBeat-bpm) <= -5) {
                 if(updateLevel === level ) {
                     level++;
-                    socket.emit('level', level);
+                    socket.emit('level', [level, roomSelected]);
                     indie.setPosition(320, 424);
                 }
             }
             if((averageHeartBeat-bpm) > -5 && (averageHeartBeat-bpm) < 5) {
                 if(updateLevel !== level ) {
                     level = updateLevel;
-                    socket.emit('level', level);
+                    socket.emit('level', [level, roomSelected]);
                     indie.setPosition(210, 424);
                 }
             }
@@ -843,22 +865,21 @@
 
         function changeLevel (timeF) {
             if (timeF >= 60000 && updateLevel=== 2 ) {
-                console.log(`higher number`);
                 updateLevel++
                 level++
-                socket.emit("level", level);    
+                socket.emit("level", [level, roomSelected]);    
             } else if(timeF >= 120000 && updateLevel=== 3) {
                 updateLevel++
                 level++
-                socket.emit("level", level);     
+                socket.emit("level", [level, roomSelected]);     
             } else if (timeF >= 180000 && updateLevel=== 4) {
                 updateLevel++
                 level++
-                socket.emit("level", level);
+                socket.emit("level", [level, roomSelected]);
             } else if (timeF >= 240000 && updateLevel=== 4) {
                 updateLevel++
                 level++
-                socket.emit("level", level);
+                socket.emit("level", [level, roomSelected]);
             } else if (timeF >= 300000 && updateLevel=== 5) {
                 console.log(`game over`);
             }
@@ -931,7 +952,7 @@
                 heartRateGemid.push(`end`);
                 console.log(averageHeartBeat);
                 level = 2;
-                socket.emit("level", level);
+                socket.emit("level", [level, roomSelected]);
                 updateLevel= 2;
             }
 
@@ -945,12 +966,12 @@
 
             if (gameOver && once && gameStartReally &&patientDied) {
                 once= false;
-                socket.emit(`gameOver`, false);
+                socket.emit(`gameOver`, [false, roomSelected]);
             }
             
             if (gameOver && once && gameStartReally&&doctorDied) {
                 once= false;
-                socket.emit(`gameOver`, true);
+                socket.emit(`gameOver`, [true, roomSelected]);
             }  
 
             if(gameStarted) {
@@ -1074,7 +1095,6 @@
                     if (doctor) {
                         SendArrow(`left`, time, true);
                     } else {
-                        console.log(`left`);
                     }
                 } 
 
@@ -1083,7 +1103,6 @@
                     if (doctor) {
                         SendArrow(`right`, time, true);
                     } else {
-                        console.log(`right`);
                     }
 
                 }
@@ -1093,7 +1112,6 @@
                     if (doctor) {
                         SendArrow(`up`, time, true);
                     } else {
-                        console.log(`up`);
                     }
                 }
 
@@ -1102,7 +1120,6 @@
                     if (doctor) {
                         SendArrow(`down`, time, true);
                     } else {
-                        console.log(`down`);
                     }
                 }
             } 
@@ -1159,7 +1176,7 @@
                 if (level === 1 && heartRateGemid.length !== 10) {
                     heartRateGemid.push(bpm);
                 }
-                socket.emit(`arrowWasRight`, getDirectionZone (zones.x));
+                socket.emit(`arrowWasRight`, [getDirectionZone (zones.x), roomSelected]);
             }
         }
 
@@ -1238,7 +1255,7 @@
                 arrowClass.fire(cords, 100, direction);
                 if (userPressedKey) {
                     const arrowInfo = [true, direction];
-                    socket.emit('arrow', arrowInfo);
+                    socket.emit('arrow', [arrowInfo, roomSelected]);
                     timeWhenFunction= time;
                     //handDoctor.setPosition(GetCords(direction),-50);
                     scene.tweens.add({
@@ -1325,7 +1342,7 @@
                     gameOver = true;
                     patientDied=true;
                 }
-                socket.emit(`playerMissed`, direction);
+                socket.emit(`playerMissed`, [direction, roomSelected]);
             }
         }
 
@@ -1338,7 +1355,6 @@
 
         function destroyEmitterHeart() {
             //emitterExplosion.stop();
-            //console.log(`Deze functie doet niets meer maar omdat het te veel werk is om het weg te doen zet ik er nu een leuk tekstje in.`)
         }
 
         function checkSpeed (speedMs) {
