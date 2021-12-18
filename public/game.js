@@ -26,15 +26,6 @@
         }
     };
 
-    //----------------------------- random vars ----------------------------------------
-        // let player;
-        // let playerTwo;
-        // let leftDown= false;        
-        // let rightDown= false;
-        // let gameOver= false;
-    //----------------------------- random vars ----------------------------------------
-
-
         let game = new Phaser.Game(config);
         let socket = io();
 
@@ -794,6 +785,7 @@
             }
         }
 
+
         function levelGameSpeed () {
             switch (level) {
                 case 1:
@@ -886,10 +878,14 @@
         let counterTime = 3;
         let onceTimePls = true;
 
+        function reloadScreen () {
+            window.location.reload();
+        }
+
         function update(time, delta) {
             if (onceTimePls) {
                 if (personedJoined) {
-                    element.getChildByID(`submitlogin`).value= `Lock descision`
+                    element.getChildByID(`submitlogin`).value= `Lock decision`
                     onceTimePls = false;
                 }; 
             };
@@ -930,12 +926,14 @@
                 doctorWinHtml.setVisible(true);
                 home.setVisible(true);
                 gameStarted= false;
+                this.time.delayedCall(120000, reloadScreen, [], this);
             }
 
             if(patientWin && gameStartReally) {
                 patientWinHtml.setVisible(true);
                 home.setVisible(true);
                 gameStarted= false;
+                this.time.delayedCall(120000, reloadScreen, [], this);
             }
 
             if (heartRateGemid.length === 10 && heartRateGemid[9] !== `end`) {
