@@ -70,7 +70,8 @@
         const xPosTimer = 76;
         const yPosTimer = 235;
         
-        let cody
+        let spriteDoctor;
+        let spritePatient;
 
         let life= 7; 
         let lifeGroup;
@@ -160,6 +161,8 @@
             
             this.load.image('heart', 'assets/heart.png');
             this.load.atlas('heartgif', 'assets/heartSprite.png', 'assets/text/heart.json');
+            this.load.atlas('spriteDoctor', 'assets/sprites/spriteSheetDoctor.png', 'assets/sprites/spritesDoctor.json');
+            this.load.atlas('spritePatient', 'assets/sprites/spriteSheetPatient.png', 'assets/sprites/spritesPatient.json');
 
             this.load.image('bloodexplo', 'assets/blood.png');
             this.load.image('good', 'assets/good.png');
@@ -173,7 +176,8 @@
             this.load.html('patientwin', 'assets/text/patientwin.html');
             this.load.html('doctorwin', 'assets/text/doctorwin.html');
 
-            this.load.image('smallui', 'assets/design/smallui1.png');
+            this.load.image('smallui', 'assets/design/livespatient.png');
+            this.load.image('smalluiDoctor', 'assets/design/livesdoctor.png');
             this.load.image('smallui2', 'assets/design/smallui2.png');
             this.load.image('smallui3', 'assets/design/smallui3.png');
             this.load.image('mediumui', 'assets/design/bigui.png');
@@ -288,7 +292,7 @@
                 }
             });
 
-            this.add.image(210, 80, 'smallui');
+            this.add.image(210, 80, 'smalluiDoctor');
             this.add.image(210, 232, 'smallui2');
             this.add.image(210, 384, 'smallui3');
             this.add.image(210, 626, 'mediumui');
@@ -439,6 +443,48 @@
             });
 
             this.anims.create({
+                key: 'idleDoctor',
+                frames: this.anims.generateFrameNames('spriteDoctor', {prefix: 'sprite', end: 4, zeroPad:0}),
+                frameRate: 2,
+                repeat: -1
+            });
+
+            this.anims.create({
+                key: 'damageDoctor',
+                frames: this.anims.generateFrameNames('spriteDoctor', {prefix: 'sprite',start: 5, end: 10, zeroPad:0}),
+                frameRate: 7,
+                repeat: 0
+            });
+
+            this.anims.create({
+                key: 'winDoctor',
+                frames: this.anims.generateFrameNames('spriteDoctor', {prefix: 'sprite',start: 11, end: 14, zeroPad:0}),
+                frameRate: 3,
+                repeat: 0
+            });
+
+            this.anims.create({
+                key: 'idlePatient',
+                frames: this.anims.generateFrameNames('spritePatient', {prefix: 'sprite', end: 4, zeroPad:0}),
+                frameRate: 2,
+                repeat: -1
+            });
+
+            this.anims.create({
+                key: 'damagePatient',
+                frames: this.anims.generateFrameNames('spritePatient', {prefix: 'sprite',start: 5, end: 10, zeroPad:0}),
+                frameRate: 7,
+                repeat: 0
+            });
+
+            this.anims.create({
+                key: 'winPatient',
+                frames: this.anims.generateFrameNames('spritePatient', {prefix: 'sprite',start: 11, end: 14, zeroPad:0}),
+                frameRate: 3,
+                repeat: 0
+            });
+
+            this.anims.create({
                 key: 'idle',
                 frames: this.anims.generateFrameNumbers('brawler', { frames: [ 5, 6, 7, 8 ] }),
                 frameRate: 8,
@@ -451,11 +497,6 @@
                 frameRate: 8,
                 repeatDelay: 2000
             });
-
-
-            cody = this.add.sprite(220, 580);
-            cody.setScale(6);
-            cody.play('idle');
 
 
         
@@ -627,6 +668,10 @@
                 if (doctor) {
                     const zone = getZone(direction);
                     zone.setName(`pressed`);
+                    if (spriteDoctor.anims.getName() === 'idleDoctor') {
+                        spriteDoctor.play('damageDoctor');
+                        spriteDoctor.chain([ 'idleDoctor' ]);
+                    }
                 }
             });
 
@@ -967,7 +1012,9 @@
             if(gameStarted) {
                 if (onceDoctor) {
                     if(doctor) {
-                        this.add.image(220, 630, 'headDoctor');
+                        //this.add.image(210, 80, 'smalluiDoctor');
+                        spriteDoctor= this.add.sprite(220,643);
+                        spriteDoctor.play(`idleDoctor`);
                         const arrowLeft = this.add.image(cordsLeft, 150, 'arrowZone');
                         const arrowRight =this.add.image(cordsRight, 150, 'arrowZone');
                         const arrowUp = this.add.image(cordsUp, 150, 'arrowZone');
@@ -976,7 +1023,9 @@
                         arrowUp.setRotation(1.55);
                         arrowDown.setRotation(4.72);
                     } else {
-                        this.add.image(220,630, 'headPatient');
+                        spritePatient= this.add.sprite(220,643);
+                        spritePatient.play(`idlePatient`);
+                        //this.add.image(210, 80, 'smallui');
                         const arrowLeft = this.add.image(cordsLeft, yPosZones, 'arrowZone');
                         const arrowRight =this.add.image(cordsRight, yPosZones, 'arrowZone');
                         const arrowUp = this.add.image(cordsUp, yPosZones, 'arrowZone');
@@ -1162,6 +1211,10 @@
                 score += 1;
                 if (!doctor) {
                     newCombo();
+                    if (spritePatient.anims.getName() === 'idlePatient') {
+                        spritePatient.play('winPatient');
+                        spritePatient.chain([ 'idlePatient' ]);
+                    }
                 }
                 if (level === 1 && heartRateGemid.length !== 10) {
                     heartRateGemid.push(bpm);
@@ -1314,11 +1367,18 @@
         function losePoints (direction) {
             score = 0;
             scoreText.setText('combo: ' + score);
-
-                            
-            if (cody.anims.getName() === 'idle') {
-                cody.play('punch');
-                cody.chain([ 'idle' ]);
+            
+            if(doctor) {
+                if (spriteDoctor.anims.getName() === 'idleDoctor') {
+                    spriteDoctor.play('winDoctor');
+                    spriteDoctor.chain([ 'idleDoctor' ]);
+                }
+            }
+            if (spritePatient) {
+                if (spritePatient.anims.getName() === 'idlePatient') {
+                    spritePatient.play('damagePatient');
+                    spritePatient.chain([ 'idlePatient' ]);
+                }    
             }
 
             if (!doctor) {
