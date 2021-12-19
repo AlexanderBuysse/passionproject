@@ -297,7 +297,8 @@
             this.add.image(210, 384, 'smallui3');
             this.add.image(210, 626, 'mediumui');
             element.setVisible(false);
-            rooms.setVisible(true);
+            gameMenu.setVisible(true);
+            //rooms.setVisible(true);
             //home.setVisible(false);
 
             element.setPerspective(800);
