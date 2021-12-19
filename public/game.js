@@ -15,7 +15,7 @@
         physics: {
             default: 'arcade',
             arcade: {
-                debug: true,
+                debug: false,
                 gravity: { y: 400 }
             }
         },
@@ -981,7 +981,7 @@
                 this.time.delayedCall(120000, reloadScreen, [], this);
             }
 
-            if (heartRateGemid.length === 10 && heartRateGemid[9] !== `end`) {
+            if (heartRateGemid.length === 10 && heartRateGemid[9] !== `end` &&!doctor) {
                 averageHeartBeat= averageOfArray(heartRateGemid);
                 heartRateGemid.pop();
                 heartRateGemid.push(`end`);
