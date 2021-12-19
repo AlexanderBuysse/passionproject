@@ -589,6 +589,7 @@
             });
             socket.on('level', function (levelFromSocket) {
                 if(doctor) {
+                    console.log(levelFromSocket);
                     level = levelFromSocket;
                 }
             });
@@ -901,6 +902,7 @@
         }
 
         function changeLevel (timeF) {
+            //console.log(`level changed`);
             if (timeF >= 60000 && updateLevel=== 2 ) {
                 updateLevel++
                 level++
@@ -989,13 +991,15 @@
                 this.time.delayedCall(120000, reloadScreen, [], this);
             }
 
-            if (heartRateGemid.length === 10 && heartRateGemid[9] !== `end` &&!doctor) {
+            if (heartRateGemid.length === 10 && heartRateGemid[9] !== `end`) {
                 averageHeartBeat= averageOfArray(heartRateGemid);
                 heartRateGemid.pop();
                 heartRateGemid.push(`end`);
                 console.log(averageHeartBeat);
                 level = 2;
-                socket.emit("level", [level, roomSelected]);
+                if (!doctor) {
+                    socket.emit("level", [level, roomSelected]);
+                }
                 updateLevel= 2;
             }
 
