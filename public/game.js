@@ -672,6 +672,14 @@
                         spriteDoctor.play('damageDoctor');
                         spriteDoctor.chain([ 'idleDoctor' ]);
                     }
+                    let particlesGood = scene.add.particles('good');
+
+                    let emitterGood = particlesGood.createEmitter({
+                        speed: 500,
+                        scale: { start: 1, end:0 }
+                    });
+                    emitterGood.stop();
+                    emitterGood.explode(20, zone.x, zone.y);
                 }
             });
 
@@ -1227,14 +1235,14 @@
 
         function newCombo () {
             scoreText.setText('combo: ' + score);
-                let particlesGood = scene.add.particles('good');
+            let particlesGood = scene.add.particles('good');
 
-                let emitterGood = particlesGood.createEmitter({
-                    speed: 500,
-                    scale: { start: 1, end:0 }
-                });
-                emitterGood.stop();
-                emitterGood.explode(20, xPosComboText+50, yPosComboText+5);
+            let emitterGood = particlesGood.createEmitter({
+                speed: 500,
+                scale: { start: 1, end:0 }
+            });
+            emitterGood.stop();
+            emitterGood.explode(20, xPosComboText+50, yPosComboText+5);
 
             scene.tweens.add({
                 targets: scoreText,
