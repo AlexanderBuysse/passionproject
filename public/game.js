@@ -348,6 +348,7 @@
                     rooms.setVisible(false);
                     socket.emit("room", `room5`);
                     roomSelected = `room5`;
+                    disableSound= true;
                 }
             });
 
@@ -955,7 +956,6 @@
                 level++
                 socket.emit("level", [level, roomSelected]);
             } else if (timeF >= 300000 && updateLevel=== 5) {
-                console.log(`game over`);
             }
         }
 
