@@ -231,7 +231,9 @@
             let socket = io();
             this.data.set(`cordsLeft`, 620);
             this.data.set(`socket`, socket);
-            
+            const socketCreate = this.data.get(`socket`);
+            console.log(this.data.get(`socket`));
+
             scene = this;
             handDoctor = this.add.image(this.data.get('cordsLeft'), -50, 'handDoctor');
             textTimeDoctor = this.add.text(200, 200);
@@ -325,7 +327,7 @@
                 if (event.target.name === 'room1') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    this.data.get('socket').emit("room", `room1`);
+                    socketCreate.emit("room", `room1`);
                     roomSelected = `room1`;
                 }
                 if (event.target.name === 'room2') {
@@ -976,6 +978,9 @@
         }
 
         function update(time, delta) {
+            //console.log(this.data.get(`socket`));
+            
+
             if (onceTimePls) {
                 if (personedJoined) {
                     element.getChildByID(`submitlogin`).value= `Lock decision`
