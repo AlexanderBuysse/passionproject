@@ -109,6 +109,9 @@ io.on('connection', (socket) => {
         if(socket.rooms.has(level[1]) && socket.rooms.has(socket.id)) {
             io.to(level[1]).emit('level', level[0]);
         }
+        if(socket.rooms.has(level[1]) && socket.rooms.has(socket.id)) {
+            io.to(level[1]).emit('sound', level[0]);
+        }
     });
 
     socket.on(`arrow`, (arrayInfo) => {

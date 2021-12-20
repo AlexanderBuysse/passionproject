@@ -146,6 +146,8 @@
         let selectDoctor = false;
 
         let roomSelected;
+
+        let soundHalloween;
         
         
         function preload() {
@@ -198,6 +200,8 @@
 
             this.load.image('indie', 'assets/design/indie.png');
             this.load.image('spuit', 'assets/design/spuit1.png');
+
+            this.load.audio('soundHalloween', 'assets/sound/halloween.mp3');
         }
 
         function connect() {
@@ -705,6 +709,25 @@
                     element.getChildByID(`doctor`).checked=true;
                 }
             });
+            socket.on(`sound`, function (high) {
+                if (doctor) {
+                    if(high === 2) {
+                        soundHalloween.setRate(1.1);
+                    }
+                    if( high === 3) {
+                        soundHalloween.setRate(1.2);
+                    }
+                    if(high === 4) {
+                        soundHalloween.setRate(1.3);
+                    }
+                    if(high === 5) {
+                        soundHalloween.setRate(1.4);
+                    }
+                    if(high === 6) {
+                        soundHalloween.setRate(1.5);
+                    }
+                }
+            })
 
             lifeGroup= this.physics.add.group({
                 maxSize: 7,
@@ -874,6 +897,7 @@
                 if(updateLevel === level ) {
                     if(level !== 2){
                         level--;
+                        soundHalloween.setRate(.8);
                         socket.emit('level', [level, roomSelected]);
                         indie.setPosition(95, 424)
                     } 
@@ -882,6 +906,7 @@
             if((averageHeartBeat-bpm) <= -5) {
                 if(updateLevel === level ) {
                     level++;
+                    soundHalloween.setRate(1.2);
                     socket.emit('level', [level, roomSelected]);
                     indie.setPosition(320, 424);
                 }
@@ -889,6 +914,7 @@
             if((averageHeartBeat-bpm) > -5 && (averageHeartBeat-bpm) < 5) {
                 if(updateLevel !== level ) {
                     level = updateLevel;
+                    soundHalloween.setRate(1);
                     socket.emit('level', [level, roomSelected]);
                     indie.setPosition(210, 424);
                 }
@@ -1047,6 +1073,11 @@
                         arrowUp.setRotation(1.55);
                         arrowDown.setRotation(4.72);
                     }
+                    soundHalloween = this.sound.add('soundHalloween');
+
+                    soundHalloween.play({
+                        seek: 2.550
+                    });
                     onceDoctor = false;
                 }
             }
