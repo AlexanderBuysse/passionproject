@@ -231,9 +231,9 @@
             let life= 7;
             this.data.set(`cordsLeft`, 620);
             this.data.set(`socket`, socket);
+            this.data.set(`xPosHeart`, 60);
             const socketCreate = this.data.get(`socket`);
-            console.log(this.data.get(`socket`));
-
+            
             scene = this;
             this.data.set(`life`, life);
             handDoctor = this.add.image(this.data.get('cordsLeft'), -50, 'handDoctor');
@@ -746,12 +746,12 @@
 
             for (let i = 0; i < scene.data.get(`life`); i++) {
                 if (i <= 6) {
-                    heartSprite = this.add.sprite(xPosHeart+ (i*50), yPosHeart);
+                    heartSprite = this.add.sprite(this.data.get(`xPosHeart`)+ (i*50), yPosHeart);
                     heartSprite.setScale(.5);
                     heartSprite.play('idleheart');
                     lifeGroup.add(heartSprite);                
                     } else {
-                    heartSprite = this.add.sprite(xPosHeart+ ((i-7)*50), yPosHeart+50);
+                    heartSprite = this.add.sprite(this.data.get(`xPosHeart`)+ ((i-7)*50), yPosHeart+50);
                     heartSprite.setScale(.5);
                     heartSprite.play('idleheart');
                     lifeGroup.add(heartSprite);
