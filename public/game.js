@@ -48,10 +48,10 @@
         let button;
         let doctor;
 
-        const cordsLeft=450+ 170;
-        const cordsUp=450+ 320;
-        const cordsDown=450+ 480;
-        const cordsRight =450+ 630;
+        const cordsLeft=620;
+        const cordsUp=770;
+        const cordsDown=930;
+        const cordsRight =1080;
 
         let emitter;
         let emitter2;
