@@ -71,8 +71,7 @@
         
         let spriteDoctor;
         let spritePatient;
-
-        let life= 7; 
+ 
         let lifeGroup;
 
         let gameOver = false;
@@ -229,12 +228,14 @@
 
         function create() {
             let socket = io();
+            let life= 7;
             this.data.set(`cordsLeft`, 620);
             this.data.set(`socket`, socket);
             const socketCreate = this.data.get(`socket`);
             console.log(this.data.get(`socket`));
 
             scene = this;
+            this.data.set(`life`, life);
             handDoctor = this.add.image(this.data.get('cordsLeft'), -50, 'handDoctor');
             textTimeDoctor = this.add.text(200, 200);
 
@@ -670,11 +671,12 @@
                 if(doctor) {
                     const missedEmitter = GetEmitter(direction);
                     missedEmitter.start();
-                    life = life -1; 
-                    lifeGroup.children.entries[life].play('deathheart');
+                    let lifeHer = scene.data.get(`life`);
+                    scene.data.set(`life`, lifeHer -1);
+                    lifeGroup.children.entries[lifeHer-1].play('deathheart');
                     emitterExplosion = bloodexplosion.createEmitter(cacheJson);
-                    emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y)
-                    emitterExplosion.explode(200, lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y);
+                    emitterExplosion.setPosition(lifeGroup.children.entries[lifeHer-1].x, lifeGroup.children.entries[lifeHer-1].y)
+                    emitterExplosion.explode(200, lifeGroup.children.entries[lifeHer-1].x, lifeGroup.children.entries[lifeHer-1].y);
                     activateOnlyWhenSocketHasBeenSend=true;
                 }
             });
@@ -741,7 +743,8 @@
                 maxSize: 7,
                 allowGravity: false
             })
-            for (let i = 0; i < life; i++) {
+
+            for (let i = 0; i < scene.data.get(`life`); i++) {
                 if (i <= 6) {
                     heartSprite = this.add.sprite(xPosHeart+ (i*50), yPosHeart);
                     heartSprite.setScale(.5);
@@ -1450,12 +1453,13 @@
             }
 
             if (!doctor) {
-                if(life > 0){
-                    life = life -1; 
-                    lifeGroup.children.entries[life].play('deathheart');
+                let lifeHer = scene.data.get(`life`);
+                if(lifeHer > 0){
+                    scene.data.set(`life`, lifeHer -1);
+                    lifeGroup.children.entries[lifeHer -1].play('deathheart');
                     emitterExplosion = bloodexplosion.createEmitter(cacheJson);
-                    emitterExplosion.setPosition(lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y);
-                    emitterExplosion.explode(200, lifeGroup.children.entries[life].x, lifeGroup.children.entries[life].y);
+                    emitterExplosion.setPosition(lifeGroup.children.entries[lifeHer -1].x, lifeGroup.children.entries[lifeHer -1].y);
+                    emitterExplosion.explode(200, lifeGroup.children.entries[lifeHer -1].x, lifeGroup.children.entries[lifeHer -1].y);
                 } else {
                     gameOver = true;
                     patientDied=true;
