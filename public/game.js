@@ -148,6 +148,8 @@
         let roomSelected;
 
         let soundHalloween;
+
+        let disableSound= false;
         
         
         function preload() {
@@ -710,7 +712,7 @@
                 }
             });
             socket.on(`sound`, function (high) {
-                if (doctor) {
+                if (doctor &&disableSound) {
                     if(high === 2) {
                         soundHalloween.setRate(1.1);
                     }
@@ -897,7 +899,9 @@
                 if(updateLevel === level ) {
                     if(level !== 2){
                         level--;
-                        soundHalloween.setRate(.8);
+                        if (disableSound) {
+                            soundHalloween.setRate(.8);
+                        }
                         socket.emit('level', [level, roomSelected]);
                         indie.setPosition(95, 424)
                     } 
@@ -906,7 +910,9 @@
             if((averageHeartBeat-bpm) <= -5) {
                 if(updateLevel === level ) {
                     level++;
-                    soundHalloween.setRate(1.2);
+                    if (disableSound) {
+                        soundHalloween.setRate(1.2);
+                    }
                     socket.emit('level', [level, roomSelected]);
                     indie.setPosition(320, 424);
                 }
@@ -914,7 +920,9 @@
             if((averageHeartBeat-bpm) > -5 && (averageHeartBeat-bpm) < 5) {
                 if(updateLevel !== level ) {
                     level = updateLevel;
-                    soundHalloween.setRate(1);
+                    if (disableSound) {
+                        soundHalloween.setRate(1);
+                    }
                     socket.emit('level', [level, roomSelected]);
                     indie.setPosition(210, 424);
                 }
@@ -1073,11 +1081,13 @@
                         arrowUp.setRotation(1.55);
                         arrowDown.setRotation(4.72);
                     }
-                    soundHalloween = this.sound.add('soundHalloween');
-
-                    soundHalloween.play({
-                        seek: 2.550
-                    });
+                    if (disableSound) {
+                        soundHalloween = this.sound.add('soundHalloween');
+    
+                        soundHalloween.play({
+                            seek: 2.550
+                        });
+                    }
                     onceDoctor = false;
                 }
             }
