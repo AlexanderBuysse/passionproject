@@ -27,7 +27,6 @@
     };
 
         let game = new Phaser.Game(config);
-        let socket = io();
 
         let platforms;
         var cursors;
@@ -229,6 +228,7 @@
         }
 
         function create() {
+            let socket = io();
             this.data.set(`cordsLeft`, 620);
             this.data.set(`socket`, socket);
             
@@ -583,7 +583,7 @@
                 allowGravity: false
             });
 
-            this.data.get('socket').on('arrow', function (arrayInfo) {
+            socket.on('arrow', function (arrayInfo) {
                 if(!doctor) {
                     if (arrayInfo[0]) {
                         SendArrow(arrayInfo[1], 0, false);
