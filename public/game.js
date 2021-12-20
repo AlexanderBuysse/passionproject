@@ -325,31 +325,31 @@
                 if (event.target.name === 'room1') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    socket.emit("room", `room1`);
+                    this.data.get('socket').emit("room", `room1`);
                     roomSelected = `room1`;
                 }
                 if (event.target.name === 'room2') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    socket.emit("room", `room2`);
+                    this.data.get('socket').emit("room", `room2`);
                     roomSelected = `room2`;
                 }
                 if (event.target.name === 'room3') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    socket.emit("room", `room3`);
+                    this.data.get('socket').emit("room", `room3`);
                     roomSelected = `room3`;
                 }
                 if (event.target.name === 'room4') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    socket.emit("room", `room4`);
+                    this.data.get('socket').emit("room", `room4`);
                     roomSelected = `room4`;
                 }
                 if (event.target.name === 'room5') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    socket.emit("room", `room5`);
+                    this.data.get('socket').emit("room", `room5`);
                     roomSelected = `room5`;
                     disableSound= true;
                 }
@@ -368,10 +368,10 @@
                         element.getChildByID(`patient`).disabled = true;
                         doctor= true;
                         gameStart= true;
-                        socket.emit('playerOne', [true, roomSelected]);
+                        this.data.get('socket').emit('playerOne', [true, roomSelected]);
                         gameStarted=true;
                         if (!playerOne && !playerTwo) {
-                            socket.emit(`characterChosen`, [`doctor`, roomSelected]);
+                            this.data.get('socket').emit(`characterChosen`, [`doctor`, roomSelected]);
                         };
                     } else {
                         this.removeListener('click');
@@ -379,10 +379,10 @@
                         element.getChildByID(`submitlogin`).classList.add(`nothing`);
                         element.getChildByID(`doctor`).disabled = true;
                         gameStart= true; 
-                        socket.emit('playerTwo', [true, roomSelected]);
+                        this.data.get('socket').emit('playerTwo', [true, roomSelected]);
                         gameStarted=true;
                         if (!playerOne && !playerTwo) {
-                            socket.emit(`characterChosen`, [`patient`, roomSelected]);
+                            this.data.get('socket').emit(`characterChosen`, [`patient`, roomSelected]);
                         };
                     }                    
                 }
@@ -583,7 +583,7 @@
                 allowGravity: false
             });
 
-            socket.on('arrow', function (arrayInfo) {
+            this.data.get('socket').on('arrow', function (arrayInfo) {
                 if(!doctor) {
                     if (arrayInfo[0]) {
                         SendArrow(arrayInfo[1], 0, false);
@@ -598,13 +598,13 @@
                     }
                 }
             });
-            socket.on('level', function (levelFromSocket) {
+            this.data.get('socket').on('level', function (levelFromSocket) {
                 if(doctor) {
                     console.log(levelFromSocket);
                     level = levelFromSocket;
                 }
             });
-            socket.on(`rooms`, function (roomsObject) {
+            this.data.get('socket').on(`rooms`, function (roomsObject) {
                 const selectRooms = number => {
                     if (number === 0 ){
                         return `room1`
@@ -639,24 +639,24 @@
                     }
                 }
             });
-            socket.on(`left`, function (left) {
+            this.data.get('socket').on(`left`, function (left) {
                 console.log(left);
                 window.location.reload();
             })
 
-            socket.on(`playerOneTrue` , function (bool) {
+            this.data.get('socket').on(`playerOneTrue` , function (bool) {
                 playerOne= true;
                 if(playerOne&&playerTwo) {
                     gameStartReally = true;
                 }
             })
-            socket.on(`playerTwoTrue` , function (bool) {
+            this.data.get('socket').on(`playerTwoTrue` , function (bool) {
                 playerTwo= true;
                 if(playerOne&&playerTwo) {
                     gameStartReally = true;
                 }
             })
-            socket.on(`gameWinner`, function (string) {
+            this.data.get('socket').on(`gameWinner`, function (string) {
                 if (string === `doctor`) {
                     doctorWin=true;
                 } 
@@ -664,7 +664,7 @@
                     patientWin=true;
                 }
             })
-            socket.on(`playerMissed`, function (direction) {
+            this.data.get('socket').on(`playerMissed`, function (direction) {
                 if(doctor) {
                     const missedEmitter = GetEmitter(direction);
                     missedEmitter.start();
@@ -676,7 +676,7 @@
                     activateOnlyWhenSocketHasBeenSend=true;
                 }
             });
-            socket.on(`arrowWasRight`, function (direction) {
+            this.data.get('socket').on(`arrowWasRight`, function (direction) {
                 if (doctor) {
                     const zone = getZone(direction);
                     zone.setName(`pressed`);
@@ -695,17 +695,17 @@
                 }
             });
 
-            socket.on(`twoPlayersInRoom`, function (bool) {
+            this.data.get('socket').on(`twoPlayersInRoom`, function (bool) {
                 personedJoined = bool;
             });
 
-            socket.on(`playerInRoom`, function (wop) {
+            this.data.get('socket').on(`playerInRoom`, function (wop) {
                 if(wop === `not` && !element.getChildByID(`doctor`).checked) {
                     //element.getChildByID(`doctor`).disabled=true;
                     //kijken voor character selector
                 }
             });
-            socket.on(`disableCharacter`, function (string) {
+            this.data.get('socket').on(`disableCharacter`, function (string) {
                 if (string === `doctor` && !gameStarted) {
                     element.getChildByID(string).disabled=true;
                     element.getChildByID(`patient`).checked=true;
@@ -715,7 +715,7 @@
                     element.getChildByID(`doctor`).checked=true;
                 }
             });
-            socket.on(`sound`, function (high) {
+            this.data.get('socket').on(`sound`, function (high) {
                 if (doctor &&disableSound) {
                     if(high === 2) {
                         soundHalloween.setRate(1.1);
