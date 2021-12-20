@@ -229,8 +229,9 @@
         }
 
         function create() {
+            this.data.set(`cordsLeft`, 620);
             scene = this;
-            handDoctor = this.add.image(cordsLeft, -50, 'handDoctor');
+            handDoctor = this.add.image(this.data.get('cordsLeft'), -50, 'handDoctor');
             textTimeDoctor = this.add.text(200, 200);
 
             connect();
