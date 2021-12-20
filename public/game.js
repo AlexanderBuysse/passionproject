@@ -906,7 +906,7 @@
                         if (disableSound) {
                             soundHalloween.setRate(.8);
                         }
-                        socket.emit('level', [level, roomSelected]);
+                        this.data.get('socket').emit('level', [level, roomSelected]);
                         indie.setPosition(95, 424)
                     } 
                 }
@@ -917,7 +917,7 @@
                     if (disableSound) {
                         soundHalloween.setRate(1.2);
                     }
-                    socket.emit('level', [level, roomSelected]);
+                    this.data.get('socket').emit('level', [level, roomSelected]);
                     indie.setPosition(320, 424);
                 }
             }
@@ -927,7 +927,7 @@
                     if (disableSound) {
                         soundHalloween.setRate(1);
                     }
-                    socket.emit('level', [level, roomSelected]);
+                    this.data.get('socket').emit('level', [level, roomSelected]);
                     indie.setPosition(210, 424);
                 }
             }
@@ -945,19 +945,19 @@
             if (timeF >= 60000 && updateLevel=== 2 ) {
                 updateLevel++
                 level++
-                socket.emit("level", [level, roomSelected]);    
+                this.data.get('socket').emit("level", [level, roomSelected]);    
             } else if(timeF >= 120000 && updateLevel=== 3) {
                 updateLevel++
                 level++
-                socket.emit("level", [level, roomSelected]);     
+                this.data.get('socket').emit("level", [level, roomSelected]);     
             } else if (timeF >= 180000 && updateLevel=== 4) {
                 updateLevel++
                 level++
-                socket.emit("level", [level, roomSelected]);
+                this.data.get('socket').emit("level", [level, roomSelected]);
             } else if (timeF >= 240000 && updateLevel=== 4) {
                 updateLevel++
                 level++
-                socket.emit("level", [level, roomSelected]);
+                this.data.get('socket').emit("level", [level, roomSelected]);
             } else if (timeF >= 300000 && updateLevel=== 5) {
             }
         }
@@ -1011,7 +1011,7 @@
             }
 
             if (onceRoom) {
-                socket.emit(`getRoom`, true);
+                this.data.get('socket').emit(`getRoom`, true);
                 onceRoom = false;
             }
 
@@ -1036,7 +1036,7 @@
                 console.log(averageHeartBeat);
                 level = 2;
                 if (!doctor) {
-                    socket.emit("level", [level, roomSelected]);
+                    this.data.get('socket').emit("level", [level, roomSelected]);
                 }
                 updateLevel= 2;
             }
@@ -1051,12 +1051,12 @@
 
             if (gameOver && once && gameStartReally &&patientDied) {
                 once= false;
-                socket.emit(`gameOver`, [false, roomSelected]);
+                this.data.get('socket').emit(`gameOver`, [false, roomSelected]);
             }
             
             if (gameOver && once && gameStartReally&&doctorDied) {
                 once= false;
-                socket.emit(`gameOver`, [true, roomSelected]);
+                this.data.get('socket').emit(`gameOver`, [true, roomSelected]);
             }  
 
             if(gameStarted) {
@@ -1276,7 +1276,7 @@
                 if (level === 1 && heartRateGemid.length !== 10) {
                     heartRateGemid.push(bpm);
                 }
-                socket.emit(`arrowWasRight`, [getDirectionZone (zones.x), roomSelected]);
+                this.data.get('socket').emit(`arrowWasRight`, [getDirectionZone (zones.x), roomSelected]);
             }
         }
 
@@ -1355,7 +1355,7 @@
                 arrowClass.fire(cords, 100, direction);
                 if (userPressedKey) {
                     const arrowInfo = [true, direction];
-                    socket.emit('arrow', [arrowInfo, roomSelected]);
+                    this.data.get('socket').emit('arrow', [arrowInfo, roomSelected]);
                     timeWhenFunction= time;
                     //handDoctor.setPosition(GetCords(direction),-50);
                     scene.tweens.add({
@@ -1449,7 +1449,7 @@
                     gameOver = true;
                     patientDied=true;
                 }
-                socket.emit(`playerMissed`, [direction, roomSelected]);
+                this.data.get('socket').emit(`playerMissed`, [direction, roomSelected]);
             }
         }
 
