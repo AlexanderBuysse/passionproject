@@ -230,6 +230,8 @@
 
         function create() {
             this.data.set(`cordsLeft`, 620);
+            this.data.set(`socket`, socket);
+            
             scene = this;
             handDoctor = this.add.image(this.data.get('cordsLeft'), -50, 'handDoctor');
             textTimeDoctor = this.add.text(200, 200);
@@ -581,7 +583,7 @@
                 allowGravity: false
             });
 
-            socket.on('arrow', function (arrayInfo) {
+            this.data.get('socket').on('arrow', function (arrayInfo) {
                 if(!doctor) {
                     if (arrayInfo[0]) {
                         SendArrow(arrayInfo[1], 0, false);
