@@ -333,25 +333,25 @@
                 if (event.target.name === 'room2') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    this.data.get('socket').emit("room", `room2`);
+                    socketCreate.emit("room", `room2`);
                     roomSelected = `room2`;
                 }
                 if (event.target.name === 'room3') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    this.data.get('socket').emit("room", `room3`);
+                    socketCreate.emit("room", `room3`);
                     roomSelected = `room3`;
                 }
                 if (event.target.name === 'room4') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    this.data.get('socket').emit("room", `room4`);
+                    socketCreate.emit("room", `room4`);
                     roomSelected = `room4`;
                 }
                 if (event.target.name === 'room5') {
                     element.setVisible(true);
                     rooms.setVisible(false);
-                    this.data.get('socket').emit("room", `room5`);
+                    socketCreate.emit("room", `room5`);
                     roomSelected = `room5`;
                     disableSound= true;
                 }
@@ -370,10 +370,10 @@
                         element.getChildByID(`patient`).disabled = true;
                         doctor= true;
                         gameStart= true;
-                        this.data.get('socket').emit('playerOne', [true, roomSelected]);
+                        socketCreate.emit('playerOne', [true, roomSelected]);
                         gameStarted=true;
                         if (!playerOne && !playerTwo) {
-                            this.data.get('socket').emit(`characterChosen`, [`doctor`, roomSelected]);
+                            socketCreate.emit(`characterChosen`, [`doctor`, roomSelected]);
                         };
                     } else {
                         this.removeListener('click');
@@ -381,10 +381,10 @@
                         element.getChildByID(`submitlogin`).classList.add(`nothing`);
                         element.getChildByID(`doctor`).disabled = true;
                         gameStart= true; 
-                        this.data.get('socket').emit('playerTwo', [true, roomSelected]);
+                        socketCreate.emit('playerTwo', [true, roomSelected]);
                         gameStarted=true;
                         if (!playerOne && !playerTwo) {
-                            this.data.get('socket').emit(`characterChosen`, [`patient`, roomSelected]);
+                            socketCreate.emit(`characterChosen`, [`patient`, roomSelected]);
                         };
                     }                    
                 }
@@ -585,7 +585,7 @@
                 allowGravity: false
             });
 
-            this.data.get('socket').on('arrow', function (arrayInfo) {
+            socketCreate.on('arrow', function (arrayInfo) {
                 if(!doctor) {
                     if (arrayInfo[0]) {
                         SendArrow(arrayInfo[1], 0, false);
@@ -600,13 +600,13 @@
                     }
                 }
             });
-            this.data.get('socket').on('level', function (levelFromSocket) {
+            socketCreate.on('level', function (levelFromSocket) {
                 if(doctor) {
                     console.log(levelFromSocket);
                     level = levelFromSocket;
                 }
             });
-            this.data.get('socket').on(`rooms`, function (roomsObject) {
+            socketCreate.on(`rooms`, function (roomsObject) {
                 const selectRooms = number => {
                     if (number === 0 ){
                         return `room1`
@@ -641,24 +641,24 @@
                     }
                 }
             });
-            this.data.get('socket').on(`left`, function (left) {
+            socketCreate.on(`left`, function (left) {
                 console.log(left);
                 window.location.reload();
             })
 
-            this.data.get('socket').on(`playerOneTrue` , function (bool) {
+            socketCreate.on(`playerOneTrue` , function (bool) {
                 playerOne= true;
                 if(playerOne&&playerTwo) {
                     gameStartReally = true;
                 }
             })
-            this.data.get('socket').on(`playerTwoTrue` , function (bool) {
+            socketCreate.on(`playerTwoTrue` , function (bool) {
                 playerTwo= true;
                 if(playerOne&&playerTwo) {
                     gameStartReally = true;
                 }
             })
-            this.data.get('socket').on(`gameWinner`, function (string) {
+            socketCreate.on(`gameWinner`, function (string) {
                 if (string === `doctor`) {
                     doctorWin=true;
                 } 
@@ -666,7 +666,7 @@
                     patientWin=true;
                 }
             })
-            this.data.get('socket').on(`playerMissed`, function (direction) {
+            socketCreate.on(`playerMissed`, function (direction) {
                 if(doctor) {
                     const missedEmitter = GetEmitter(direction);
                     missedEmitter.start();
@@ -678,7 +678,7 @@
                     activateOnlyWhenSocketHasBeenSend=true;
                 }
             });
-            this.data.get('socket').on(`arrowWasRight`, function (direction) {
+            socketCreate.on(`arrowWasRight`, function (direction) {
                 if (doctor) {
                     const zone = getZone(direction);
                     zone.setName(`pressed`);
@@ -697,17 +697,17 @@
                 }
             });
 
-            this.data.get('socket').on(`twoPlayersInRoom`, function (bool) {
+            socketCreate.on(`twoPlayersInRoom`, function (bool) {
                 personedJoined = bool;
             });
 
-            this.data.get('socket').on(`playerInRoom`, function (wop) {
+            socketCreate.on(`playerInRoom`, function (wop) {
                 if(wop === `not` && !element.getChildByID(`doctor`).checked) {
                     //element.getChildByID(`doctor`).disabled=true;
                     //kijken voor character selector
                 }
             });
-            this.data.get('socket').on(`disableCharacter`, function (string) {
+            socketCreate.on(`disableCharacter`, function (string) {
                 if (string === `doctor` && !gameStarted) {
                     element.getChildByID(string).disabled=true;
                     element.getChildByID(`patient`).checked=true;
@@ -717,7 +717,7 @@
                     element.getChildByID(`doctor`).checked=true;
                 }
             });
-            this.data.get('socket').on(`sound`, function (high) {
+            socketCreate.on(`sound`, function (high) {
                 if (doctor &&disableSound) {
                     if(high === 2) {
                         soundHalloween.setRate(1.1);
@@ -901,6 +901,7 @@
         }
 
         function checkheartBeat() {
+            const socketCreate = scene.data.get(`socket`)
             if((averageHeartBeat-bpm) >= 5) {
                 if(updateLevel === level ) {
                     if(level !== 2){
@@ -908,7 +909,7 @@
                         if (disableSound) {
                             soundHalloween.setRate(.8);
                         }
-                        this.data.get('socket').emit('level', [level, roomSelected]);
+                        socketCreate.emit('level', [level, roomSelected]);
                         indie.setPosition(95, 424)
                     } 
                 }
@@ -919,7 +920,7 @@
                     if (disableSound) {
                         soundHalloween.setRate(1.2);
                     }
-                    this.data.get('socket').emit('level', [level, roomSelected]);
+                    socketCreate.emit('level', [level, roomSelected]);
                     indie.setPosition(320, 424);
                 }
             }
@@ -929,7 +930,7 @@
                     if (disableSound) {
                         soundHalloween.setRate(1);
                     }
-                    this.data.get('socket').emit('level', [level, roomSelected]);
+                    socketCreate.emit('level', [level, roomSelected]);
                     indie.setPosition(210, 424);
                 }
             }
@@ -943,23 +944,24 @@
         }
 
         function changeLevel (timeF) {
+            const socketCreate = scene.data.get(`socket`)
             //console.log(`level changed`);
             if (timeF >= 60000 && updateLevel=== 2 ) {
                 updateLevel++
                 level++
-                this.data.get('socket').emit("level", [level, roomSelected]);    
+                socketCreate.emit("level", [level, roomSelected]);    
             } else if(timeF >= 120000 && updateLevel=== 3) {
                 updateLevel++
                 level++
-                this.data.get('socket').emit("level", [level, roomSelected]);     
+                socketCreate.emit("level", [level, roomSelected]);     
             } else if (timeF >= 180000 && updateLevel=== 4) {
                 updateLevel++
                 level++
-                this.data.get('socket').emit("level", [level, roomSelected]);
+                socketCreate.emit("level", [level, roomSelected]);
             } else if (timeF >= 240000 && updateLevel=== 4) {
                 updateLevel++
                 level++
-                this.data.get('socket').emit("level", [level, roomSelected]);
+                socketCreate.emit("level", [level, roomSelected]);
             } else if (timeF >= 300000 && updateLevel=== 5) {
             }
         }
@@ -979,6 +981,7 @@
 
         function update(time, delta) {
             //console.log(this.data.get(`socket`));
+            const socketCreate = scene.data.get(`socket`)
             
 
             if (onceTimePls) {
@@ -1016,7 +1019,7 @@
             }
 
             if (onceRoom) {
-                this.data.get('socket').emit(`getRoom`, true);
+                socketCreate.emit(`getRoom`, true);
                 onceRoom = false;
             }
 
@@ -1041,7 +1044,7 @@
                 console.log(averageHeartBeat);
                 level = 2;
                 if (!doctor) {
-                    this.data.get('socket').emit("level", [level, roomSelected]);
+                    socketCreate.emit("level", [level, roomSelected]);
                 }
                 updateLevel= 2;
             }
@@ -1056,12 +1059,12 @@
 
             if (gameOver && once && gameStartReally &&patientDied) {
                 once= false;
-                this.data.get('socket').emit(`gameOver`, [false, roomSelected]);
+                socketCreate.emit(`gameOver`, [false, roomSelected]);
             }
             
             if (gameOver && once && gameStartReally&&doctorDied) {
                 once= false;
-                this.data.get('socket').emit(`gameOver`, [true, roomSelected]);
+                socketCreate.emit(`gameOver`, [true, roomSelected]);
             }  
 
             if(gameStarted) {
@@ -1268,6 +1271,7 @@
 
 
         function removeArrowZone (zones, arrows) {
+            const socketCreate = scene.data.get(`socket`)
             if (zones.name===`pressed`) {
                 arrows.destroy();
                 score += 1;
@@ -1281,7 +1285,7 @@
                 if (level === 1 && heartRateGemid.length !== 10) {
                     heartRateGemid.push(bpm);
                 }
-                this.data.get('socket').emit(`arrowWasRight`, [getDirectionZone (zones.x), roomSelected]);
+                socketCreate.emit(`arrowWasRight`, [getDirectionZone (zones.x), roomSelected]);
             }
         }
 
@@ -1353,6 +1357,7 @@
         }
 
         function SendArrow (direction, time, userPressedKey) {
+            const socketCreate = scene.data.get(`socket`)
             var arrowClass = arrowsClass.get();
             const cords = GetCords(direction);
             if (arrowClass)
@@ -1360,7 +1365,7 @@
                 arrowClass.fire(cords, 100, direction);
                 if (userPressedKey) {
                     const arrowInfo = [true, direction];
-                    this.data.get('socket').emit('arrow', [arrowInfo, roomSelected]);
+                    socketCreate.emit('arrow', [arrowInfo, roomSelected]);
                     timeWhenFunction= time;
                     //handDoctor.setPosition(GetCords(direction),-50);
                     scene.tweens.add({
@@ -1427,6 +1432,7 @@
         }
 
         function losePoints (direction) {
+            const socketCreate = scene.data.get(`socket`)
             score = 0;
             scoreText.setText('combo: ' + score);
             
@@ -1454,7 +1460,7 @@
                     gameOver = true;
                     patientDied=true;
                 }
-                this.data.get('socket').emit(`playerMissed`, [direction, roomSelected]);
+                socketCreate.emit(`playerMissed`, [direction, roomSelected]);
             }
         }
 
