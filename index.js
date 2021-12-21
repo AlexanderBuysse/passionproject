@@ -4,6 +4,7 @@ const http = require('http');
 const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
+require('dotenv').config();
 
 let users = [];
 let roomsId;
@@ -34,6 +35,7 @@ io.on('connection', (socket) => {
 
     socket.on(`getRoom`, (bol) => {
         io.emit(`rooms`, [room1, room2, room3, room4, room5]);
+        io.emit(`token`, process.env.MY_TOKEN);
         roomsId = socket.rooms;
     })
 

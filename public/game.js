@@ -147,7 +147,7 @@
         }
 
         function connect() {
-            var ws = new WebSocket('wss://dev.pulsoid.net/api/v1/data/real_time?access_token=ca88ff26-710a-4bb8-81f6-bc32ffcabe5d');
+            var ws = new WebSocket(`wss://dev.pulsoid.net/api/v1/data/real_time?access_token=${scene.data.get(`token`)}`);
             ws.onopen = function() {
                 ws.send(JSON.stringify({
                 }));
@@ -217,6 +217,7 @@
             this.data.set(`patientDied`, false);
             this.data.set(`doctorDied`, false);
             this.data.set(`updateLevel`, undefined);
+            this.data.set(`token`, undefined);
 
             const socketCreate = this.data.get(`socket`);
             
@@ -225,7 +226,6 @@
             handDoctor = this.add.image(this.data.get('cordsLeft'), -50, 'handDoctor');
             textTimeDoctor = this.add.text(200, 200);
 
-            connect();
         //----------------------------- game loader ----------------------------------------------
             home = this.add.dom(400,370).createFromCache('home');
 
@@ -593,6 +593,9 @@
                     console.log(levelFromSocket);
                     scene.data.set(`level`, levelFromSocket);
                 }
+            });
+            socketCreate.on('token', function (token) {
+                scene.data.set(`token`, token);
             });
             socketCreate.on(`rooms`, function (roomsObject) {
                 const selectRooms = number => {
@@ -979,6 +982,7 @@
             
             if (onceTimePls) {
                 if (personedJoined) {
+                    connect();
                     element.getChildByID(`submitlogin`).value= `Lock decision`
                     scene.data.set(`onceTimePls`, false);
                 }; 
