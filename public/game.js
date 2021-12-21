@@ -34,18 +34,18 @@
         let arrows;
         let arrowsClass;
 
-        let timeWhenFunction = 0;
+        //let timeWhenFunction = 0;
 
         let zone;
         let zone2;
         let zone3;
         let zone4;
         let scoreText;
-        let score = 0;
+        //let score = 0;
 
         var element;
         let button;
-        let doctor;
+        //let doctor;
 
         const cordsLeft=620;
         const cordsUp=770;
@@ -70,12 +70,12 @@
         const yPosTimer = 235;
         
         let spriteDoctor;
-        let spritePatient;
+        //let spritePatient;
  
         let lifeGroup;
 
-        let gameOver = false;
-        let once = true;
+        //let gameOver = false;
+        //let once = true;
 
         let heartSprite;
 
@@ -94,17 +94,17 @@
 
         let textHeart;
 
-        let fiveMinTimer = 5000;
+        //let fiveMinTimer = 5000;
         let textTimer;
 
         let gameSpeed= 500;
-        let level = 1;
-        let heartRateGemid = [];
+        //let level = 1;
+        //let heartRateGemid = [];
         let arrowsCaught = 0;
 
         let textGameSpeed;
 
-        let bpm= 0;
+        //let bpm= 0;
         let textBpm;
         const xPosBpm = 235;
         const yPosBpm = 340;
@@ -122,16 +122,16 @@
         let handDoctor;
 
         let tweenDoctor;
-        let doctorWin = false;
-        let patientWin = false;        
+        //let doctorWin = false;
+        //let patientWin = false;        
         let doctorWinHtml;
         let patientWinHtml;
         let countdown;
 
-        let playerOne= false;
-        let playerTwo= false;
+        //let playerOne= false;
+        //let playerTwo= false;
 
-        let gameStartReally = false;
+        //let gameStartReally = false;
         let patientDied= false;
         let doctorDied= false;
 
@@ -140,14 +140,14 @@
         const yPosComboText = 500;
         const xPosComboText = 500;
 
-        let personedJoined = false;
+        //let personedJoined = false;
         let selectDoctor = false;
 
         let roomSelected;
 
         let soundHalloween;
 
-        let disableSound= false;
+        //let disableSound= false;
         
         
         function preload() {
@@ -212,7 +212,7 @@
             };
             ws.onmessage = function(e) {
                 const messageObj = JSON.parse(e.data);
-                bpm = messageObj.data.heart_rate;
+                scene.data.set(`bpm`, messageObj.data.heart_rate);
             };
             ws.onclose = function(e) {
                 console.log('Socket is closed. Reconnect will be attempted in 1 second.', e.reason);
@@ -229,9 +229,50 @@
         function create() {
             let socket = io();
             let life= 7;
-            this.data.set(`cordsLeft`, 620);
             this.data.set(`socket`, socket);
             this.data.set(`xPosHeart`, 60);
+            this.data.set(`yPosHeart`,105);
+            this.data.set(`yPosZones`,630);
+            this.data.set(`cordsLeft`, 620);
+            this.data.set(`cordsUp`, 770);
+            this.data.set(`cordsDown`, 930);
+            this.data.set(`cordsRight`, 1080);
+            this.data.set(`xPosComboText`, 500);            
+            this.data.set(`yPosComboText`, 500);
+            this.data.set(`xPosTimer`, 76);            
+            this.data.set(`yPosTimer`, 235);
+            this.data.set(`xPosBpm`, 235);            
+            this.data.set(`yPosBpm`, 340);
+            this.data.set(`yPosPlatform`, 760);            
+            this.data.set(`xPosPlatform`, 850);            
+            this.data.set(`yPosEmitters`, 700);
+            this.data.set(`onceTimePls`, true);
+            this.data.set(`personedJoined`, false);
+            this.data.set(`gameStartReally`, false);
+            this.data.set(`activateOnlyWhenSocketHasBeenSend`, false);
+            this.data.set(`onceRoom`, true);
+            this.data.set(`doctorWin`, false);
+            this.data.set(`patientWin`, false);
+            this.data.set(`heartRateGemid`, []);
+            this.data.set(`level`, 1);
+            this.data.set(`gameOver`, false);
+            this.data.set(`gameStarted`, false);
+            this.data.set(`fiveMinTimer`, 5000);
+            this.data.set(`timeStart`, undefined);
+            this.data.set(`bpm`, 0);
+            this.data.set(`timeWhenFunction`, 0);
+            this.data.set(`playerOne`, false);
+            this.data.set(`playerTwo`, false);
+            this.data.set(`onceDoctor`, true);
+            this.data.set(`disableSound`, false);
+            this.data.set(`onceStartGame`, true);
+            this.data.set(`counterTime`, 3);
+            this.data.set(`doctor`, undefined);
+            this.data.set(`score`, 0);
+            this.data.set(`spritePatient`, undefined);
+            this.data.set(`comboReset`, true);
+            this.data.set(`once`, true);
+
             const socketCreate = this.data.get(`socket`);
             
             scene = this;
@@ -354,7 +395,7 @@
                     rooms.setVisible(false);
                     socketCreate.emit("room", `room5`);
                     roomSelected = `room5`;
-                    disableSound= true;
+                    scene.data.set(`disableSound`, true);
                 }
             });
 
@@ -363,17 +404,18 @@
             element.addListener('submit');
             element.on('submit', function (event) {
                 event.preventDefault();
-                if (personedJoined) {
+                const oke = scene.data.get(`personedJoined`)
+                if (oke) {
                     if(event.target[0].checked === true) {
                         this.removeListener('click');
                         this.removeListener('submit');
                         element.getChildByID(`submitlogin`).classList.add(`nothing`);
                         element.getChildByID(`patient`).disabled = true;
-                        doctor= true;
+                        scene.data.set(`doctor`, true);
                         gameStart= true;
                         socketCreate.emit('playerOne', [true, roomSelected]);
-                        gameStarted=true;
-                        if (!playerOne && !playerTwo) {
+                        scene.data.set(`gameStarted`, true);
+                        if (!scene.data.get(`playerOne`) && !scene.data.get(`playerTwo`)) {
                             socketCreate.emit(`characterChosen`, [`doctor`, roomSelected]);
                         };
                     } else {
@@ -383,8 +425,8 @@
                         element.getChildByID(`doctor`).disabled = true;
                         gameStart= true; 
                         socketCreate.emit('playerTwo', [true, roomSelected]);
-                        gameStarted=true;
-                        if (!playerOne && !playerTwo) {
+                        scene.data.set(`gameStarted`, true);
+                        if (!scene.data.get(`playerOne`) && !scene.data.get(`playerTwo`)) {
                             socketCreate.emit(`characterChosen`, [`patient`, roomSelected]);
                         };
                     }                    
@@ -551,13 +593,13 @@
                 {
                     this.y += this.speed * delta *.5;
 
-                    if(level===3) {
+                    if(scene.data.get(`level`)===3) {
                         this.rotation = this.rotation+.1;
                     }
-                    if(level === 4){
+                    if(scene.data.get(`level`) === 4){
                         this.alpha= this.alpha-.01; 
                     }
-                    if(level === 5) {
+                    if(scene.data.get(`level`) === 5) {
                         this.alpha= this.alpha-.01; 
                         this.rotation = this.rotation+.1;
                     }
@@ -587,7 +629,7 @@
             });
 
             socketCreate.on('arrow', function (arrayInfo) {
-                if(!doctor) {
+                if(!scene.data.get(`doctor`)) {
                     if (arrayInfo[0]) {
                         SendArrow(arrayInfo[1], 0, false);
                         scene.tweens.add({
@@ -602,9 +644,9 @@
                 }
             });
             socketCreate.on('level', function (levelFromSocket) {
-                if(doctor) {
+                if(scene.data.get(`doctor`)) {
                     console.log(levelFromSocket);
-                    level = levelFromSocket;
+                    scene.data.set(`level`, levelFromSocket);
                 }
             });
             socketCreate.on(`rooms`, function (roomsObject) {
@@ -648,27 +690,27 @@
             })
 
             socketCreate.on(`playerOneTrue` , function (bool) {
-                playerOne= true;
-                if(playerOne&&playerTwo) {
-                    gameStartReally = true;
+                scene.data.set(`playerOne`, true);
+                if(scene.data.get(`playerOne`)&&scene.data.get(`playerTwo`)) {
+                    scene.data.set(`gameStartReally`, true);
                 }
             })
             socketCreate.on(`playerTwoTrue` , function (bool) {
-                playerTwo= true;
-                if(playerOne&&playerTwo) {
-                    gameStartReally = true;
+                scene.data.set(`playerTwo`, true);
+                if(scene.data.get(`playerOne`)&&scene.data.get(`playerTwo`)) {
+                    scene.data.set(`gameStartReally`, true);
                 }
             })
             socketCreate.on(`gameWinner`, function (string) {
                 if (string === `doctor`) {
-                    doctorWin=true;
+                    scene.data.set(`doctorWin`, true);
                 } 
                 if (string === `patient`) {
-                    patientWin=true;
+                    scene.data.set(`patientWin`, true);
                 }
             })
             socketCreate.on(`playerMissed`, function (direction) {
-                if(doctor) {
+                if(scene.data.get(`doctor`)) {
                     const missedEmitter = GetEmitter(direction);
                     missedEmitter.start();
                     let lifeHer = scene.data.get(`life`);
@@ -677,11 +719,11 @@
                     emitterExplosion = bloodexplosion.createEmitter(cacheJson);
                     emitterExplosion.setPosition(lifeGroup.children.entries[lifeHer-1].x, lifeGroup.children.entries[lifeHer-1].y)
                     emitterExplosion.explode(200, lifeGroup.children.entries[lifeHer-1].x, lifeGroup.children.entries[lifeHer-1].y);
-                    activateOnlyWhenSocketHasBeenSend=true;
+                    scene.data.set(`activateOnlyWhenSocketHasBeenSend`, true);
                 }
             });
             socketCreate.on(`arrowWasRight`, function (direction) {
-                if (doctor) {
+                if (scene.data.get(`doctor`)) {
                     const zone = getZone(direction);
                     zone.setName(`pressed`);
                     if (spriteDoctor.anims.getName() === 'idleDoctor') {
@@ -700,7 +742,7 @@
             });
 
             socketCreate.on(`twoPlayersInRoom`, function (bool) {
-                personedJoined = bool;
+                scene.data.set(`personedJoined`, bool);
             });
 
             socketCreate.on(`playerInRoom`, function (wop) {
@@ -710,17 +752,17 @@
                 }
             });
             socketCreate.on(`disableCharacter`, function (string) {
-                if (string === `doctor` && !gameStarted) {
+                if (string === `doctor` && !scene.data.get(`gameStarted`)) {
                     element.getChildByID(string).disabled=true;
                     element.getChildByID(`patient`).checked=true;
                 }
-                if (string === `patient` && !gameStarted) {
+                if (string === `patient` && !scene.data.get(`gameStarted`)) {
                     element.getChildByID(string).disabled=true;
                     element.getChildByID(`doctor`).checked=true;
                 }
             });
             socketCreate.on(`sound`, function (high) {
-                if (doctor &&disableSound) {
+                if (scene.data.get(`doctor`) &&scene.data.get(`disableSound`)) {
                     if(high === 2) {
                         soundHalloween.setRate(1.1);
                     }
@@ -746,12 +788,12 @@
 
             for (let i = 0; i < scene.data.get(`life`); i++) {
                 if (i <= 6) {
-                    heartSprite = this.add.sprite(this.data.get(`xPosHeart`)+ (i*50), yPosHeart);
+                    heartSprite = this.add.sprite(this.data.get(`xPosHeart`)+ (i*50), this.data.get(`yPosHeart`));
                     heartSprite.setScale(.5);
                     heartSprite.play('idleheart');
                     lifeGroup.add(heartSprite);                
                     } else {
-                    heartSprite = this.add.sprite(this.data.get(`xPosHeart`)+ ((i-7)*50), yPosHeart+50);
+                    heartSprite = this.add.sprite(this.data.get(`xPosHeart`)+ ((i-7)*50), this.data.get(`yPosHeart`)+50);
                     heartSprite.setScale(.5);
                     heartSprite.play('idleheart');
                     lifeGroup.add(heartSprite);
@@ -761,32 +803,32 @@
 
             // ----------------------------------------- zone ------------------------------
             
-            zone = this.add.zone(cordsLeft, yPosZones).setSize(100, 100);
+            zone = this.add.zone(scene.data.get('cordsLeft'), this.data.get(`yPosZones`)).setSize(100, 100);
             this.physics.world.enable(zone);
             zone.body.setAllowGravity(false);
             zone.body.moves = false;
         
-            zone2 = this.add.zone(cordsUp, yPosZones).setSize(100, 100);
+            zone2 = this.add.zone(scene.data.get(`cordsUp`), this.data.get(`yPosZones`)).setSize(100, 100);
             this.physics.world.enable(zone2);
             zone2.body.setAllowGravity(false);
             zone2.body.moves = false;
 
-            zone3 = this.add.zone(cordsDown, yPosZones).setSize(100, 100);
+            zone3 = this.add.zone(scene.data.get(`cordsDown`), this.data.get(`yPosZones`)).setSize(100, 100);
             this.physics.world.enable(zone3);
             zone3.body.setAllowGravity(false);
             zone3.body.moves = false;
 
-            zone4 = this.add.zone(cordsRight, yPosZones).setSize(100, 100);
+            zone4 = this.add.zone(scene.data.get(`cordsRight`), this.data.get(`yPosZones`)).setSize(100, 100);
             this.physics.world.enable(zone4);
             zone4.body.setAllowGravity(false);
             zone4.body.moves = false;
 
             //this.add.image(400, 800, 'sky');
             this.add.image(350, 332, 'line');
-            scoreText = this.add.text(xPosComboText, yPosComboText, 'Combo', { fontSize: '32px', fill: '#b8baad', fontFamily: 'futura-pt, sans serif' }); 
+            scoreText = this.add.text(scene.data.get(`xPosComboText`), scene.data.get(`yPosComboText`), 'Combo', { fontSize: '32px', fill: '#b8baad', fontFamily: 'futura-pt, sans serif' }); 
             scoreText.setAlpha(0);
-            textTimer = this.add.text(xPosTimer, yPosTimer, '5:00', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
-            textBpm = this.add.text(xPosBpm, yPosBpm, '0', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
+            textTimer = this.add.text(scene.data.get(`xPosTimer`), scene.data.get(`yPosTimer`), '5:00', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
+            textBpm = this.add.text(this.data.get(`xPosBpm`), this.data.get(`yPosBpm`), '0', { fontSize: '30px', fill: '#ff3e36', fontFamily: 'futura-pt, sans serif' })
             textGameSpeed = this.add.text(268, 220, '1X', { fontSize: '50px', fill: '#ff3e36', fontFamily: 'poleno,  sans serif' })
             // ----------------------------------------- zone ------------------------------
 
@@ -796,7 +838,7 @@
             this.add.image(940, 720, 'hersenen').setDepth(1);
             this.add.image(1100, 720, 'lever').setDepth(1);
             platforms = this.physics.add.staticGroup()
-            platforms.create(xPosPlatform, yPosPlatform, 'platformBlack').refreshBody()
+            platforms.create(this.data.get(`xPosPlatform`), this.data.get(`yPosPlatform`), 'platformBlack').refreshBody()
             this.physics.add.overlap(arrowsClass, zone, removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, zone2,removeArrowZone, null, this);
             this.physics.add.overlap(arrowsClass, zone3, removeArrowZone, null, this);
@@ -806,8 +848,8 @@
             particles = this.add.particles('blood');
 
             emitter = particles.createEmitter({
-                x: cordsLeft,
-                y: yPosEmitters,
+                x: scene.data.get(`cordsLeft`),
+                y: scene.data.get(`yPosEmitters`),
                 lifespan: 5000, 
                 angle: { min: 265, max: 275 },
                 speed: { min: 300, max: 500 },
@@ -820,8 +862,8 @@
             emitter.stop();
             
             emitter2 = particles.createEmitter({
-                x: cordsUp,
-                y: yPosEmitters,
+                x: scene.data.get(`cordsUp`),
+                y: scene.data.get(`yPosEmitters`),
                 lifespan: 5000,
                 angle: { min: 265, max: 275 },
                 speed: { min: 300, max: 500 },
@@ -834,8 +876,8 @@
             emitter2.stop();
 
             emitter3 = particles.createEmitter({
-                x: cordsDown,
-                y: yPosEmitters,
+                x: scene.data.get(`cordsDown`),
+                y: scene.data.get(`yPosEmitters`),
                 lifespan: 5000,
                 angle: { min: 265, max: 275 },
                 speed: { min: 300, max: 500 },
@@ -848,8 +890,8 @@
             emitter3.stop();
 
             emitter4 = particles.createEmitter({
-                x: cordsRight,
-                y: yPosEmitters,
+                x: scene.data.get(`cordsRight`),
+                y: scene.data.get(`yPosEmitters`),
                 lifespan: 5000,
                 angle: { min: 265, max: 275 },
                 speed: { min: 300, max: 500 },
@@ -865,18 +907,18 @@
         }
 
         function checkHeartDoctor () {
-            if (bpm >= 100) {
+            if (scene.data.get(`bpm`) >= 100) {
                 gameSpeed= 900;
-            } else if (bpm >= 80) {
+            } else if (scene.data.get(`bpm`) >= 80) {
                 gameSpeed= 500;
-            } else if (bpm <= 80) {
+            } else if (scene.data.get(`bpm`) <= 80) {
                 gameSpeed= 300;
             }
         }
 
 
         function levelGameSpeed () {
-            switch (level) {
+            switch (scene.data.get(`level`)) {
                 case 1:
                     gameSpeed= 900;
                     break;
@@ -905,35 +947,35 @@
 
         function checkheartBeat() {
             const socketCreate = scene.data.get(`socket`)
-            if((averageHeartBeat-bpm) >= 5) {
-                if(updateLevel === level ) {
-                    if(level !== 2){
-                        level--;
-                        if (disableSound) {
+            if((averageHeartBeat-scene.data.get(`bpm`)) >= 5) {
+                if(updateLevel ===scene.data.get(`level`)) {
+                    if(scene.data.get(`level`) !== 2){
+                        scene.data.set(`level`, scene.data.get(`level`) -1);
+                        if (scene.data.get(`disableSound`)) {
                             soundHalloween.setRate(.8);
                         }
-                        socketCreate.emit('level', [level, roomSelected]);
+                        socketCreate.emit('level', [scene.data.get(`level`), roomSelected]);
                         indie.setPosition(95, 424)
                     } 
                 }
             }
-            if((averageHeartBeat-bpm) <= -5) {
-                if(updateLevel === level ) {
-                    level++;
-                    if (disableSound) {
+            if((averageHeartBeat-scene.data.get(`bpm`)) <= -5) {
+                if(updateLevel === scene.data.get(`level`) ) {
+                    scene.data.set(`level`, scene.data.get(`level`) +1);
+                    if (scene.data.get(`disableSound`)) {
                         soundHalloween.setRate(1.2);
                     }
-                    socketCreate.emit('level', [level, roomSelected]);
+                    socketCreate.emit('level', [scene.data.get(`level`), roomSelected]);
                     indie.setPosition(320, 424);
                 }
             }
-            if((averageHeartBeat-bpm) > -5 && (averageHeartBeat-bpm) < 5) {
-                if(updateLevel !== level ) {
-                    level = updateLevel;
-                    if (disableSound) {
+            if((averageHeartBeat-scene.data.get(`bpm`)) > -5 && (averageHeartBeat-scene.data.get(`bpm`)) < 5) {
+                if(updateLevel !== scene.data.get(`level`) ) {
+                    scene.data.set(`level`, updateLevel)
+                    if (scene.data.get(`disableSound`)) {
                         soundHalloween.setRate(1);
                     }
-                    socketCreate.emit('level', [level, roomSelected]);
+                    socketCreate.emit('level', [scene.data.get(`level`), roomSelected]);
                     indie.setPosition(210, 424);
                 }
             }
@@ -951,31 +993,31 @@
             //console.log(`level changed`);
             if (timeF >= 60000 && updateLevel=== 2 ) {
                 updateLevel++
-                level++
-                socketCreate.emit("level", [level, roomSelected]);    
+                scene.data.set(`level`, scene.data.get(`level`)+1);
+                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);    
             } else if(timeF >= 120000 && updateLevel=== 3) {
                 updateLevel++
-                level++
-                socketCreate.emit("level", [level, roomSelected]);     
+                scene.data.set(`level`, scene.data.get(`level`)+1);
+                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);     
             } else if (timeF >= 180000 && updateLevel=== 4) {
                 updateLevel++
-                level++
-                socketCreate.emit("level", [level, roomSelected]);
+                scene.data.set(`level`, scene.data.get(`level`)+1);
+                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);
             } else if (timeF >= 240000 && updateLevel=== 4) {
                 updateLevel++
-                level++
-                socketCreate.emit("level", [level, roomSelected]);
+                scene.data.set(`level`, scene.data.get(`level`)+1);
+                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);
             } else if (timeF >= 300000 && updateLevel=== 5) {
             }
         }
 
-        let onceDoctor = true;
-        let gameStarted = false;
-        let onceRoom = true;
-        let onceStartGame = true;
-        let timeStart;
-        let activateOnlyWhenSocketHasBeenSend = false;
-        let counterTime = 3;
+        //let onceDoctor = true;
+        //let gameStarted = false;
+        //let onceRoom = true;
+        //let onceStartGame = true;
+        //let timeStart;
+        //let activateOnlyWhenSocketHasBeenSend = false;
+        //let counterTime = 3;
         let onceTimePls = true;
 
         function reloadScreen () {
@@ -984,23 +1026,35 @@
 
         function update(time, delta) {
             //console.log(this.data.get(`socket`));
-            const socketCreate = scene.data.get(`socket`)
+            const socketCreate = scene.data.get(`socket`);
+            const onceTimePls = scene.data.get(`onceTimePls`);
+            const personedJoined = scene.data.get(`personedJoined`);
+            const activateOnlyWhenSocketHasBeenSend = scene.data.get(`activateOnlyWhenSocketHasBeenSend`);
+            const gameStartReally = scene.data.get(`gameStartReally`);
+            const onceRoom = scene.data.get(`onceRoom`);
+            const doctorWin = scene.data.get(`doctorWin`);
+            const patientWin = scene.data.get(`patientWin`);
+            const heartRateGemid = scene.data.get(`heartRateGemid`);
+            const gameOver = scene.data.get(`gameOver`);
+            const gameStarted = scene.data.get(`gameStarted`);
+            const fiveMinTimer = scene.data.get(`fiveMinTimer`);
+            const timeStart = scene.data.get(`timeStart`);
+            const onceDoctor = scene.data.get(`onceDoctor`);
+            const onceStartGame = scene.data.get(`onceStartGame`);
             
-
             if (onceTimePls) {
                 if (personedJoined) {
                     element.getChildByID(`submitlogin`).value= `Lock decision`
-                    onceTimePls = false;
+                    scene.data.set(`onceTimePls`, false);
                 }; 
             };
             if (activateOnlyWhenSocketHasBeenSend) {
-                activateOnlyWhenSocketHasBeenSend = false;
+                scene.data.set(`activateOnlyWhenSocketHasBeenSend`, false);
                 this.time.delayedCall(150, destroyEmitter, [], this);
                 this.time.delayedCall(150, destroyEmitterHeart, [], this);             
             }
-
             if(gameStartReally && onceStartGame) {
-                onceStartGame = false;
+                scene.data.set(`onceStartGame`, false);
                 element.setVisible(false);
                 countdown.setVisible(true);
                 this.time.delayedCall(1000, countdownF, [], this);
@@ -1011,32 +1065,34 @@
             }
 
             function countdownF () {
-                countdown.getChildByID(`count`).textContent = counterTime--;
+                let counterNow = scene.data.get(`counterTime`);
+                countdown.getChildByID(`count`).textContent = counterNow--;
+                scene.data.set(`counterTime`, counterNow--);
             }
 
             function delay () {
-                fiveMinTimer = 300000;
-                timeStart= time;
+                scene.data.set(`fiveMinTimer`, 300000);
+                scene.data.set(`timeStart`, time);
                 countdown.setVisible(false);
                 home.setVisible(false);
             }
 
             if (onceRoom) {
                 socketCreate.emit(`getRoom`, true);
-                onceRoom = false;
+                scene.data.set(`onceRoom`, false);
             }
 
             if (doctorWin && gameStartReally) {
                 doctorWinHtml.setVisible(true);
                 home.setVisible(true);
-                gameStarted= false;
+                scene.data.set(`gameStarted`, false);
                 this.time.delayedCall(120000, reloadScreen, [], this);
             }
 
             if(patientWin && gameStartReally) {
                 patientWinHtml.setVisible(true);
                 home.setVisible(true);
-                gameStarted= false;
+                scene.data.set(`gameStarted`, false);
                 this.time.delayedCall(120000, reloadScreen, [], this);
             }
 
@@ -1044,74 +1100,75 @@
                 averageHeartBeat= averageOfArray(heartRateGemid);
                 heartRateGemid.pop();
                 heartRateGemid.push(`end`);
+                scene.data.set(`heartRateGemid`, heartRateGemid);
                 console.log(averageHeartBeat);
-                level = 2;
-                if (!doctor) {
-                    socketCreate.emit("level", [level, roomSelected]);
+                scene.data.set(`level`, 2);
+                if (!scene.data.get(`doctor`)) {
+                    socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);
                 }
                 updateLevel= 2;
             }
 
-            if (!doctor) {
-                if (level >= 2 ) {
+            if (!scene.data.get(`doctor`)) {
+                if (scene.data.get(`level`) >= 2 ) {
                     checkheartBeat()
                 }
                 changeLevel(time);
             }
             levelGameSpeed();
 
-            if (gameOver && once && gameStartReally &&patientDied) {
-                once= false;
+            if (gameOver && scene.data.get(`once`) && gameStartReally &&patientDied) {;
+                scene.data.set(`once`, false);
                 socketCreate.emit(`gameOver`, [false, roomSelected]);
             }
             
-            if (gameOver && once && gameStartReally&&doctorDied) {
-                once= false;
+            if (gameOver && scene.data.get(`once`) && gameStartReally&&doctorDied) {
+                scene.data.set(`once`, false);
                 socketCreate.emit(`gameOver`, [true, roomSelected]);
             }  
 
             if(gameStarted) {
                 if (onceDoctor) {
-                    if(doctor) {
+                    if(scene.data.get(`doctor`)) {
                         //this.add.image(210, 80, 'smalluiDoctor');
                         spriteDoctor= this.add.sprite(220,643);
                         spriteDoctor.play(`idleDoctor`);
-                        const arrowLeft = this.add.image(cordsLeft, 150, 'arrowZone');
-                        const arrowRight =this.add.image(cordsRight, 150, 'arrowZone');
-                        const arrowUp = this.add.image(cordsUp, 150, 'arrowZone');
-                        const arrowDown = this.add.image(cordsDown, 150, 'arrowZone');
+                        const arrowLeft = this.add.image(scene.data.get(`cordsLeft`), 150, 'arrowZone');
+                        const arrowRight =this.add.image(scene.data.get(`cordsRight`), 150, 'arrowZone');
+                        const arrowUp = this.add.image(scene.data.get(`cordsUp`), 150, 'arrowZone');
+                        const arrowDown = this.add.image(scene.data.get(`cordsDown`), 150, 'arrowZone');
                         arrowRight.setRotation(15.7);
                         arrowUp.setRotation(1.55);
                         arrowDown.setRotation(4.72);
                     } else {
-                        spritePatient= this.add.sprite(220,643);
-                        spritePatient.play(`idlePatient`);
+                        scene.data.set(`spritePatient`, this.add.sprite(220,643));
+                        scene.data.get(`spritePatient`).play(`idlePatient`);
                         //this.add.image(210, 80, 'smallui');
-                        const arrowLeft = this.add.image(cordsLeft, yPosZones, 'arrowZone');
-                        const arrowRight =this.add.image(cordsRight, yPosZones, 'arrowZone');
-                        const arrowUp = this.add.image(cordsUp, yPosZones, 'arrowZone');
-                        const arrowDown = this.add.image(cordsDown, yPosZones, 'arrowZone');
+                        const arrowLeft = this.add.image(scene.data.get(`cordsLeft`), scene.data.get(`yPosZones`), 'arrowZone');
+                        const arrowRight =this.add.image(scene.data.get(`cordsRight`), scene.data.get(`yPosZones`), 'arrowZone');
+                        const arrowUp = this.add.image(scene.data.get(`cordsUp`), scene.data.get(`yPosZones`), 'arrowZone');
+                        const arrowDown = this.add.image(scene.data.get(`cordsDown`), scene.data.get(`yPosZones`), 'arrowZone');
                         arrowRight.setRotation(15.7);
                         arrowUp.setRotation(1.55);
                         arrowDown.setRotation(4.72);
                     }
-                    if (disableSound) {
+                    if (scene.data.get(`disableSound`)) {
                         soundHalloween = this.sound.add('soundHalloween');
     
                         soundHalloween.play({
                             seek: 2.550
                         });
                     }
-                    onceDoctor = false;
+                    scene.data.set(`onceDoctor`, false);
                 }
             }
 
             if ((fiveMinTimer-(time- timeStart))<= 0 && gameStartReally) {
-                gameOver=true;
+                scene.data.set(`gameOver`, true);
                 doctorDied= true;
             }
-            textGameSpeed.setText(level+ 'X');
-            textBpm.setText(bpm);
+            textGameSpeed.setText(scene.data.get(`level`)+ 'X');
+            textBpm.setText(scene.data.get(`bpm`));
             textTimer.setText(millisToMinutesAndSeconds(fiveMinTimer-(time- timeStart)));
 
             // ----------------------------------------- zone controller ------------------------------
@@ -1166,7 +1223,7 @@
                 zone4.setName(`not pressed yet`);
             }
 
-            if (!doctor && gameStarted &&gameStartReally) {
+            if (!scene.data.get(`doctor`) && gameStarted &&gameStartReally) {
                 if (zone.body.touching.none && this.input.keyboard.checkDown(cursors.left, 500)) {
                     emitter.start();
                     this.time.delayedCall(150, destroyEmitter, [], this);
@@ -1196,10 +1253,10 @@
             
             // ----------------------------------------- arrow controller ------------------------------  
 
-            if (time - timeWhenFunction >gameSpeed){
+            if (time - scene.data.get(`timeWhenFunction`) >gameSpeed){
                 if (this.input.keyboard.checkDown(cursors.left, 1000))
                 {
-                    if (doctor) {
+                    if (scene.data.get(`doctor`)) {
                         SendArrow(`left`, time, true);
                     } else {
                     }
@@ -1207,7 +1264,7 @@
 
                 if (this.input.keyboard.checkDown(cursors.right, 1000))
                 {
-                    if (doctor) {
+                    if (scene.data.get(`doctor`)) {
                         SendArrow(`right`, time, true);
                     } else {
                     }
@@ -1216,7 +1273,7 @@
         
                 if (this.input.keyboard.checkDown(cursors.up, 1000))
                 {
-                    if (doctor) {
+                    if (scene.data.get(`doctor`)) {
                         SendArrow(`up`, time, true);
                     } else {
                     }
@@ -1224,7 +1281,7 @@
 
                 if (this.input.keyboard.checkDown(cursors.down, 1000))
                 {
-                    if (doctor) {
+                    if (scene.data.get(`doctor`)) {
                         SendArrow(`down`, time, true);
                     } else {
                     }
@@ -1237,7 +1294,7 @@
             arrows.destroy();
             losePoints(arrows.name);
             //this.time.delayedCall(150, destroyEmitterHeart, [], this);
-            if(!doctor) {            
+            if(!scene.data.get(`doctor`)) {            
                 switch (arrows.name) {
                     case `left`:
                         emitter.start();
@@ -1275,27 +1332,30 @@
 
         function removeArrowZone (zones, arrows) {
             const socketCreate = scene.data.get(`socket`)
+            const heartRateGemid = scene.data.get(`heartRateGemid`)
+            let score= scene.data.get(`score`);
             if (zones.name===`pressed`) {
                 arrows.destroy();
-                score += 1;
-                if (!doctor) {
+                scene.data.set(`score`,score +1);
+                if (!scene.data.get(`doctor`)) {
                     newCombo();
-                    if (spritePatient.anims.getName() === 'idlePatient') {
-                        spritePatient.play('winPatient');
-                        spritePatient.chain([ 'idlePatient' ]);
+                    if (scene.data.get(`spritePatient`).anims.getName() === 'idlePatient') {
+                        scene.data.get(`spritePatient`).play('winPatient');
+                        scene.data.get(`spritePatient`).chain([ 'idlePatient' ]);
                     }
                 }
-                if (level === 1 && heartRateGemid.length !== 10) {
-                    heartRateGemid.push(bpm);
+                if (scene.data.get(`level`) === 1 && heartRateGemid.length !== 10) {
+                    heartRateGemid.push(scene.data.get(`bpm`));
+                    scene.data.set(`heartRateGemid`, heartRateGemid)
                 }
                 socketCreate.emit(`arrowWasRight`, [getDirectionZone (zones.x), roomSelected]);
             }
         }
 
-        let comboReset = true;
+        //let comboReset = true;
 
         function newCombo () {
-            scoreText.setText('combo: ' + score);
+            scoreText.setText('combo: ' + scene.data.get(`score`));
             let particlesGood = scene.add.particles('good');
 
             let emitterGood = particlesGood.createEmitter({
@@ -1303,7 +1363,7 @@
                 scale: { start: 1, end:0 }
             });
             emitterGood.stop();
-            emitterGood.explode(20, xPosComboText+50, yPosComboText+5);
+            emitterGood.explode(20, scene.data.get(`xPosComboText`)+50, scene.data.get(`yPosComboText`)+5);
 
             scene.tweens.add({
                 targets: scoreText,
@@ -1311,7 +1371,7 @@
                 duration: 500,
                 onComplete : function () {
                     // here comes different animaitons for the combo meter
-                    if( comboReset) {
+                    if(scene.data.get(`comboReset`)) {
                     scene.tweens.add({
                         targets: scoreText,
                         alpha: 1,
@@ -1322,11 +1382,11 @@
                                     alpha: 0,
                                     duration: 1000
                                 });
-                            comboReset=true
+                                scene.data.set(`comboReset`, true);
                         }
                     });
                     }
-                    comboReset=false;
+                    scene.data.set(`comboReset`, false);
                 }
             })
         }
@@ -1369,7 +1429,7 @@
                 if (userPressedKey) {
                     const arrowInfo = [true, direction];
                     socketCreate.emit('arrow', [arrowInfo, roomSelected]);
-                    timeWhenFunction= time;
+                    scene.data.set(`timeWhenFunction`, time);
                     //handDoctor.setPosition(GetCords(direction),-50);
                     scene.tweens.add({
                         targets: handDoctor,
@@ -1386,15 +1446,15 @@
 
         function GetCords (direction) {
             if (direction === `left`) {
-                return cordsLeft;
+                return scene.data.get('cordsLeft');
             } else if (direction === `right`) {
-                return cordsRight;
+                return scene.data.get(`cordsRight`);
             } else
             if (direction === `up`) {
-                return cordsUp;                
+                return scene.data.get(`cordsUp`);                
             } else 
             if (direction === `down`) {
-                return cordsDown;
+                return scene.data.get(`cordsDown`);
             }
         }
 
@@ -1413,7 +1473,7 @@
         }
 
         function arrowInZone (zoneNumber) {
-            if(!doctor) {
+            if(!scene.data.get(`doctor`)) {
                 const nameRightZone= nameZone(zoneNumber);
                 nameRightZone.setName(`pressed`);
             }
@@ -1436,23 +1496,23 @@
 
         function losePoints (direction) {
             const socketCreate = scene.data.get(`socket`)
-            score = 0;
-            scoreText.setText('combo: ' + score);
+            scene.data.set(`score`, 0);
+            scoreText.setText('combo: ' + scene.data.get(`score`));
             
-            if(doctor) {
+            if(scene.data.get(`doctor`)) {
                 if (spriteDoctor.anims.getName() === 'idleDoctor') {
                     spriteDoctor.play('winDoctor');
                     spriteDoctor.chain([ 'idleDoctor' ]);
                 }
             }
-            if (spritePatient) {
-                if (spritePatient.anims.getName() === 'idlePatient') {
-                    spritePatient.play('damagePatient');
-                    spritePatient.chain([ 'idlePatient' ]);
+            if (scene.data.get(`spritePatient`)) {
+                if (scene.data.get(`spritePatient`).anims.getName() === 'idlePatient') {
+                    scene.data.get(`spritePatient`).play('damagePatient');
+                    scene.data.get(`spritePatient`).chain([ 'idlePatient' ]);
                 }    
             }
 
-            if (!doctor) {
+            if (!scene.data.get(`doctor`)) {
                 let lifeHer = scene.data.get(`life`);
                 if(lifeHer > 0){
                     scene.data.set(`life`, lifeHer -1);
@@ -1461,7 +1521,7 @@
                     emitterExplosion.setPosition(lifeGroup.children.entries[lifeHer -1].x, lifeGroup.children.entries[lifeHer -1].y);
                     emitterExplosion.explode(200, lifeGroup.children.entries[lifeHer -1].x, lifeGroup.children.entries[lifeHer -1].y);
                 } else {
-                    gameOver = true;
+                    scene.data.set(`gameOver`, true);
                     patientDied=true;
                 }
                 socketCreate.emit(`playerMissed`, [direction, roomSelected]);
