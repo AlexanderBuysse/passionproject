@@ -41,41 +41,18 @@
         let zone3;
         let zone4;
         let scoreText;
-        //let score = 0;
 
         var element;
-        let button;
-        //let doctor;
-
-        const cordsLeft=620;
-        const cordsUp=770;
-        const cordsDown=930;
-        const cordsRight =1080;
 
         let emitter;
         let emitter2;
         let emitter3;
         let emitter4;
         let particles;
-
-        const yPosEmitters = 700;
-        const yPosZones = 630;
-        const yPosPlatform = 760;
-        const xPosPlatform = 850
-
-        const xPosHeart = 60;
-        const yPosHeart = 105;
-
-        const xPosTimer = 76;
-        const yPosTimer = 235;
         
         let spriteDoctor;
-        //let spritePatient;
  
         let lifeGroup;
-
-        //let gameOver = false;
-        //let once = true;
 
         let heartSprite;
 
@@ -83,72 +60,37 @@
         let emitterExplosion;
 
         let cacheJson;
-        let timeInGame;
 
         let home;
         let rooms;
         let gameMenu;
         let tutorial;
 
-        let gameStart = false;
-
-        let textHeart;
-
-        //let fiveMinTimer = 5000;
         let textTimer;
 
         let gameSpeed= 500;
-        //let level = 1;
-        //let heartRateGemid = [];
-        let arrowsCaught = 0;
 
         let textGameSpeed;
 
-        //let bpm= 0;
         let textBpm;
-        const xPosBpm = 235;
-        const yPosBpm = 340;
 
         var textTimeDoctor;
-        var graphics;
-        var hsv;
-        var timerEvents = [];
 
         let averageHeartBeat;
 
-        let room;
         let indie;
 
         let handDoctor;
-
-        let tweenDoctor;
-        //let doctorWin = false;
-        //let patientWin = false;        
+   
         let doctorWinHtml;
         let patientWinHtml;
         let countdown;
 
-        //let playerOne= false;
-        //let playerTwo= false;
-
-        //let gameStartReally = false;
-        let patientDied= false;
-        let doctorDied= false;
-
         let scene;
-
-        const yPosComboText = 500;
-        const xPosComboText = 500;
-
-        //let personedJoined = false;
-        let selectDoctor = false;
 
         let roomSelected;
 
         let soundHalloween;
-
-        //let disableSound= false;
-        
         
         function preload() {
 
@@ -272,6 +214,9 @@
             this.data.set(`spritePatient`, undefined);
             this.data.set(`comboReset`, true);
             this.data.set(`once`, true);
+            this.data.set(`patientDied`, false);
+            this.data.set(`doctorDied`, false);
+            this.data.set(`updateLevel`, undefined);
 
             const socketCreate = this.data.get(`socket`);
             
@@ -948,7 +893,7 @@
         function checkheartBeat() {
             const socketCreate = scene.data.get(`socket`)
             if((averageHeartBeat-scene.data.get(`bpm`)) >= 5) {
-                if(updateLevel ===scene.data.get(`level`)) {
+                if(scene.data.get(`updateLevel`) ===scene.data.get(`level`)) {
                     if(scene.data.get(`level`) !== 2){
                         scene.data.set(`level`, scene.data.get(`level`) -1);
                         if (scene.data.get(`disableSound`)) {
@@ -960,7 +905,7 @@
                 }
             }
             if((averageHeartBeat-scene.data.get(`bpm`)) <= -5) {
-                if(updateLevel === scene.data.get(`level`) ) {
+                if(scene.data.get(`updateLevel`) === scene.data.get(`level`) ) {
                     scene.data.set(`level`, scene.data.get(`level`) +1);
                     if (scene.data.get(`disableSound`)) {
                         soundHalloween.setRate(1.2);
@@ -970,8 +915,8 @@
                 }
             }
             if((averageHeartBeat-scene.data.get(`bpm`)) > -5 && (averageHeartBeat-scene.data.get(`bpm`)) < 5) {
-                if(updateLevel !== scene.data.get(`level`) ) {
-                    scene.data.set(`level`, updateLevel)
+                if(scene.data.get(`updateLevel`) !== scene.data.get(`level`) ) {
+                    scene.data.set(`level`, scene.data.get(`updateLevel`))
                     if (scene.data.get(`disableSound`)) {
                         soundHalloween.setRate(1);
                     }
@@ -981,44 +926,34 @@
             }
         }
 
-        let lastSpeed;
-        let updateLevel;
-
         function averageOfArray (arr) {
             return arr.reduce( ( p, c ) => p + c, 0 ) / arr.length;
         }
 
         function changeLevel (timeF) {
-            const socketCreate = scene.data.get(`socket`)
-            //console.log(`level changed`);
-            if (timeF >= 60000 && updateLevel=== 2 ) {
-                updateLevel++
+            const socketCreate = scene.data.get(`socket`);
+            let oldScore = scene.data.get(`updateLevel`);
+            if (timeF >= 240000 && scene.data.get(`updateLevel`)=== 5) {
+                scene.data.set(`updateLevel`, oldScore + 1);
                 scene.data.set(`level`, scene.data.get(`level`)+1);
-                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);    
-            } else if(timeF >= 120000 && updateLevel=== 3) {
-                updateLevel++
+                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);
+            }
+            if (timeF >= 180000 && scene.data.get(`updateLevel`)=== 4) {
+                scene.data.set(`updateLevel`, oldScore + 1);
+                scene.data.set(`level`, scene.data.get(`level`)+1);
+                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);
+            }
+            if(timeF >= 120000 && scene.data.get(`updateLevel`)=== 3) {
+                scene.data.set(`updateLevel`, oldScore + 1);
                 scene.data.set(`level`, scene.data.get(`level`)+1);
                 socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);     
-            } else if (timeF >= 180000 && updateLevel=== 4) {
-                updateLevel++
-                scene.data.set(`level`, scene.data.get(`level`)+1);
-                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);
-            } else if (timeF >= 240000 && updateLevel=== 4) {
-                updateLevel++
-                scene.data.set(`level`, scene.data.get(`level`)+1);
-                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);
-            } else if (timeF >= 300000 && updateLevel=== 5) {
             }
+            if (timeF >= 60000 && scene.data.get(`updateLevel`)=== 2 ) {
+                scene.data.set(`updateLevel`, oldScore + 1);
+                scene.data.set(`level`, scene.data.get(`level`)+1);
+                socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);    
+            } 
         }
-
-        //let onceDoctor = true;
-        //let gameStarted = false;
-        //let onceRoom = true;
-        //let onceStartGame = true;
-        //let timeStart;
-        //let activateOnlyWhenSocketHasBeenSend = false;
-        //let counterTime = 3;
-        let onceTimePls = true;
 
         function reloadScreen () {
             window.location.reload();
@@ -1106,7 +1041,7 @@
                 if (!scene.data.get(`doctor`)) {
                     socketCreate.emit("level", [scene.data.get(`level`), roomSelected]);
                 }
-                updateLevel= 2;
+                scene.data.set(`updateLevel`, 2);
             }
 
             if (!scene.data.get(`doctor`)) {
@@ -1117,12 +1052,12 @@
             }
             levelGameSpeed();
 
-            if (gameOver && scene.data.get(`once`) && gameStartReally &&patientDied) {;
+            if (gameOver && scene.data.get(`once`) && gameStartReally &&scene.data.get(`patientDied`)) {;
                 scene.data.set(`once`, false);
                 socketCreate.emit(`gameOver`, [false, roomSelected]);
             }
             
-            if (gameOver && scene.data.get(`once`) && gameStartReally&&doctorDied) {
+            if (gameOver && scene.data.get(`once`) && gameStartReally&&scene.data.get(`doctorDied`)) {
                 scene.data.set(`once`, false);
                 socketCreate.emit(`gameOver`, [true, roomSelected]);
             }  
@@ -1165,7 +1100,7 @@
 
             if ((fiveMinTimer-(time- timeStart))<= 0 && gameStartReally) {
                 scene.data.set(`gameOver`, true);
-                doctorDied= true;
+                scene.data.set(`doctorDied`,true);
             }
             textGameSpeed.setText(scene.data.get(`level`)+ 'X');
             textBpm.setText(scene.data.get(`bpm`));
@@ -1522,7 +1457,7 @@
                     emitterExplosion.explode(200, lifeGroup.children.entries[lifeHer -1].x, lifeGroup.children.entries[lifeHer -1].y);
                 } else {
                     scene.data.set(`gameOver`, true);
-                    patientDied=true;
+                    scene.data.set(`patientDied`, true);
                 }
                 socketCreate.emit(`playerMissed`, [direction, roomSelected]);
             }
